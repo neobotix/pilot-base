@@ -1,0 +1,9 @@
+package pilot;
+
+class JoyData extends pilot.Sample {
+	
+	vector<float> axes;
+	
+	vector<int> buttons;
+	
+}

@@ -1,0 +1,31 @@
+package pilot.sensors;
+
+module SerialPort {
+	
+	vnx.TopicPtr input;					// automy.basic.DataPacket
+	
+	vnx.TopicPtr output;				// automy.basic.DataPacket
+	vnx.TopicPtr output_signals;		// neo.SocketSignal
+	
+	string port;						// device path (linux) or device name (windows)
+	
+	int baud_rate = 115200;				// baud rate in [bit/s]
+	
+	bool raw_mode = true;				// if to read binary data, instead of ASCII lines
+	
+	int read_timeout_ms = 200;			// read timeout [ms]
+	
+	int signal_interval_ms = 1000;		// signal publish interval (0 = disable) [ms]
+	
+	int error_interval_ms = 1000;		// error retry interval [ms]
+	
+	int stats_interval_ms = 10000;		// status message interval (0 = disable) [ms]
+	
+	
+	void open_port();
+	
+	void close_port();
+	
+	void handle(automy.basic.DataPacket sample);
+	
+}

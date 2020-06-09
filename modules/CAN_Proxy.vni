@@ -1,0 +1,14 @@
+package automy.can;
+
+module CAN_Proxy {
+	
+	vnx.TopicPtr input;				// input topic
+	vnx.TopicPtr output;			// output topic
+	
+	string device;					// like "can0"
+	
+	bool is_big_endian;				// if data is big endian
+	
+	void handle(Frame sample);
+	
+}

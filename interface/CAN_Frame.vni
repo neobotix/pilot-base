@@ -1,0 +1,38 @@
+package automy.can;
+
+class Frame {
+	
+	long time;
+	uint id;
+	uchar size;
+	uchar data[8];
+	bool is_big_endian;
+	
+	bool get_bit(int pos) const;
+	void set_bit(int pos, bool value);
+	
+	bool get_bool(int pos) const;
+	int get_int(int pos, int size, int offset = 0) const;
+	uint get_uint(int pos, int size, int offset = 0) const;
+	float get_float_signed(int pos, int size, float scale, float offset = 0) const;
+	float get_float_unsigned(int pos, int size, float scale, float offset = 0) const;
+	
+	void set_bool(int pos, bool value);
+	void set_int(int pos, int size, int value, int offset = 0);
+	void set_uint(int pos, int size, uint value, int offset = 0);
+	void set_float_signed(int pos, int size, float value, float scale, float offset = 0);
+	void set_float_unsigned(int pos, int size, float value, float scale, float offset = 0);
+	
+	bool get_bool_dbc(int pos) const;
+	int get_int_dbc(int pos, int size, int offset = 0) const;
+	uint get_uint_dbc(int pos, int size, int offset = 0) const;
+	float get_float_signed_dbc(int pos, int size, float scale, float offset = 0) const;
+	float get_float_unsigned_dbc(int pos, int size, float scale, float offset = 0) const;
+	
+	void set_bool_dbc(int pos, bool value);
+	void set_int_dbc(int pos, int size, int value, int offset = 0);
+	void set_uint_dbc(int pos, int size, uint value, int offset = 0);
+	void set_float_signed_dbc(int pos, int size, float value, float scale, float offset = 0);
+	void set_float_unsigned_dbc(int pos, int size, float value, float scale, float offset = 0);
+	
+}

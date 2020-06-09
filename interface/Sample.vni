@@ -1,0 +1,7 @@
+package pilot;
+
+class Sample {
+	
+	long time;				// posix timestamp [usec]
+	
+}
