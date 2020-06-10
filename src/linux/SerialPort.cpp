@@ -5,7 +5,7 @@
  *      Author: mad
  */
 
-#include <pilot/sensors/SerialPort.h>
+#include <pilot/base/SerialPort.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -22,7 +22,7 @@
 
 
 namespace pilot {
-namespace sensors {
+namespace base {
 
 void SerialPort::open_port()
 {
@@ -119,5 +119,5 @@ ssize_t SerialPort::write_port(const void* buf, size_t len) const
 }
 
 
-} // sensors
+} // base
 } // pilot

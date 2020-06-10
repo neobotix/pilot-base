@@ -5,11 +5,11 @@
  *      Author: mad
  */
 
-#include <pilot/sensors/UDP_Receiver.h>
+#include <pilot/base/UDP_Receiver.h>
 
 
 namespace pilot {
-namespace sensors {
+namespace base {
 
 void UDP_Receiver::open_port()
 {
@@ -27,5 +27,5 @@ ssize_t UDP_Receiver::recv_packet(void* buf, size_t len, int timeout_ms) const
 }
 
 
-} // sensors
+} // base
 } // pilot

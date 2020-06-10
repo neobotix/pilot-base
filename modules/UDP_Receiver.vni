@@ -1,8 +1,8 @@
-package pilot.sensors;
+package pilot.base;
 
 module UDP_Receiver {
 	
-	vnx.TopicPtr output;				// automy.basic.DataPacket
+	vnx.TopicPtr output;				// pilot.base.DataPacket
 	
 	int port;							// UDP port
 	

@@ -5,31 +5,31 @@
  *      Author: mad
  */
 
-#ifndef CAN_INCLUDE_CAN_PROXY_H_
-#define CAN_INCLUDE_CAN_PROXY_H_
+#ifndef INCLUDE_PILOT_BASE_CAN_PROXY_H_
+#define INCLUDE_PILOT_BASE_CAN_PROXY_H_
 
-#include <automy/can/ProxyBase.hxx>
-#include <automy/can/Socket.h>
+#include <pilot/base/CAN_ProxyBase.hxx>
+#include <pilot/base/CAN_Socket.h>
 
 
-namespace automy {
-namespace can {
+namespace pilot {
+namespace base {
 
-class Proxy : public ProxyBase {
+class CAN_Proxy : public CAN_ProxyBase {
 public:
-	Proxy(const std::string& _vnx_name);
+	CAN_Proxy(const std::string& _vnx_name);
 	
 protected:
 	void main() override;
 	
-	void handle(std::shared_ptr<const can::Frame> value) override;
+	void handle(std::shared_ptr<const CAN_Frame> value) override;
 	
 	void print_stats();
 	
-	void read_loop(std::shared_ptr<vnx::Topic> topic);
+	void read_loop();
 	
 private:
-	std::shared_ptr<can::Socket> socket;
+	std::shared_ptr<CAN_Socket> socket;
 	
 	int64_t num_read = 0;
 	int64_t num_write = 0;
@@ -37,7 +37,7 @@ private:
 };
 
 
-} // can
-} // automy
+} // base
+} // pilot
 
-#endif /* CAN_INCLUDE_CAN_PROXY_H_ */
+#endif /* INCLUDE_PILOT_BASE_CAN_PROXY_H_ */

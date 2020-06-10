@@ -1,6 +1,6 @@
-package pilot;
+package pilot.base;
 
-class JoyData extends pilot.Sample {
+class JoyData extends Sample {
 	
 	vector<float> axes;
 	

@@ -1,0 +1,11 @@
+package pilot.base;
+
+class SocketSignal {
+	
+	string port;
+	
+	bool is_open;
+	bool is_readable;
+	bool is_writable;
+	
+}

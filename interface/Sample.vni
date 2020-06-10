@@ -1,7 +1,7 @@
-package pilot;
+package pilot.base;
 
 class Sample {
 	
-	long time;				// posix timestamp [usec]
+	long time;				// POSIX timestamp [usec]
 	
 }

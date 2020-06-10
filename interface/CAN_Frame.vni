@@ -1,11 +1,15 @@
-package automy.can;
+package pilot.base;
 
-class Frame {
+class CAN_Frame {
 	
-	long time;
-	uint id;
-	uchar size;
+	long time;						// POSIX timestamp [usec]
+	
+	uint id;						// CAN ID
+	
+	uchar size;						// CAN message length [bytes]
+	
 	uchar data[8];
+	
 	bool is_big_endian;
 	
 	bool get_bit(int pos) const;

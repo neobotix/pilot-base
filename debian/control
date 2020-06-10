@@ -1,0 +1,7 @@
+Package: pilot-base
+Section: base
+Priority: optional
+Depends: vnx-base (>= 1.6.5)
+Maintainer: Max Wittal <wittal@neobotix.de>
+Description: Neobotix PlatformPilot Base Package
+Architecture: all

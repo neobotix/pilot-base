@@ -1,14 +1,18 @@
-package automy.can;
+package pilot.base;
 
 module CAN_Proxy {
 	
-	vnx.TopicPtr input;				// input topic
-	vnx.TopicPtr output;			// output topic
+	vnx.TopicPtr input;						// pilot.base.CAN_Frame
 	
-	string device;					// like "can0"
+	vnx.TopicPtr output;					// pilot.base.CAN_Frame
 	
-	bool is_big_endian;				// if data is big endian
+	string device;							// for example "can0"
 	
-	void handle(Frame sample);
+	bool is_big_endian;						// if data received is big endian
+	
+	int stats_interval_ms = 10000;			// status message interval (0 = disable) [ms]
+	
+	
+	void handle(CAN_Frame sample);
 	
 }

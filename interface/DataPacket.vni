@@ -1,0 +1,9 @@
+package pilot.base;
+
+class DataPacket {
+	
+	long time;						// POSIX timestamp [usec]
+	
+	vector<uchar> payload;			// binary data
+	
+}

@@ -5,14 +5,13 @@
  *      Author: mad
  */
 
-#include <pilot/sensors/UDP_Receiver.h>
-#include <pilot/sensors/UDP_ReceiverClient.hxx>
-
-#include <automy/basic/DataPacket.hxx>
+#include <pilot/base/UDP_Receiver.h>
+#include <pilot/base/UDP_ReceiverClient.hxx>
+#include <pilot/base/DataPacket.hxx>
 
 
 namespace pilot {
-namespace sensors {
+namespace base {
 
 UDP_Receiver::UDP_Receiver(const std::string& _vnx_name)
 	:	UDP_ReceiverBase(_vnx_name)
@@ -60,7 +59,7 @@ void UDP_Receiver::read_loop(const vnx::Hash64 module_addr) const noexcept
 		while(vnx_do_run())
 		{
 			try {
-				auto sample = automy::basic::DataPacket::create();
+				auto sample = DataPacket::create();
 				sample->time = vnx::get_time_micros();
 				sample->payload.resize(max_packet_size);
 
@@ -93,5 +92,5 @@ void UDP_Receiver::print_stats()
 }
 
 
-} // sensors
+} // base
 } // pilot

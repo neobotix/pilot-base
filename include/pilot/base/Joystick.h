@@ -5,17 +5,17 @@
  *      Author: mad
  */
 
-#ifndef INCLUDE_PILOT_SENSORS_JOYSTICK_H_
-#define INCLUDE_PILOT_SENSORS_JOYSTICK_H_
+#ifndef INCLUDE_PILOT_BASE_JOYSTICK_H_
+#define INCLUDE_PILOT_BASE_JOYSTICK_H_
 
-#include <pilot/sensors/JoystickBase.hxx>
-#include <pilot/JoystickData.hxx>
+#include <pilot/base/JoystickBase.hxx>
+#include <pilot/base/JoyData.hxx>
 
 #include <atomic>
 
 
 namespace pilot {
-namespace sensors {
+namespace base {
 
 class Joystick : public JoystickBase {
 public:
@@ -29,7 +29,7 @@ protected:
 	void close_device() override;
 
 private:
-	bool read_input(JoystickData& data, int timeout_ms) const;
+	bool read_input(JoyData& data, int timeout_ms) const;
 
 	void read_loop(const vnx::Hash64 module_addr) const;
 
@@ -48,7 +48,7 @@ private:
 };
 
 
-} // sensors
+} // base
 } // pilot
 
-#endif /* INCLUDE_PILOT_SENSORS_JOYSTICK_H_ */
+#endif /* INCLUDE_PILOT_BASE_JOYSTICK_H_ */

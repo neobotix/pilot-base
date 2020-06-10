@@ -1,11 +1,11 @@
-package pilot.sensors;
+package pilot.base;
 
 module SerialPort {
 	
-	vnx.TopicPtr input;					// automy.basic.DataPacket
+	vnx.TopicPtr input;					// pilot.base.DataPacket
 	
-	vnx.TopicPtr output;				// automy.basic.DataPacket
-	vnx.TopicPtr output_signals;		// neo.SocketSignal
+	vnx.TopicPtr output;				// pilot.base.DataPacket
+	vnx.TopicPtr output_signals;		// pilot.base.SocketSignal
 	
 	string port;						// device path (linux) or device name (windows)
 	
@@ -26,6 +26,6 @@ module SerialPort {
 	
 	void close_port();
 	
-	void handle(automy.basic.DataPacket sample);
+	void handle(DataPacket sample);
 	
 }

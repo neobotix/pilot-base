@@ -5,16 +5,16 @@
  *      Author: mad
  */
 
-#ifndef INCLUDE_NEO_SENSORS_SERIALPORT_H_
-#define INCLUDE_NEO_SENSORS_SERIALPORT_H_
+#ifndef INCLUDE_PILOT_BASE_SERIALPORT_H_
+#define INCLUDE_PILOT_BASE_SERIALPORT_H_
 
-#include <pilot/sensors/SerialPortBase.hxx>
+#include <pilot/base/SerialPortBase.hxx>
 
 #include <atomic>
 
 
 namespace pilot {
-namespace sensors {
+namespace base {
 
 class SerialPort : public SerialPortBase {
 public:
@@ -27,7 +27,7 @@ protected:
 
 	void close_port() override;
 
-	void handle(std::shared_ptr<const automy::basic::DataPacket> value) override;
+	void handle(std::shared_ptr<const DataPacket> value) override;
 
 private:
 	void signal();
@@ -53,8 +53,8 @@ private:
 };
 
 
-} // sensors
+} // base
 } // pilot
 
 
-#endif /* INCLUDE_NEO_SENSORS_SERIALPORT_H_ */
+#endif /* INCLUDE_PILOT_BASE_SERIALPORT_H_ */

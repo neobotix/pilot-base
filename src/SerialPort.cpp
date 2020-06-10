@@ -5,13 +5,13 @@
  *      Author: mad
  */
 
-#include <pilot/sensors/SerialPort.h>
-#include <pilot/sensors/SerialPortClient.hxx>
-#include <pilot/SocketSignal.hxx>
+#include <pilot/base/SerialPort.h>
+#include <pilot/base/SerialPortClient.hxx>
+#include <pilot/base/SocketSignal.hxx>
 
 
 namespace pilot {
-namespace sensors {
+namespace base {
 
 SerialPort::SerialPort(const std::string& _vnx_name)
 	:	SerialPortBase(_vnx_name)
@@ -46,7 +46,7 @@ void SerialPort::main()
 	close_port();
 }
 
-void SerialPort::handle(std::shared_ptr<const automy::basic::DataPacket> value)
+void SerialPort::handle(std::shared_ptr<const DataPacket> value)
 {
 	if(m_fd < 0) {
 		return;
@@ -78,7 +78,7 @@ void SerialPort::read_loop(const vnx::Hash64 module_addr) const
 		while(vnx_do_run())
 		{
 			try {
-				auto sample = automy::basic::DataPacket::create();
+				auto sample = DataPacket::create();
 				sample->time = vnx::get_time_micros();
 				sample->payload.resize(4096);
 
@@ -126,5 +126,5 @@ void SerialPort::print_stats()
 }
 
 
-} // sensors
+} // base
 } // pilot

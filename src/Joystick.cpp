@@ -5,12 +5,12 @@
  *      Author: mad
  */
 
-#include <pilot/sensors/Joystick.h>
-#include <pilot/sensors/JoystickClient.hxx>
+#include <pilot/base/Joystick.h>
+#include <pilot/base/JoystickClient.hxx>
 
 
 namespace pilot {
-namespace sensors {
+namespace base {
 
 Joystick::Joystick(const std::string& _vnx_name)
 	:	JoystickBase(_vnx_name)
@@ -55,7 +55,7 @@ void Joystick::read_loop(const vnx::Hash64 module_addr) const
 			continue;
 		}
 
-		JoystickData data;
+		JoyData data;
 
 		while(vnx_do_run())
 		{
@@ -92,5 +92,5 @@ void Joystick::print_stats()
 }
 
 
-} // sensors
+} // base
 } // pilot

@@ -5,57 +5,71 @@
  *      Author: mad
  */
 
-#include <automy/can/Proxy.h>
+#include <pilot/base/CAN_Proxy.h>
 
 
-namespace automy {
-namespace can {
+namespace pilot {
+namespace base {
 
-Proxy::Proxy(const std::string& _vnx_name) : ProxyBase(_vnx_name) {}
+CAN_Proxy::CAN_Proxy(const std::string& _vnx_name)
+	:	CAN_ProxyBase(_vnx_name)
+{
+}
 
-void Proxy::main() {
-	subscribe(input);
-	set_timer_millis(1000, std::bind(&Proxy::print_stats, this));
+void CAN_Proxy::main()
+{
+	subscribe(input, 10);
 	
-	socket = std::make_shared<can::Socket>(device);
-	std::thread thread(&Proxy::read_loop, this, output);
+	set_timer_millis(stats_interval_ms, std::bind(&CAN_Proxy::print_stats, this));
+
+	socket = std::make_shared<CAN_Socket>(device);
+
+	std::thread thread(&CAN_Proxy::read_loop, this);
 	
 	Super::main();
 	
-	socket->shutdown();
-	socket->close();			// somehow shutdown does not work, so we close it here already
-	thread.join();
+	socket->close();			// close socket to make read_loop() exit
+	thread.join();				// wait for read_loop()
 }
 
-void Proxy::handle(std::shared_ptr<const can::Frame> value) {
+void CAN_Proxy::handle(std::shared_ptr<const CAN_Frame> value)
+{
 	try {
 		socket->write(*value);
 		num_write++;
-	} catch(std::exception& ex) {
+	}
+	catch(const std::exception& ex) {
 		log(WARN).out << ex.what();
 	}
 }
 
-void Proxy::print_stats() {
-	log(INFO).out << num_read << " msgs/s receiving, " << num_write << " msgs/s sending";
+void CAN_Proxy::print_stats()
+{
+	log(INFO).out << (1000 * num_read) / stats_interval_ms << " msgs/s receive, "
+				<< (1000 * num_write) / stats_interval_ms << " msgs/s send";
 	num_read = 0;
 	num_write = 0;
 }
 
-void Proxy::read_loop(std::shared_ptr<vnx::Topic> topic) {
-	vnx::Publisher publisher;
-	while(true) {
+void CAN_Proxy::read_loop()
+{
+	while(vnx_do_run())
+	{
 		try {
-			can::Frame frame = socket->read();
+			CAN_Frame frame = socket->read();
 			frame.is_big_endian = is_big_endian;
-			publisher.publish(frame, topic);
+			publish(frame, output);
 			num_read++;
-		} catch(...) {
-			break;
+		}
+		catch(const std::exception& ex) {
+			if(vnx_do_run()) {
+				log(WARN).out << "read() failed with: " << ex.what();
+				std::this_thread::sleep_for(std::chrono::seconds(1));
+			}
 		}
 	}
 }
 
 
-} // can
-} // automy
+} // base
+} // pilot

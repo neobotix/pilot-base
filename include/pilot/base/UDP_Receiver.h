@@ -5,16 +5,16 @@
  *      Author: mad
  */
 
-#ifndef INCLUDE_PILOT_SENSORS_UDP_RECEIVER_H_
-#define INCLUDE_PILOT_SENSORS_UDP_RECEIVER_H_
+#ifndef INCLUDE_PILOT_BASE_UDP_RECEIVER_H_
+#define INCLUDE_PILOT_BASE_UDP_RECEIVER_H_
 
-#include <pilot/sensors/UDP_ReceiverBase.hxx>
+#include <pilot/base/UDP_ReceiverBase.hxx>
 
 #include <atomic>
 
 
 namespace pilot {
-namespace sensors {
+namespace base {
 
 class UDP_Receiver : public UDP_ReceiverBase {
 public:
@@ -47,7 +47,7 @@ private:
 };
 
 
-} // sensors
+} // base
 } // pilot
 
-#endif /* INCLUDE_PILOT_SENSORS_UDP_RECEIVER_H_ */
+#endif /* INCLUDE_PILOT_BASE_UDP_RECEIVER_H_ */

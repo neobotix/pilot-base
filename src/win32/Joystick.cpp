@@ -5,12 +5,12 @@
  *      Author: mad
  */
 
-#include <pilot/sensors/Joystick.h>
+#include <pilot/base/Joystick.h>
 #include <pilot/JoystickData.hxx>
 
 
 namespace pilot {
-namespace sensors {
+namespace base {
 
 void Joystick::open_device()
 {
@@ -22,12 +22,12 @@ void Joystick::close_device()
 	// TODO
 }
 
-bool Joystick::read_input(JoystickData& data, int timeout_ms) const
+bool Joystick::read_input(JoyData& data, int timeout_ms) const
 {
 	// TODO
 	return false;
 }
 
 
-} // sensors
+} // base
 } // pilot
