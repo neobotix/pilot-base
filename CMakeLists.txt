@@ -31,6 +31,7 @@ add_library(pilot_base SHARED
 )
 
 target_include_directories(pilot_base PUBLIC include generated/include)
+target_include_directories(pilot_base PUBLIC dependencies/vnx/usr/include)
 
 install(DIRECTORY include/ DESTINATION include)
 install(DIRECTORY generated/include/ DESTINATION include)
