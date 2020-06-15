@@ -87,6 +87,10 @@ bool Joystick::read_input(JoyData& data, int timeout_ms) const
 	return num_events > 0;
 }
 
+bool Joystick::is_connected(){
+	return m_fd >= 0;
+}
+
 
 } // base
 } // pilot

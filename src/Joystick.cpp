@@ -87,7 +87,7 @@ void Joystick::read_loop(const vnx::Hash64 module_addr) const
 void Joystick::print_stats()
 {
 	log(INFO) << (1000 * m_sample_counter) / stats_interval_ms << " samples/s, joystick "
-			<< (m_fd >= 0 ? "connected" : "lost");
+			<< (is_connected() ? "connected" : "lost");
 	m_sample_counter = 0;
 }
 

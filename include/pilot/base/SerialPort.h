@@ -12,6 +12,10 @@
 
 #include <atomic>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 
 namespace pilot {
 namespace base {
@@ -42,7 +46,7 @@ private:
 
 private:
 #ifdef _WIN32
-	// TODO
+	HANDLE m_fd;
 #else
 	std::atomic<int> m_fd {-1};
 #endif

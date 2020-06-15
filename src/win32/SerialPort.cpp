@@ -24,7 +24,7 @@ void SerialPort::close_port()
 {
 	if(m_fd >= 0) {
 		// TODO
-		m_fd = -1;
+		m_fd = INVALID_HANDLE_VALUE;
 	}
 }
 

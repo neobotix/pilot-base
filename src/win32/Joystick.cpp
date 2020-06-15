@@ -6,7 +6,7 @@
  */
 
 #include <pilot/base/Joystick.h>
-#include <pilot/JoystickData.hxx>
+#include <pilot/base/JoyData.hxx>
 
 
 namespace pilot {
@@ -24,6 +24,11 @@ void Joystick::close_device()
 
 bool Joystick::read_input(JoyData& data, int timeout_ms) const
 {
+	// TODO
+	return false;
+}
+
+bool Joystick::is_connected(){
 	// TODO
 	return false;
 }
