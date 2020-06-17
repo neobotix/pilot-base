@@ -26,18 +26,18 @@ JoystickAsyncClient::JoystickAsyncClient(vnx::Hash64 service_addr)
 {
 }
 
-uint64_t JoystickAsyncClient::close_device(const std::function<void()>& _callback) {
+uint64_t JoystickAsyncClient::close_device(const std::function<void()>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
 	auto _method = ::pilot::base::Joystick_close_device::create();
 	const auto _request_id = vnx_request(_method);
-	vnx_queue_close_device[_request_id] = _callback;
+	vnx_queue_close_device[_request_id] = std::make_pair(_callback, _error_callback);
 	vnx_num_pending++;
 	return _request_id;
 }
 
-uint64_t JoystickAsyncClient::open_device(const std::function<void()>& _callback) {
+uint64_t JoystickAsyncClient::open_device(const std::function<void()>& _callback, const std::function<void(const std::exception&)>& _error_callback) {
 	auto _method = ::pilot::base::Joystick_open_device::create();
 	const auto _request_id = vnx_request(_method);
-	vnx_queue_open_device[_request_id] = _callback;
+	vnx_queue_open_device[_request_id] = std::make_pair(_callback, _error_callback);
 	vnx_num_pending++;
 	return _request_id;
 }
@@ -53,9 +53,27 @@ std::vector<uint64_t> JoystickAsyncClient::vnx_get_pending_ids() const {
 	return _list;
 }
 
-void JoystickAsyncClient::vnx_purge_request(uint64_t _request_id) {
-	vnx_num_pending -= vnx_queue_close_device.erase(_request_id);
-	vnx_num_pending -= vnx_queue_open_device.erase(_request_id);
+void JoystickAsyncClient::vnx_purge_request(uint64_t _request_id, const std::exception& _ex) {
+	{
+		const auto _iter = vnx_queue_close_device.find(_request_id);
+		if(_iter != vnx_queue_close_device.end()) {
+			if(_iter->second.second) {
+				_iter->second.second(_ex);
+			}
+			vnx_queue_close_device.erase(_iter);
+			vnx_num_pending--;
+		}
+	}
+	{
+		const auto _iter = vnx_queue_open_device.find(_request_id);
+		if(_iter != vnx_queue_open_device.end()) {
+			if(_iter->second.second) {
+				_iter->second.second(_ex);
+			}
+			vnx_queue_open_device.erase(_iter);
+			vnx_num_pending--;
+		}
+	}
 }
 
 void JoystickAsyncClient::vnx_callback_switch(uint64_t _request_id, std::shared_ptr<const vnx::Value> _value) {
@@ -63,7 +81,7 @@ void JoystickAsyncClient::vnx_callback_switch(uint64_t _request_id, std::shared_
 	if(_type_hash == vnx::Hash64(0xf6658818750ccdfbull)) {
 		const auto _iter = vnx_queue_close_device.find(_request_id);
 		if(_iter != vnx_queue_close_device.end()) {
-			const auto _callback = std::move(_iter->second);
+			const auto _callback = std::move(_iter->second.first);
 			vnx_queue_close_device.erase(_iter);
 			vnx_num_pending--;
 			if(_callback) {
@@ -76,7 +94,7 @@ void JoystickAsyncClient::vnx_callback_switch(uint64_t _request_id, std::shared_
 	else if(_type_hash == vnx::Hash64(0x62c17e5ed453f52ull)) {
 		const auto _iter = vnx_queue_open_device.find(_request_id);
 		if(_iter != vnx_queue_open_device.end()) {
-			const auto _callback = std::move(_iter->second);
+			const auto _callback = std::move(_iter->second.first);
 			vnx_queue_open_device.erase(_iter);
 			vnx_num_pending--;
 			if(_callback) {

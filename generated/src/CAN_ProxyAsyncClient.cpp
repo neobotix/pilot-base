@@ -28,7 +28,7 @@ std::vector<uint64_t> CAN_ProxyAsyncClient::vnx_get_pending_ids() const {
 	return _list;
 }
 
-void CAN_ProxyAsyncClient::vnx_purge_request(uint64_t _request_id) {
+void CAN_ProxyAsyncClient::vnx_purge_request(uint64_t _request_id, const std::exception& _ex) {
 }
 
 void CAN_ProxyAsyncClient::vnx_callback_switch(uint64_t _request_id, std::shared_ptr<const vnx::Value> _value) {
