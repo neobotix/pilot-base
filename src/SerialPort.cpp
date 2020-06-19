@@ -18,10 +18,13 @@ SerialPort::SerialPort(const std::string& _vnx_name)
 {
 }
 
-void SerialPort::main()
+void SerialPort::init()
 {
 	subscribe(input, 100);					// receive binary data packets
+}
 
+void SerialPort::main()
+{
 	std::thread read_thread;
 	{
 		// open a private pipe for read_loop()

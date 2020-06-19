@@ -21,6 +21,8 @@ public:
 	SerialPort(const std::string& _vnx_name);
 
 protected:
+	void init() override;
+
 	void main() override;
 
 	void open_port() override;

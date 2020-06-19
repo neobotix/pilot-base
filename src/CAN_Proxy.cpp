@@ -16,10 +16,13 @@ CAN_Proxy::CAN_Proxy(const std::string& _vnx_name)
 {
 }
 
-void CAN_Proxy::main()
+void CAN_Proxy::init()
 {
 	subscribe(input, 10);
-	
+}
+
+void CAN_Proxy::main()
+{
 	set_timer_millis(stats_interval_ms, std::bind(&CAN_Proxy::print_stats, this));
 
 	socket = std::make_shared<CAN_Socket>(device);

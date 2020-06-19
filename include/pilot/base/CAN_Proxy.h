@@ -20,6 +20,8 @@ public:
 	CAN_Proxy(const std::string& _vnx_name);
 	
 protected:
+	void init() override;
+
 	void main() override;
 	
 	void handle(std::shared_ptr<const CAN_Frame> value) override;
