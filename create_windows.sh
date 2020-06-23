@@ -5,6 +5,8 @@ ARCH=$(uname -m)
 DIST=$(cat ~/DIST)
 DST=pilot-base-$VERSION-$ARCH-$DIST
 
+export PATH=$PATH:$PWD/dependencies/codegen/usr/bin
+export VNX_INTERFACE_DIR=${VNX_INTERFACE_DIR:-$PWD/dependencies/vnx/usr/interface}
 ./codegen.sh || exit 1
 
 rm -rf $DST
