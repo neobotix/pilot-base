@@ -35,11 +35,7 @@ private:
 	void print_stats();
 
 private:
-#ifdef _WIN32
-	// TODO
-#else
 	std::atomic<int> m_fd {-1};
-#endif
 
 	mutable volatile size_t m_bytes_recv = 0;
 	mutable volatile size_t m_packet_counter = 0;

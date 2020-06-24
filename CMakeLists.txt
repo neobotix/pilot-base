@@ -10,12 +10,14 @@ if(WIN32)
 		src/win32/SerialPort.cpp
 		src/win32/Joystick.cpp
 		src/win32/UDP_Receiver.cpp
+		src/win32/CAN_Socket.cpp
 	)
 else()
 	list(APPEND PLATFORM_SOURCE_FILES
 		src/linux/SerialPort.cpp
 		src/linux/Joystick.cpp
 		src/linux/UDP_Receiver.cpp
+		src/linux/CAN_Socket.cpp
 	)
 endif()
 
@@ -23,7 +25,6 @@ add_library(pilot_base SHARED
 	${GENERATED_SOURCE_FILES}
 	${PLATFORM_SOURCE_FILES}
 	src/SerialPort.cpp
-	src/CAN_Socket.cpp
 	src/CAN_Frame.cpp
 	src/CAN_Proxy.cpp
 	src/Joystick.cpp
@@ -32,7 +33,16 @@ add_library(pilot_base SHARED
 
 target_include_directories(pilot_base PUBLIC include generated/include)
 
-target_link_libraries(pilot_base vnx_base)
+if(WIN32)
+	#add_library(vnx_base STATIC IMPORTED)
+	#set_target_properties(vnx_base PROPERTIES
+	#	IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/dependencies/vnx/usr/lib/libvnx_base.dll.a
+	#	INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/dependencies/vnx/usr/include
+	#)
+	target_link_libraries(pilot_base vnx_base ws2_32)
+else()
+	target_link_libraries(pilot_base vnx_base)
+endif()
 
 install(DIRECTORY include/ DESTINATION include)
 install(DIRECTORY generated/include/ DESTINATION include)

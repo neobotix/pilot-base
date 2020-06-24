@@ -35,6 +35,8 @@ private:
 
 	void print_stats();
 
+	bool is_connected();
+
 private:
 #ifdef _WIN32
 	// TODO
