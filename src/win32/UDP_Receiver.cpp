@@ -47,7 +47,7 @@ ssize_t UDP_Receiver::recv_packet(void* buf, size_t len, int timeout_ms) const
 		timeval tv = {timeout_ms / 1000, (timeout_ms % 1000) * 1000};
 
 		int ret = select(m_fd+1, &fdset, NULL, NULL, &tv);
-		if(ret == -1) return 0;
+		if(ret < 1) return 0;
 	}
 
 	ssize_t result = recv(m_fd, (char*)buf, len, 0);
