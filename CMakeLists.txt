@@ -34,12 +34,12 @@ add_library(pilot_base SHARED
 target_include_directories(pilot_base PUBLIC include generated/include)
 
 if(WIN32)
-	add_library(vnx_base STATIC IMPORTED)
-	set_target_properties(vnx_base PROPERTIES
-		IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/dependencies/vnx/usr/lib/libvnx_base.dll.a
-		INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/dependencies/vnx/usr/include
-	)
-	target_link_libraries(pilot_base vnx_base)
+	#add_library(vnx_base STATIC IMPORTED)
+	#set_target_properties(vnx_base PROPERTIES
+	#	IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/dependencies/vnx/usr/lib/libvnx_base.dll.a
+	#	INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/dependencies/vnx/usr/include
+	#)
+	#target_link_libraries(pilot_base vnx_base)
 	target_link_libraries(pilot_base ws2_32)
 endif()
 
