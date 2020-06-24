@@ -33,7 +33,7 @@ void SerialPort::open_port()
 	// Default values
 	dcb.DCBlength = sizeof(dcb);
 	dcb.BaudRate = (DWORD)baud_rate;
-	dcb.fBinary = TRUE;
+	dcb.fBinary = raw_mode ? TRUE : FALSE;
 	dcb.fParity = FALSE;
 	dcb.fOutxCtsFlow = FALSE;
 	dcb.fOutxDsrFlow = FALSE;
