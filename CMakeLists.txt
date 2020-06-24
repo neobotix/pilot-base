@@ -40,6 +40,7 @@ if(WIN32)
 		INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/dependencies/vnx/usr/include
 	)
 	target_link_libraries(pilot_base vnx_base)
+	target_link_libraries(pilot_base ws2_32)
 endif()
 
 install(DIRECTORY include/ DESTINATION include)
