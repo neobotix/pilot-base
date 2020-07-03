@@ -18,6 +18,9 @@ JoystickMng::JoystickMng(const std::string& _vnx_name)
 
 void JoystickMng::main()
 {
+	set_timer_millis(interval_discover_ms, std::bind(&JoystickMng::findJoysticks, this));
+	set_timer_millis(interval_poll_ms, std::bind(&JoystickMng::pollJoysticks, this));
+
 	Super::main();
 }
 
@@ -26,30 +29,45 @@ void JoystickMng::findJoysticks(){
 	std::list<JoyParam> list = discover();
 	for(JoyParam &joystick : list){
 		if(!isConnected(joystick) && connect(joystick)){
-			m_connectedJoysticks.push_back(joystick);
+			JoyData data;
+			Joy joy = {joystick, data};
+			m_connectedJoysticks.push_back(joy);
+			if(!m_active){
+				m_activeJoystick = joystick;
+				m_active = true;
+			}
 		}
 	}
 }
 
 
 void JoystickMng::pollJoysticks(){
-	auto cit = m_connectedJoysticks.cbegin();
-	while(cit != m_connectedJoysticks.cend()){
-		const JoyParam &joystick = *cit;
-		JoyData data;
-		if(poll(joystick, data)){
-			cit++;
+	auto it = m_connectedJoysticks.begin();
+	while(it != m_connectedJoysticks.end()){
+		Joy &joystick = *it;
+		bool activeOne = m_active && compare(joystick.param, m_activeJoystick);
+
+		if(poll(joystick.param, joystick.data)){
+			if(joystick.data.buttons[JoyData::JOYBUTTON_X] || joystick.data.buttons[JoyData::JOYBUTTON_START]){
+				m_active = true;
+				m_activeJoystick = joystick.param;
+				activeOne = true;
+			}
+
+			if(activeOne) publish(joystick.data, output);
+			it++;
 		}else{
-			disconnect(joystick);
-			cit = m_connectedJoysticks.erase(cit);
+			if(activeOne) m_active = false;
+			disconnect(joystick.param);
+			it = m_connectedJoysticks.erase(it);
 		}
 	}
 }
 
 
 bool JoystickMng::isConnected(const JoyParam &joystick){
-	for(const JoyParam &j : m_connectedJoysticks){
-		if(compare(joystick, j)) return true;
+	for(const Joy &j : m_connectedJoysticks){
+		if(compare(joystick, j.param)) return true;
 	}
 	return false;
 }

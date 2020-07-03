@@ -35,10 +35,17 @@ protected:
 		int axesMax[JoyData::JOYAXIS_MAX];
 	};
 
+	struct Joy{
+		JoyParam param;
+		JoyData data;
+	};
+
 	void main() override;
 
 private:
-	std::list<JoyParam> m_connectedJoysticks;
+	std::list<Joy> m_connectedJoysticks;
+	bool m_active = false;
+	JoyParam m_activeJoystick;
 
 	void findJoysticks();
 	void pollJoysticks();
