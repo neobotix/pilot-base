@@ -80,7 +80,7 @@ bool Joystick::read_input(JoyData& data, int timeout_ms) const
 		if(events[i].type & JS_EVENT_BUTTON) {
 			const auto button = events[i].number;
 			if(button >= 0 && button < data.axes.size()) {
-				data.buttons[button] = events[i].value;
+				data.buttons[button] = (events[i].value != 0);
 			}
 		}
 	}
