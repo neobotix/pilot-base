@@ -9,6 +9,7 @@ if(WIN32)
 	list(APPEND PLATFORM_SOURCE_FILES
 		src/win32/SerialPort.cpp
 		src/win32/Joystick.cpp
+		src/win32/JoystickMng.cpp
 		src/win32/UDP_Receiver.cpp
 		src/win32/CAN_Socket.cpp
 	)
@@ -16,6 +17,7 @@ else()
 	list(APPEND PLATFORM_SOURCE_FILES
 		src/linux/SerialPort.cpp
 		src/linux/Joystick.cpp
+		src/linux/JoystickMng.cpp
 		src/linux/UDP_Receiver.cpp
 		src/linux/CAN_Socket.cpp
 	)
@@ -28,6 +30,7 @@ add_library(pilot_base SHARED
 	src/CAN_Frame.cpp
 	src/CAN_Proxy.cpp
 	src/Joystick.cpp
+	src/JoystickMng.cpp
 	src/UDP_Receiver.cpp
 )
 
