@@ -25,7 +25,7 @@ public:
 protected:
 	struct JoyParam{
 #ifdef _WIN32
-		int id;
+		DWORD id;
 #else
 		std::string interface;
 		int fd;
