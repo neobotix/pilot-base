@@ -1,9 +1,26 @@
 package pilot.base;
 
 class JoyData extends Sample {
+	static const uint JOYBUTTON_A = 0;
+	static const uint JOYBUTTON_B = 1;
+	static const uint JOYBUTTON_X = 2;
+	static const uint JOYBUTTON_Y = 3;
+	static const uint JOYBUTTON_LB = 4;
+	static const uint JOYBUTTON_RB = 5;
+	static const uint JOYBUTTON_BACK = 6;
+	static const uint JOYBUTTON_START = 7;
+	static const uint JOYBUTTON_MAX = 8;
+
+	static const uint JOYAXIS_LEFT_X = 0;
+	static const uint JOYAXIS_LEFT_Y = 1;
+	static const uint JOYAXIS_LT = 2;
+	static const uint JOYAXIS_RIGHT_X = 3;
+	static const uint JOYAXIS_RIGHT_Y = 4;
+	static const uint JOYAXIS_RT = 5;
+	static const uint JOYAXIS_MAX = 6;
 	
 	vector<float> axes;
 	
-	vector<int> buttons;
+	vector<bool> buttons;
 	
 }

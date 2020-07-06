@@ -1,0 +1,11 @@
+package pilot.base;
+
+module JoystickMng {
+	
+	vnx.TopicPtr output;						// pilot.JoystickData
+	
+	int interval_poll_ms = 20;					// interval for polling connected joystick(s) [ms]
+	
+	int interval_discover_ms = 500;					// interval for discovering newly connected joysticks [ms]
+	
+}
