@@ -12,6 +12,9 @@
 #include <pilot/base/JoyData.hxx>
 #include <string>
 #include <list>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 
 
