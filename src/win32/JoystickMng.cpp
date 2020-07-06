@@ -60,13 +60,15 @@ void JoystickMng::disconnect(const JoyParam &joystick){
 }
 
 
-bool JoystickMng::poll(const JoyParam &joystick, JoyData &data){
+ssize_t JoystickMng::poll(const JoyParam &joystick, JoyData &data){
 	XINPUT_STATE state;
 	memset(&state, 0, sizeof(state));
-	if(XInputGetState(joystick.id, &state) != ERROR_SUCCESS) return false;
+	if(XInputGetState(joystick.id, &state) != ERROR_SUCCESS) return -1;
 
 	// if there is nothing to read we are done
-	if(state.dwPacketNumber == 0) return true;
+	if(state.dwPacketNumber == m_packetNumber) return 0;
+	ssize_t result = state.dwPacketNumber - m_packetNumber;
+	m_packetNumber = state.dwPacketNumber;
 
 	int axvalues[] = {state.Gamepad.sThumbLX,  -state.Gamepad.sThumbLY,  state.Gamepad.sThumbRX,   state.Gamepad.sThumbRY,   state.Gamepad.bLeftTrigger, state.Gamepad.bRightTrigger};
 	int axjoyids[] =  {JoyData::JOYAXIS_LEFT_X, JoyData::JOYAXIS_LEFT_Y, JoyData::JOYAXIS_RIGHT_X, JoyData::JOYAXIS_RIGHT_Y, JoyData::JOYAXIS_LT,        JoyData::JOYAXIS_RT};
@@ -76,7 +78,7 @@ bool JoystickMng::poll(const JoyParam &joystick, JoyData &data){
 		if(absValue > 0){
 			relValue = absValue / joystick.axesMax[axjoyids[i]];
 		}else if(absValue < 0){
-			relValue = absValue / joystick.axesMin[axjoyids[i]];
+			relValue = -absValue / joystick.axesMin[axjoyids[i]];
 		}
 		data.axes[axjoyids[i]] = relValue;
 	}
@@ -87,7 +89,7 @@ bool JoystickMng::poll(const JoyParam &joystick, JoyData &data){
 		data.buttons[butjoyids[i]] = state.Gamepad.wButtons & butxids[i];
 	}
 
-	return true;
+	return result;
 }
 
 

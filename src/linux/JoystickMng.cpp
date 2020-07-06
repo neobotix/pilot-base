@@ -25,10 +25,11 @@ std::list<JoystickMng::JoyParam> JoystickMng::discover(){
 	std::list<JoyParam> foundJoysticks;
 	vnx::Directory dir(joydir);
 	dir.open();
-	std::vector<std::shared_ptr<vnx::File>> foundFiles = dir.files();
+	std::vector<std::shared_ptr<vnx::File>> foundFiles = dir.all_files();
 
 	for(auto f : foundFiles){
 		std::string filename = f->get_name();
+		if(filename == "." || filename == "..") continue;
 		size_t namelength = filename.length();
 		if(namelength >= ev_suffix_length && filename.find(ev_suffix, namelength-ev_suffix_length) != std::string::npos){
 			// joystick found
@@ -91,7 +92,7 @@ void JoystickMng::disconnect(const JoyParam &joystick){
 }
 
 
-bool JoystickMng::poll(const JoyParam &joystick, JoyData &data){
+ssize_t JoystickMng::poll(const JoyParam &joystick, JoyData &data){
 	fd_set fdset;
 	timeval tv = {0, 0};
 	FD_ZERO(&fdset);
@@ -100,16 +101,16 @@ bool JoystickMng::poll(const JoyParam &joystick, JoyData &data){
 	int ret = ::select(joystick.fd+1, &fdset, NULL, NULL, &tv);
 	if(ret < 0){
 		// error
-		return false;
+		return -1;
 	}else if(ret == 0){
 		// nothing to read, but that is not an error
 		//resetValues(joystick);
-		return true;
+		return 0;
 	}
 
 	input_event js[256];
 	ssize_t len = ::read(joystick.fd, js, sizeof(js));
-	if(len == -1) return false;
+	if(len == -1) return -1;
 
 
 	size_t numEvents = len / sizeof(input_event);
@@ -148,7 +149,7 @@ bool JoystickMng::poll(const JoyParam &joystick, JoyData &data){
 				if(absValue > 0){
 					relValue = absValue / joystick.axesMax[targetAxis];
 				}else if(absValue < 0){
-					relValue = absValue / joystick.axesMin[targetAxis];
+					relValue = -absValue / joystick.axesMin[targetAxis];
 				}
 				data.axes[targetAxis] = relValue;
 			}
@@ -190,7 +191,7 @@ bool JoystickMng::poll(const JoyParam &joystick, JoyData &data){
 		}
 	}
 
-	return true;
+	return numEvents;
 }
 
 

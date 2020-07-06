@@ -47,7 +47,8 @@ void JoystickMng::pollJoysticks(){
 		Joy &joystick = *it;
 		bool activeOne = m_active && compare(joystick.param, m_activeJoystick);
 
-		if(poll(joystick.param, joystick.data)){
+		ssize_t status = poll(joystick.param, joystick.data);
+		if(status > 0){
 			if(joystick.data.buttons[JoyData::JOYBUTTON_X] || joystick.data.buttons[JoyData::JOYBUTTON_START]){
 				m_active = true;
 				m_activeJoystick = joystick.param;
@@ -56,10 +57,12 @@ void JoystickMng::pollJoysticks(){
 
 			if(activeOne) publish(joystick.data, output);
 			it++;
-		}else{
+		}else if(status == -1){
 			if(activeOne) m_active = false;
 			disconnect(joystick.param);
 			it = m_connectedJoysticks.erase(it);
+		}else{
+			it++;
 		}
 	}
 }

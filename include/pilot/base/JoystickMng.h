@@ -46,6 +46,9 @@ private:
 	std::list<Joy> m_connectedJoysticks;
 	bool m_active = false;
 	JoyParam m_activeJoystick;
+#ifdef _WIN32
+	DWORD m_packetNumber = 0;
+#endif
 
 	void findJoysticks();
 	void pollJoysticks();
@@ -54,7 +57,7 @@ private:
 	std::list<JoyParam> discover();
 	bool connect(JoyParam &joystick);
 	void disconnect(const JoyParam &joystick);
-	bool poll(const JoyParam &joystick, JoyData &data);
+	ssize_t poll(const JoyParam &joystick, JoyData &data);
 	bool compare(const JoyParam &lhs, const JoyParam &rhs);
 
 };
