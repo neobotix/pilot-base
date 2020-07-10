@@ -81,7 +81,7 @@ ssize_t JoystickMng::poll(const JoyParam &joystick, JoyData &data){
 			relValue = -absValue / joystick.axesMin[axjoyids[i]];
 		}
 		if(invert) relValue = -relValue;
-		if(relValue < 0.005 && relValue > -0.005) relValue = 0;
+		if(relValue < deadzone && relValue > -deadzone) relValue = 0;
 		data.axes[axjoyids[i]] = relValue;
 	}
 

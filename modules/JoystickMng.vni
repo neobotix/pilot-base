@@ -10,4 +10,6 @@ module JoystickMng {
 	
 	bool invert = false;						// if to invert axes
 	
+	float deadzone = 0.005;						// assume 0 for interval (-deadzone, +deadzone)
+	
 }
