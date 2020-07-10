@@ -55,7 +55,10 @@ void JoystickMng::pollJoysticks(){
 				activeOne = true;
 			}
 
-			if(activeOne) publish(joystick.data, output);
+			if(activeOne){
+				joystick.data.time = vnx::get_time_micros();
+				publish(joystick.data, output);
+			}
 			it++;
 		}else if(status == -1){
 			if(activeOne) m_active = false;

@@ -8,4 +8,8 @@ module JoystickMng {
 	
 	int interval_discover_ms = 500;					// interval for discovering newly connected joysticks [ms]
 	
+	bool invert = false;						// if to invert axes
+	
+	float deadzone = 0.005;						// assume 0 for interval (-deadzone, +deadzone)
+	
 }
