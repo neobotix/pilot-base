@@ -13,9 +13,25 @@ namespace base {
 
 class JoyData : public ::pilot::base::Sample {
 public:
+	static const uint32_t JOYBUTTON_A = 0;
+	static const uint32_t JOYBUTTON_B = 1;
+	static const uint32_t JOYBUTTON_X = 2;
+	static const uint32_t JOYBUTTON_Y = 3;
+	static const uint32_t JOYBUTTON_LB = 4;
+	static const uint32_t JOYBUTTON_RB = 5;
+	static const uint32_t JOYBUTTON_BACK = 6;
+	static const uint32_t JOYBUTTON_START = 7;
+	static const uint32_t JOYBUTTON_MAX = 8;
+	static const uint32_t JOYAXIS_LEFT_X = 0;
+	static const uint32_t JOYAXIS_LEFT_Y = 1;
+	static const uint32_t JOYAXIS_LT = 2;
+	static const uint32_t JOYAXIS_RIGHT_X = 3;
+	static const uint32_t JOYAXIS_RIGHT_Y = 4;
+	static const uint32_t JOYAXIS_RT = 5;
+	static const uint32_t JOYAXIS_MAX = 6;
 	
 	std::vector<vnx::float32_t> axes;
-	std::vector<int32_t> buttons;
+	std::vector<vnx::bool_t> buttons;
 	
 	typedef ::pilot::base::Sample Super;
 	

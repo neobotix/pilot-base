@@ -18,13 +18,15 @@ public:
 	
 	JoystickClient(vnx::Hash64 service_addr);
 	
-	void close_device();
-	
-	void close_device_async();
+	::vnx::TypeCode vnx_get_type_code();
 	
 	void open_device();
 	
 	void open_device_async();
+	
+	void close_device();
+	
+	void close_device_async();
 	
 };
 

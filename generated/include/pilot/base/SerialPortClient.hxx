@@ -19,13 +19,15 @@ public:
 	
 	SerialPortClient(vnx::Hash64 service_addr);
 	
-	void close_port();
-	
-	void close_port_async();
+	::vnx::TypeCode vnx_get_type_code();
 	
 	void open_port();
 	
 	void open_port_async();
+	
+	void close_port();
+	
+	void close_port_async();
 	
 };
 
