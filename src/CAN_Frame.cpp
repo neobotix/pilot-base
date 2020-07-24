@@ -35,6 +35,9 @@ vnx::bool_t CAN_Frame::get_bool(const ::int32_t& pos) const {
 }
 
 ::int32_t CAN_Frame::get_int(const ::int32_t& pos, const ::int32_t& size, const ::int32_t& offset) const {
+	if(size > 32) {
+		throw std::logic_error("size > 32");
+	}
 	const uint32_t max = uint32_t(1) << (size - 1);
 	const uint32_t value = get_uint(pos, size, 0);
 	int32_t out;
@@ -79,6 +82,9 @@ void CAN_Frame::set_bool(const ::int32_t& pos, const vnx::bool_t& value) {
 }
 
 void CAN_Frame::set_int(const ::int32_t& pos, const ::int32_t& size, const ::int32_t& value_, const ::int32_t& offset) {
+	if(size > 32) {
+		throw std::logic_error("size > 32");
+	}
 	const uint32_t max = uint32_t(1) << (size - 1);
 	int32_t value = value_ - offset;
 	if(value >= int32_t(max)) {
@@ -96,10 +102,13 @@ void CAN_Frame::set_int(const ::int32_t& pos, const ::int32_t& size, const ::int
 }
 
 void CAN_Frame::set_uint(const ::int32_t& pos, const ::int32_t& size, const ::uint32_t& value_, const ::int32_t& offset) {
-	const uint32_t max = uint32_t(1) << size;
+	if(size > 32) {
+		throw std::logic_error("size > 32");
+	}
+	const uint32_t max = (uint64_t(1) << size) - 1;
 	int32_t value = value_ - offset;
-	if(value >= max) {
-		value = max - 1;
+	if(value > max) {
+		value = max;
 	}
 	if(is_big_endian) {
 		int bit = pos;
@@ -111,7 +120,7 @@ void CAN_Frame::set_uint(const ::int32_t& pos, const ::int32_t& size, const ::ui
 		}
 	} else {
 		for(int i = 0; i < size; ++i) {
-			set_bit(pos+i, value & (1 << i));
+			set_bit(pos + i, value & (1 << i));
 		}
 	}
 }
