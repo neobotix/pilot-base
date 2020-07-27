@@ -10,6 +10,8 @@ module CAN_Proxy {
 	
 	bool is_big_endian;						// if data received is big endian
 	
+	int read_timeout_ms = 200;			// [ms]
+	
 	int stats_interval_ms = 10000;			// status message interval (0 = disable) [ms]
 	
 	

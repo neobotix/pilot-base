@@ -27,16 +27,9 @@ void CAN_Socket::close()
 {
 }
 
-CAN_Frame CAN_Socket::read()
+bool CAN_Socket::read(CAN_Frame &frame, int timeout_ms)
 {
-	CAN_Frame out;
-	out.time = vnx::get_time_micros();
-	out.id = 0;
-	out.size = 0;
-	for(int i = 0; i < 8; ++i) {
-		out.data[i] = 0;
-	}
-	return out;
+	return false;
 }
 
 void CAN_Socket::write(const CAN_Frame& frame)
