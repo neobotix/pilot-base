@@ -58,22 +58,32 @@ void CAN_Socket::close()
 	}
 }
 
-CAN_Frame CAN_Socket::read()
+bool CAN_Socket::read(CAN_Frame &frame, int timeout_ms)
 {
-	::can_frame frame = {};
-	const auto res = ::read(sock, &frame, sizeof(frame));
-	if(res != sizeof(frame)) {
+	if(timeout_ms >= 0){
+		::fd_set read_set;
+		FD_ZERO(&read_set);
+		FD_SET(sock, &read_set);
+
+		struct timeval timeout = {int32_t(timeout_ms / 1000), int32_t((timeout_ms % 1000) * 1000)};
+		if(::select(sock + 1, &read_set, 0, 0, &timeout) < 1) {
+			return false;
+		}
+	}
+
+	::can_frame data = {};
+	const auto res = ::read(sock, &data, sizeof(data));
+	if(res != sizeof(data)) {
 		throw std::runtime_error("read() failed with: " + std::string(strerror(errno)));
 	}
 
-	CAN_Frame out;
-	out.time = vnx::get_time_micros();
-	out.id = frame.can_id & 0x1FFFFFFF;
-	out.size = frame.can_dlc;
+	frame.time = vnx::get_time_micros();
+	frame.id = data.can_id & 0x1FFFFFFF;
+	frame.size = data.can_dlc;
 	for(int i = 0; i < 8; ++i) {
-		out.data[i] = frame.data[i];
+		frame.data[i] = data.data[i];
 	}
-	return out;
+	return true;
 }
 
 void CAN_Socket::write(const CAN_Frame& frame)

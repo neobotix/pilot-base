@@ -59,10 +59,12 @@ void CAN_Proxy::read_loop()
 	while(vnx_do_run())
 	{
 		try {
-			CAN_Frame frame = socket->read();
-			frame.is_big_endian = is_big_endian;
-			publish(frame, output);
-			num_read++;
+			CAN_Frame frame;
+			if(socket->read(frame, read_timeout_ms)){
+				frame.is_big_endian = is_big_endian;
+				publish(frame, output);
+				num_read++;
+			}
 		}
 		catch(const std::exception& ex) {
 			if(vnx_do_run()) {

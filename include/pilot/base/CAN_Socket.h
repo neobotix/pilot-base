@@ -22,7 +22,7 @@ public:
 	
 	void close();
 	
-	CAN_Frame read();
+	bool read(CAN_Frame &frame, int timout_ms);
 	
 	void write(const CAN_Frame& frame);
 	
