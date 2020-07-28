@@ -1,0 +1,8 @@
+package pilot.base;
+
+enum can_adapter_e {
+	
+	SOCKETCAN,
+	PEAKUSB,
+	
+}

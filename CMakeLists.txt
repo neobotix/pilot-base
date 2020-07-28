@@ -11,7 +11,7 @@ if(WIN32)
 		src/win32/Joystick.cpp
 		src/win32/JoystickMng.cpp
 		src/win32/UDP_Receiver.cpp
-		src/win32/CAN_Socket.cpp
+		src/win32/CAN_PeakUSB.cpp
 	)
 else()
 	list(APPEND PLATFORM_SOURCE_FILES

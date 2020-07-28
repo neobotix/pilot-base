@@ -9,7 +9,7 @@
 #define INCLUDE_PILOT_BASE_CAN_PROXY_H_
 
 #include <pilot/base/CAN_ProxyBase.hxx>
-#include <pilot/base/CAN_Socket.h>
+#include <pilot/base/CAN_Interface.h>
 
 
 namespace pilot {
@@ -31,7 +31,7 @@ protected:
 	void read_loop();
 	
 private:
-	std::shared_ptr<CAN_Socket> socket;
+	std::shared_ptr<CAN_Interface> socket;
 	
 	int64_t num_read = 0;
 	int64_t num_write = 0;
