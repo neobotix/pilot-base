@@ -6,7 +6,7 @@
  */
 
 #include <pilot/base/CAN_PeakUSB.h>
-#include <windows.h>
+#include <vnx/Time.h>
 
 
 
@@ -71,7 +71,7 @@ void CAN_PeakUSB::close(){
 	m_initialized = false;
 }
 
-bool CAN_PeakUSB::read(CAN_Frame &frame){
+bool CAN_PeakUSB::read(CAN_Frame &frame, int timeout_ms){
 	TPCANMsg TPCMsg;
 	TPCMsg.LEN = 8;
 	TPCMsg.MSGTYPE = 0;

@@ -10,6 +10,7 @@
 
 #include <pilot/base/CAN_Frame.hxx>
 #include <pilot/base/CAN_Interface.h>
+#include <windows.h>
 #include <pcanbasic/PCANBasic.h>
 
 
