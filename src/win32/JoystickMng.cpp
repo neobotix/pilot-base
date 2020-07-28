@@ -70,6 +70,8 @@ ssize_t JoystickMng::poll(const JoyParam &joystick, JoyData &data){
 	ssize_t result = state.dwPacketNumber - m_packetNumber;
 	m_packetNumber = state.dwPacketNumber;
 
+	data.axes.resize(JoyData::JOYAXIS_MAX);
+	data.buttons.resize(JoyData::JOYBUTTON_MAX);
 	int axvalues[] = {state.Gamepad.sThumbLX,  -state.Gamepad.sThumbLY,  state.Gamepad.sThumbRX,   state.Gamepad.sThumbRY,   state.Gamepad.bLeftTrigger, state.Gamepad.bRightTrigger};
 	int axjoyids[] =  {JoyData::JOYAXIS_LEFT_X, JoyData::JOYAXIS_LEFT_Y, JoyData::JOYAXIS_RIGHT_X, JoyData::JOYAXIS_RIGHT_Y, JoyData::JOYAXIS_LT,        JoyData::JOYAXIS_RT};
 	for(size_t i=0; i<JoyData::JOYAXIS_MAX; i++){
