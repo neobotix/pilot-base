@@ -6,6 +6,11 @@
  */
 
 #include <pilot/base/CAN_Proxy.h>
+#ifdef _WIN32
+#include <pilot/base/CAN_PeakUSB.h>
+#else
+#include <pilot/base/CAN_Socket.h>
+#endif
 
 
 namespace pilot {
@@ -25,7 +30,21 @@ void CAN_Proxy::main()
 {
 	set_timer_millis(stats_interval_ms, std::bind(&CAN_Proxy::print_stats, this));
 
-	socket = std::make_shared<CAN_Socket>(device);
+
+	switch(adapter){
+#ifdef _WIN32
+	case can_adapter_e::PEAKUSB:
+		socket = std::make_shared<CAN_PeakUSB>(baud_rate);
+		break;
+#else
+	case can_adapter_e::SOCKETCAN:
+		socket = std::make_shared<CAN_Socket>(device);
+		break;
+#endif
+	default:
+		throw std::runtime_error("Can adapter not available on this platform");
+	}
+
 
 	std::thread thread(&CAN_Proxy::read_loop, this);
 	

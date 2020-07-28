@@ -9,12 +9,13 @@
 #define INCLUDE_PILOT_BASE_CAN_SOCKET_H_
 
 #include <pilot/base/CAN_Frame.hxx>
+#include <pilot/base/CAN_Interface.h>
 
 
 namespace pilot {
 namespace base {
 
-class CAN_Socket {
+class CAN_Socket : public CAN_Interface {
 public:
 	CAN_Socket(const std::string& iface);
 	

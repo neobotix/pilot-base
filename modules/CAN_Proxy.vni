@@ -6,7 +6,11 @@ module CAN_Proxy {
 	
 	vnx.TopicPtr output;					// pilot.base.CAN_Frame
 	
-	string device;							// for example "can0"
+	can_adapter_e adapter = SOCKETCAN;
+	
+	string device;							// (if needed) for example "can0"
+	
+	int baud_rate;							// (if needed) baud rate [baud/s]
 	
 	bool is_big_endian;						// if data received is big endian
 	
