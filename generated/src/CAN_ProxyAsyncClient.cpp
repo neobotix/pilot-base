@@ -4,6 +4,7 @@
 #include <pilot/base/package.hxx>
 #include <pilot/base/CAN_ProxyAsyncClient.hxx>
 #include <pilot/base/CAN_Frame.hxx>
+#include <pilot/base/can_adapter_e.hxx>
 #include <vnx/Module.h>
 #include <vnx/ModuleInterface_vnx_get_type_code.hxx>
 #include <vnx/ModuleInterface_vnx_get_type_code_return.hxx>

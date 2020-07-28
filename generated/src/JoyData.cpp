@@ -156,7 +156,7 @@ std::shared_ptr<vnx::TypeCode> JoyData::static_create_type_code() {
 		vnx::TypeField& field = type_code->fields[2];
 		field.is_extended = true;
 		field.name = "buttons";
-		field.code = {12, 1};
+		field.code = {12, 31};
 	}
 	type_code->build();
 	return type_code;

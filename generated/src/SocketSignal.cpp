@@ -139,17 +139,17 @@ std::shared_ptr<vnx::TypeCode> SocketSignal::static_create_type_code() {
 	{
 		vnx::TypeField& field = type_code->fields[1];
 		field.name = "is_open";
-		field.code = {1};
+		field.code = {31};
 	}
 	{
 		vnx::TypeField& field = type_code->fields[2];
 		field.name = "is_readable";
-		field.code = {1};
+		field.code = {31};
 	}
 	{
 		vnx::TypeField& field = type_code->fields[3];
 		field.name = "is_writable";
-		field.code = {1};
+		field.code = {31};
 	}
 	type_code->build();
 	return type_code;

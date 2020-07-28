@@ -215,7 +215,7 @@ std::shared_ptr<vnx::TypeCode> SerialPortBase::static_create_type_code() {
 		vnx::TypeField& field = type_code->fields[5];
 		field.name = "raw_mode";
 		field.value = vnx::to_string(true);
-		field.code = {1};
+		field.code = {31};
 	}
 	{
 		vnx::TypeField& field = type_code->fields[6];

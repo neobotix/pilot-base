@@ -160,7 +160,7 @@ std::shared_ptr<vnx::TypeCode> CAN_Frame::static_create_type_code() {
 	{
 		vnx::TypeField& field = type_code->fields[4];
 		field.name = "is_big_endian";
-		field.code = {1};
+		field.code = {31};
 	}
 	type_code->build();
 	return type_code;

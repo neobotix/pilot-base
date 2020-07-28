@@ -6,6 +6,7 @@
 
 #include <vnx/AsyncClient.h>
 #include <pilot/base/CAN_Frame.hxx>
+#include <pilot/base/can_adapter_e.hxx>
 #include <vnx/Module.h>
 #include <vnx/TopicPtr.hpp>
 
