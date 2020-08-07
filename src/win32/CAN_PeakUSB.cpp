@@ -42,7 +42,6 @@ CAN_PeakUSB::CAN_PeakUSB(int baud_rate){
 
 	case 500000:
 		ret = pfCAN_Init(m_pcanHandle, PCAN_BAUD_500K, 0, 0, 0);
-		//ret = pfCAN_Init(m_pcanHandle, PCAN_BAUD_500K);
 		break;
 
 	case 250000:
@@ -62,7 +61,7 @@ CAN_PeakUSB::CAN_PeakUSB(int baud_rate){
 
 
 CAN_PeakUSB::~CAN_PeakUSB(){
-	if(!m_initialized) close();
+	if(m_initialized) close();
 }
 
 
@@ -96,12 +95,12 @@ bool CAN_PeakUSB::read(CAN_Frame &frame, int timeout_ms){
 void CAN_PeakUSB::write(const CAN_Frame& frame){
 	TPCANMsg TPCMsg;
 
-
 	TPCMsg.LEN = frame.size;
 	TPCMsg.ID = frame.id;
 	TPCMsg.MSGTYPE = 0;
-	for(size_t i=0; i<8; i++)
+	for(size_t i=0; i<8; i++){
 		TPCMsg.DATA[i] = frame.data[i];
+	}
 
 	pfCAN_Write(m_pcanHandle, &TPCMsg);
 	pfCAN_Status(m_pcanHandle);
