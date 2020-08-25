@@ -101,6 +101,36 @@ void SocketSignal::from_object(const vnx::Object& _object) {
 	}
 }
 
+vnx::Variant SocketSignal::get_field(const std::string& _name) const {
+	if(_name == "port") {
+		return vnx::Variant(port);
+	}
+	if(_name == "is_open") {
+		return vnx::Variant(is_open);
+	}
+	if(_name == "is_readable") {
+		return vnx::Variant(is_readable);
+	}
+	if(_name == "is_writable") {
+		return vnx::Variant(is_writable);
+	}
+	return vnx::Variant();
+}
+
+void SocketSignal::set_field(const std::string& _name, const vnx::Variant& _value) {
+	if(_name == "port") {
+		_value.to(port);
+	} else if(_name == "is_open") {
+		_value.to(is_open);
+	} else if(_name == "is_readable") {
+		_value.to(is_readable);
+	} else if(_name == "is_writable") {
+		_value.to(is_writable);
+	} else {
+		throw std::logic_error("no such field: '" + _name + "'");
+	}
+}
+
 /// \private
 std::ostream& operator<<(std::ostream& _out, const SocketSignal& _value) {
 	_value.write(_out);

@@ -150,6 +150,66 @@ void SerialPortBase::from_object(const vnx::Object& _object) {
 	}
 }
 
+vnx::Variant SerialPortBase::get_field(const std::string& _name) const {
+	if(_name == "input") {
+		return vnx::Variant(input);
+	}
+	if(_name == "output") {
+		return vnx::Variant(output);
+	}
+	if(_name == "output_signals") {
+		return vnx::Variant(output_signals);
+	}
+	if(_name == "port") {
+		return vnx::Variant(port);
+	}
+	if(_name == "baud_rate") {
+		return vnx::Variant(baud_rate);
+	}
+	if(_name == "raw_mode") {
+		return vnx::Variant(raw_mode);
+	}
+	if(_name == "read_timeout_ms") {
+		return vnx::Variant(read_timeout_ms);
+	}
+	if(_name == "signal_interval_ms") {
+		return vnx::Variant(signal_interval_ms);
+	}
+	if(_name == "error_interval_ms") {
+		return vnx::Variant(error_interval_ms);
+	}
+	if(_name == "stats_interval_ms") {
+		return vnx::Variant(stats_interval_ms);
+	}
+	return vnx::Variant();
+}
+
+void SerialPortBase::set_field(const std::string& _name, const vnx::Variant& _value) {
+	if(_name == "input") {
+		_value.to(input);
+	} else if(_name == "output") {
+		_value.to(output);
+	} else if(_name == "output_signals") {
+		_value.to(output_signals);
+	} else if(_name == "port") {
+		_value.to(port);
+	} else if(_name == "baud_rate") {
+		_value.to(baud_rate);
+	} else if(_name == "raw_mode") {
+		_value.to(raw_mode);
+	} else if(_name == "read_timeout_ms") {
+		_value.to(read_timeout_ms);
+	} else if(_name == "signal_interval_ms") {
+		_value.to(signal_interval_ms);
+	} else if(_name == "error_interval_ms") {
+		_value.to(error_interval_ms);
+	} else if(_name == "stats_interval_ms") {
+		_value.to(stats_interval_ms);
+	} else {
+		throw std::logic_error("no such field: '" + _name + "'");
+	}
+}
+
 /// \private
 std::ostream& operator<<(std::ostream& _out, const SerialPortBase& _value) {
 	_value.write(_out);

@@ -68,6 +68,14 @@ vnx::Object SerialPort_close_port::to_object() const {
 void SerialPort_close_port::from_object(const vnx::Object& _object) {
 }
 
+vnx::Variant SerialPort_close_port::get_field(const std::string& _name) const {
+	return vnx::Variant();
+}
+
+void SerialPort_close_port::set_field(const std::string& _name, const vnx::Variant& _value) {
+	throw std::logic_error("no such field: '" + _name + "'");
+}
+
 /// \private
 std::ostream& operator<<(std::ostream& _out, const SerialPort_close_port& _value) {
 	_value.write(_out);
