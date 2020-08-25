@@ -131,6 +131,56 @@ void CAN_ProxyBase::from_object(const vnx::Object& _object) {
 	}
 }
 
+vnx::Variant CAN_ProxyBase::get_field(const std::string& _name) const {
+	if(_name == "input") {
+		return vnx::Variant(input);
+	}
+	if(_name == "output") {
+		return vnx::Variant(output);
+	}
+	if(_name == "adapter") {
+		return vnx::Variant(adapter);
+	}
+	if(_name == "device") {
+		return vnx::Variant(device);
+	}
+	if(_name == "baud_rate") {
+		return vnx::Variant(baud_rate);
+	}
+	if(_name == "is_big_endian") {
+		return vnx::Variant(is_big_endian);
+	}
+	if(_name == "read_timeout_ms") {
+		return vnx::Variant(read_timeout_ms);
+	}
+	if(_name == "stats_interval_ms") {
+		return vnx::Variant(stats_interval_ms);
+	}
+	return vnx::Variant();
+}
+
+void CAN_ProxyBase::set_field(const std::string& _name, const vnx::Variant& _value) {
+	if(_name == "input") {
+		_value.to(input);
+	} else if(_name == "output") {
+		_value.to(output);
+	} else if(_name == "adapter") {
+		_value.to(adapter);
+	} else if(_name == "device") {
+		_value.to(device);
+	} else if(_name == "baud_rate") {
+		_value.to(baud_rate);
+	} else if(_name == "is_big_endian") {
+		_value.to(is_big_endian);
+	} else if(_name == "read_timeout_ms") {
+		_value.to(read_timeout_ms);
+	} else if(_name == "stats_interval_ms") {
+		_value.to(stats_interval_ms);
+	} else {
+		throw std::logic_error("no such field: '" + _name + "'");
+	}
+}
+
 /// \private
 std::ostream& operator<<(std::ostream& _out, const CAN_ProxyBase& _value) {
 	_value.write(_out);

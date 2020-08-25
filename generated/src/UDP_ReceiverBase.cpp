@@ -117,6 +117,46 @@ void UDP_ReceiverBase::from_object(const vnx::Object& _object) {
 	}
 }
 
+vnx::Variant UDP_ReceiverBase::get_field(const std::string& _name) const {
+	if(_name == "output") {
+		return vnx::Variant(output);
+	}
+	if(_name == "port") {
+		return vnx::Variant(port);
+	}
+	if(_name == "max_packet_size") {
+		return vnx::Variant(max_packet_size);
+	}
+	if(_name == "read_timeout_ms") {
+		return vnx::Variant(read_timeout_ms);
+	}
+	if(_name == "error_interval_ms") {
+		return vnx::Variant(error_interval_ms);
+	}
+	if(_name == "stats_interval_ms") {
+		return vnx::Variant(stats_interval_ms);
+	}
+	return vnx::Variant();
+}
+
+void UDP_ReceiverBase::set_field(const std::string& _name, const vnx::Variant& _value) {
+	if(_name == "output") {
+		_value.to(output);
+	} else if(_name == "port") {
+		_value.to(port);
+	} else if(_name == "max_packet_size") {
+		_value.to(max_packet_size);
+	} else if(_name == "read_timeout_ms") {
+		_value.to(read_timeout_ms);
+	} else if(_name == "error_interval_ms") {
+		_value.to(error_interval_ms);
+	} else if(_name == "stats_interval_ms") {
+		_value.to(stats_interval_ms);
+	} else {
+		throw std::logic_error("no such field: '" + _name + "'");
+	}
+}
+
 /// \private
 std::ostream& operator<<(std::ostream& _out, const UDP_ReceiverBase& _value) {
 	_value.write(_out);

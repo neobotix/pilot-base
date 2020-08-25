@@ -87,6 +87,26 @@ void DataPacket::from_object(const vnx::Object& _object) {
 	}
 }
 
+vnx::Variant DataPacket::get_field(const std::string& _name) const {
+	if(_name == "time") {
+		return vnx::Variant(time);
+	}
+	if(_name == "payload") {
+		return vnx::Variant(payload);
+	}
+	return vnx::Variant();
+}
+
+void DataPacket::set_field(const std::string& _name, const vnx::Variant& _value) {
+	if(_name == "time") {
+		_value.to(time);
+	} else if(_name == "payload") {
+		_value.to(payload);
+	} else {
+		throw std::logic_error("no such field: '" + _name + "'");
+	}
+}
+
 /// \private
 std::ostream& operator<<(std::ostream& _out, const DataPacket& _value) {
 	_value.write(_out);

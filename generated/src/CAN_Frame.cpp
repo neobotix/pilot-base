@@ -108,6 +108,41 @@ void CAN_Frame::from_object(const vnx::Object& _object) {
 	}
 }
 
+vnx::Variant CAN_Frame::get_field(const std::string& _name) const {
+	if(_name == "time") {
+		return vnx::Variant(time);
+	}
+	if(_name == "id") {
+		return vnx::Variant(id);
+	}
+	if(_name == "size") {
+		return vnx::Variant(size);
+	}
+	if(_name == "data") {
+		return vnx::Variant(data);
+	}
+	if(_name == "is_big_endian") {
+		return vnx::Variant(is_big_endian);
+	}
+	return vnx::Variant();
+}
+
+void CAN_Frame::set_field(const std::string& _name, const vnx::Variant& _value) {
+	if(_name == "time") {
+		_value.to(time);
+	} else if(_name == "id") {
+		_value.to(id);
+	} else if(_name == "size") {
+		_value.to(size);
+	} else if(_name == "data") {
+		_value.to(data);
+	} else if(_name == "is_big_endian") {
+		_value.to(is_big_endian);
+	} else {
+		throw std::logic_error("no such field: '" + _name + "'");
+	}
+}
+
 /// \private
 std::ostream& operator<<(std::ostream& _out, const CAN_Frame& _value) {
 	_value.write(_out);
