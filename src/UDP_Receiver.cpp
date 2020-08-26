@@ -20,6 +20,19 @@ UDP_Receiver::UDP_Receiver(const std::string& _vnx_name)
 
 void UDP_Receiver::main()
 {
+	if(stats_interval_ms) {
+		set_timer_millis(stats_interval_ms, std::bind(&UDP_Receiver::print_stats, this));
+	}
+
+	// make sure port is opened before entering Super::main()
+	try {
+		open_port();
+	}
+	catch(const vnx::exception& ex) {
+		log(WARN) << ex.value()->what;
+	}
+
+	// start read loop
 	std::thread read_thread;
 	{
 		// open a private pipe for read_loop()
@@ -27,10 +40,6 @@ void UDP_Receiver::main()
 		vnx::open_pipe(module_addr, this, UNLIMITED);
 		// start read thread
 		read_thread = std::thread(&UDP_Receiver::read_loop, this, module_addr);
-	}
-
-	if(stats_interval_ms) {
-		set_timer_millis(stats_interval_ms, std::bind(&UDP_Receiver::print_stats, this));
 	}
 
 	Super::main();
@@ -47,15 +56,6 @@ void UDP_Receiver::read_loop(const vnx::Hash64 module_addr) const noexcept
 
 	while(vnx_do_run())
 	{
-		try {
-			client.open_port();
-		}
-		catch(const vnx::exception& ex) {
-			log(WARN) << ex.value()->what;
-			std::this_thread::sleep_for(std::chrono::milliseconds(error_interval_ms));
-			continue;
-		}
-
 		while(vnx_do_run())
 		{
 			try {
@@ -78,6 +78,17 @@ void UDP_Receiver::read_loop(const vnx::Hash64 module_addr) const noexcept
 					std::this_thread::sleep_for(std::chrono::milliseconds(error_interval_ms));
 				}
 				break;
+			}
+		}
+		if(vnx_do_run())
+		{
+			try {
+				client.open_port();
+			}
+			catch(const vnx::exception& ex) {
+				log(WARN) << ex.value()->what;
+				std::this_thread::sleep_for(std::chrono::milliseconds(error_interval_ms));
+				continue;
 			}
 		}
 	}

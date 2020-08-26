@@ -25,6 +25,22 @@ void SerialPort::init()
 
 void SerialPort::main()
 {
+	if(signal_interval_ms) {
+		set_timer_millis(signal_interval_ms, std::bind(&SerialPort::signal, this));
+	}
+	if(stats_interval_ms) {
+		set_timer_millis(stats_interval_ms, std::bind(&SerialPort::print_stats, this));
+	}
+
+	// make sure port is opened before entering Super::main()
+	try {
+		open_port();
+	}
+	catch(const vnx::exception& ex) {
+		log(WARN) << ex.value()->what;
+	}
+
+	// start read loop
 	std::thread read_thread;
 	{
 		// open a private pipe for read_loop()
@@ -32,13 +48,6 @@ void SerialPort::main()
 		vnx::open_pipe(module_addr, this, UNLIMITED);
 		// start read thread
 		read_thread = std::thread(&SerialPort::read_loop, this, module_addr);
-	}
-
-	if(signal_interval_ms) {
-		set_timer_millis(signal_interval_ms, std::bind(&SerialPort::signal, this));
-	}
-	if(stats_interval_ms) {
-		set_timer_millis(stats_interval_ms, std::bind(&SerialPort::print_stats, this));
 	}
 
 	Super::main();
@@ -69,15 +78,6 @@ void SerialPort::read_loop(const vnx::Hash64 module_addr) const
 
 	while(vnx_do_run())
 	{
-		try {
-			client.open_port();
-		}
-		catch(const vnx::exception& ex) {
-			log(WARN) << ex.value()->what;
-			std::this_thread::sleep_for(std::chrono::milliseconds(error_interval_ms));
-			continue;
-		}
-
 		while(vnx_do_run())
 		{
 			try {
@@ -99,6 +99,17 @@ void SerialPort::read_loop(const vnx::Hash64 module_addr) const
 					std::this_thread::sleep_for(std::chrono::milliseconds(error_interval_ms));
 				}
 				break;
+			}
+		}
+		if(vnx_do_run())
+		{
+			try {
+				client.open_port();
+			}
+			catch(const vnx::exception& ex) {
+				log(WARN) << ex.value()->what;
+				std::this_thread::sleep_for(std::chrono::milliseconds(error_interval_ms));
+				continue;
 			}
 		}
 	}
