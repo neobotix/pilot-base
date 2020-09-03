@@ -41,6 +41,7 @@ vnx::Hash64 CAN_ProxyBase::get_type_hash() const {
 const char* CAN_ProxyBase::get_type_name() const {
 	return "pilot.base.CAN_Proxy";
 }
+
 const vnx::TypeCode* CAN_ProxyBase::get_type_code() const {
 	return pilot::base::vnx_native_type_code_CAN_ProxyBase;
 }
@@ -362,6 +363,10 @@ void read(TypeInput& in, ::pilot::base::CAN_ProxyBase& value, const TypeCode* ty
 }
 
 void write(TypeOutput& out, const ::pilot::base::CAN_ProxyBase& value, const TypeCode* type_code, const uint16_t* code) {
+	if(code && code[0] == CODE_OBJECT) {
+		vnx::write(out, value.to_object(), nullptr, code);
+		return;
+	}
 	if(!type_code || (code && code[0] == CODE_ANY)) {
 		type_code = pilot::base::vnx_native_type_code_CAN_ProxyBase;
 		out.write_type_code(type_code);

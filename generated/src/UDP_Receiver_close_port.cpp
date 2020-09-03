@@ -23,6 +23,7 @@ vnx::Hash64 UDP_Receiver_close_port::get_type_hash() const {
 const char* UDP_Receiver_close_port::get_type_name() const {
 	return "pilot.base.UDP_Receiver.close_port";
 }
+
 const vnx::TypeCode* UDP_Receiver_close_port::get_type_code() const {
 	return pilot::base::vnx_native_type_code_UDP_Receiver_close_port;
 }
@@ -153,6 +154,10 @@ void read(TypeInput& in, ::pilot::base::UDP_Receiver_close_port& value, const Ty
 }
 
 void write(TypeOutput& out, const ::pilot::base::UDP_Receiver_close_port& value, const TypeCode* type_code, const uint16_t* code) {
+	if(code && code[0] == CODE_OBJECT) {
+		vnx::write(out, value.to_object(), nullptr, code);
+		return;
+	}
 	if(!type_code || (code && code[0] == CODE_ANY)) {
 		type_code = pilot::base::vnx_native_type_code_UDP_Receiver_close_port;
 		out.write_type_code(type_code);

@@ -21,6 +21,7 @@ vnx::Hash64 can_adapter_e::get_type_hash() const {
 const char* can_adapter_e::get_type_name() const {
 	return "pilot.base.can_adapter_e";
 }
+
 const vnx::TypeCode* can_adapter_e::get_type_code() const {
 	return pilot::base::vnx_native_type_code_can_adapter_e;
 }
@@ -194,6 +195,10 @@ void read(TypeInput& in, ::pilot::base::can_adapter_e& value, const TypeCode* ty
 }
 
 void write(TypeOutput& out, const ::pilot::base::can_adapter_e& value, const TypeCode* type_code, const uint16_t* code) {
+	if(code && code[0] == CODE_STRING) {
+		vnx::write(out, vnx::to_string_value(value), nullptr, code);
+		return;
+	}
 	if(!type_code || (code && code[0] == CODE_ANY)) {
 		type_code = pilot::base::vnx_native_type_code_can_adapter_e;
 		out.write_type_code(type_code);

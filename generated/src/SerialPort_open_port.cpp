@@ -23,6 +23,7 @@ vnx::Hash64 SerialPort_open_port::get_type_hash() const {
 const char* SerialPort_open_port::get_type_name() const {
 	return "pilot.base.SerialPort.open_port";
 }
+
 const vnx::TypeCode* SerialPort_open_port::get_type_code() const {
 	return pilot::base::vnx_native_type_code_SerialPort_open_port;
 }
@@ -153,6 +154,10 @@ void read(TypeInput& in, ::pilot::base::SerialPort_open_port& value, const TypeC
 }
 
 void write(TypeOutput& out, const ::pilot::base::SerialPort_open_port& value, const TypeCode* type_code, const uint16_t* code) {
+	if(code && code[0] == CODE_OBJECT) {
+		vnx::write(out, value.to_object(), nullptr, code);
+		return;
+	}
 	if(!type_code || (code && code[0] == CODE_ANY)) {
 		type_code = pilot::base::vnx_native_type_code_SerialPort_open_port;
 		out.write_type_code(type_code);

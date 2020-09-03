@@ -22,6 +22,7 @@ vnx::Hash64 SocketSignal::get_type_hash() const {
 const char* SocketSignal::get_type_name() const {
 	return "pilot.base.SocketSignal";
 }
+
 const vnx::TypeCode* SocketSignal::get_type_code() const {
 	return pilot::base::vnx_native_type_code_SocketSignal;
 }
@@ -248,6 +249,10 @@ void read(TypeInput& in, ::pilot::base::SocketSignal& value, const TypeCode* typ
 }
 
 void write(TypeOutput& out, const ::pilot::base::SocketSignal& value, const TypeCode* type_code, const uint16_t* code) {
+	if(code && code[0] == CODE_OBJECT) {
+		vnx::write(out, value.to_object(), nullptr, code);
+		return;
+	}
 	if(!type_code || (code && code[0] == CODE_ANY)) {
 		type_code = pilot::base::vnx_native_type_code_SocketSignal;
 		out.write_type_code(type_code);

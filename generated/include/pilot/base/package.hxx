@@ -157,7 +157,7 @@ struct type<::pilot::base::CAN_Frame> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -180,7 +180,7 @@ struct type<::pilot::base::CAN_ProxyBase> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -203,7 +203,7 @@ struct type<::pilot::base::DataPacket> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -226,7 +226,7 @@ struct type<::pilot::base::Sample> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -249,7 +249,7 @@ struct type<::pilot::base::SerialPortBase> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -272,7 +272,7 @@ struct type<::pilot::base::SerialPort_close_port> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -295,7 +295,7 @@ struct type<::pilot::base::SerialPort_close_port_return> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -318,7 +318,7 @@ struct type<::pilot::base::SerialPort_open_port> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -341,7 +341,7 @@ struct type<::pilot::base::SerialPort_open_port_return> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -364,7 +364,7 @@ struct type<::pilot::base::SocketSignal> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -387,7 +387,7 @@ struct type<::pilot::base::UDP_ReceiverBase> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -410,7 +410,7 @@ struct type<::pilot::base::UDP_Receiver_close_port> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -433,7 +433,7 @@ struct type<::pilot::base::UDP_Receiver_close_port_return> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -456,7 +456,7 @@ struct type<::pilot::base::UDP_Receiver_open_port> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -479,7 +479,7 @@ struct type<::pilot::base::UDP_Receiver_open_port_return> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_OBJECT);
 	}
 };
 
@@ -502,7 +502,7 @@ struct type<::pilot::base::can_adapter_e> {
 		vnx::accept(visitor, value);
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code) {
-		code.push_back(CODE_ANY);
+		code.push_back(CODE_STRING);
 	}
 };
 

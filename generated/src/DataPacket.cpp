@@ -22,6 +22,7 @@ vnx::Hash64 DataPacket::get_type_hash() const {
 const char* DataPacket::get_type_name() const {
 	return "pilot.base.DataPacket";
 }
+
 const vnx::TypeCode* DataPacket::get_type_code() const {
 	return pilot::base::vnx_native_type_code_DataPacket;
 }
@@ -202,6 +203,10 @@ void read(TypeInput& in, ::pilot::base::DataPacket& value, const TypeCode* type_
 }
 
 void write(TypeOutput& out, const ::pilot::base::DataPacket& value, const TypeCode* type_code, const uint16_t* code) {
+	if(code && code[0] == CODE_OBJECT) {
+		vnx::write(out, value.to_object(), nullptr, code);
+		return;
+	}
 	if(!type_code || (code && code[0] == CODE_ANY)) {
 		type_code = pilot::base::vnx_native_type_code_DataPacket;
 		out.write_type_code(type_code);
