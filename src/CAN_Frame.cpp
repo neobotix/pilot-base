@@ -107,7 +107,7 @@ void CAN_Frame::set_uint(const ::int32_t& pos, const ::int32_t& size, const ::ui
 	}
 	const uint32_t max = (uint64_t(1) << size) - 1;
 	int32_t value = value_ - offset;
-	if(value > max) {
+	if(value > 0 && (uint32_t)value > max) {
 		value = max;
 	}
 	if(is_big_endian) {

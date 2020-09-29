@@ -64,7 +64,7 @@ void SerialPort::handle(std::shared_ptr<const DataPacket> value)
 		return;
 	}
 	const auto num_written = write_port(value->payload.data(), value->payload.size());
-	if(num_written != value->payload.size()) {
+	if(num_written == -1 || (size_t)num_written != value->payload.size()) {
 		log(WARN) << "Failed to write " << value->payload.size() << " bytes!";
 	}
 	if(num_written > 0) {
