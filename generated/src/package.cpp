@@ -4,7 +4,6 @@
 #include <pilot/base/CAN_Frame.hxx>
 #include <pilot/base/CAN_ProxyBase.hxx>
 #include <pilot/base/DataPacket.hxx>
-#include <pilot/base/Sample.hxx>
 #include <pilot/base/SerialPortBase.hxx>
 #include <pilot/base/SerialPort_close_port.hxx>
 #include <pilot/base/SerialPort_close_port_return.hxx>
@@ -30,7 +29,6 @@ static void register_all_types() {
 	vnx::register_type_code(::pilot::base::CAN_Frame::static_create_type_code());
 	vnx::register_type_code(::pilot::base::CAN_ProxyBase::static_create_type_code());
 	vnx::register_type_code(::pilot::base::DataPacket::static_create_type_code());
-	vnx::register_type_code(::pilot::base::Sample::static_create_type_code());
 	vnx::register_type_code(::pilot::base::SerialPortBase::static_create_type_code());
 	vnx::register_type_code(::pilot::base::SerialPort_close_port::static_create_type_code());
 	vnx::register_type_code(::pilot::base::SerialPort_close_port_return::static_create_type_code());
@@ -54,7 +52,6 @@ static struct vnx_static_init {
 const vnx::TypeCode* const vnx_native_type_code_CAN_Frame = vnx::get_type_code(vnx::Hash64(0x4d70a2725dc4def6ull));
 const vnx::TypeCode* const vnx_native_type_code_CAN_ProxyBase = vnx::get_type_code(vnx::Hash64(0x17c6e6ba3900a740ull));
 const vnx::TypeCode* const vnx_native_type_code_DataPacket = vnx::get_type_code(vnx::Hash64(0xcd0d2bd202ac0fb0ull));
-const vnx::TypeCode* const vnx_native_type_code_Sample = vnx::get_type_code(vnx::Hash64(0xde796e4da0f9430full));
 const vnx::TypeCode* const vnx_native_type_code_SerialPortBase = vnx::get_type_code(vnx::Hash64(0x34145bbaf1d9d037ull));
 const vnx::TypeCode* const vnx_native_type_code_SerialPort_close_port = vnx::get_type_code(vnx::Hash64(0x325a9542af22132full));
 const vnx::TypeCode* const vnx_native_type_code_SerialPort_close_port_return = vnx::get_type_code(vnx::Hash64(0xeab3f48d8b486944ull));

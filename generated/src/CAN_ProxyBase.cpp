@@ -7,8 +7,20 @@
 #include <pilot/base/CAN_Frame.hxx>
 #include <pilot/base/can_adapter_e.hxx>
 #include <vnx/Module.h>
+#include <vnx/ModuleInterface_vnx_close.hxx>
+#include <vnx/ModuleInterface_vnx_close_return.hxx>
+#include <vnx/ModuleInterface_vnx_get_config.hxx>
+#include <vnx/ModuleInterface_vnx_get_config_object.hxx>
+#include <vnx/ModuleInterface_vnx_get_config_object_return.hxx>
+#include <vnx/ModuleInterface_vnx_get_config_return.hxx>
 #include <vnx/ModuleInterface_vnx_get_type_code.hxx>
 #include <vnx/ModuleInterface_vnx_get_type_code_return.hxx>
+#include <vnx/ModuleInterface_vnx_restart.hxx>
+#include <vnx/ModuleInterface_vnx_restart_return.hxx>
+#include <vnx/ModuleInterface_vnx_set_config.hxx>
+#include <vnx/ModuleInterface_vnx_set_config_object.hxx>
+#include <vnx/ModuleInterface_vnx_set_config_object_return.hxx>
+#include <vnx/ModuleInterface_vnx_set_config_return.hxx>
 #include <vnx/TopicPtr.hpp>
 
 #include <vnx/vnx.h>
@@ -210,8 +222,14 @@ std::shared_ptr<vnx::TypeCode> CAN_ProxyBase::static_create_type_code() {
 	type_code->is_native = true;
 	type_code->depends.resize(1);
 	type_code->depends[0] = ::pilot::base::can_adapter_e::static_get_type_code();
-	type_code->methods.resize(1);
-	type_code->methods[0] = ::vnx::ModuleInterface_vnx_get_type_code::static_get_type_code();
+	type_code->methods.resize(7);
+	type_code->methods[0] = ::vnx::ModuleInterface_vnx_get_config_object::static_get_type_code();
+	type_code->methods[1] = ::vnx::ModuleInterface_vnx_get_config::static_get_type_code();
+	type_code->methods[2] = ::vnx::ModuleInterface_vnx_set_config_object::static_get_type_code();
+	type_code->methods[3] = ::vnx::ModuleInterface_vnx_set_config::static_get_type_code();
+	type_code->methods[4] = ::vnx::ModuleInterface_vnx_get_type_code::static_get_type_code();
+	type_code->methods[5] = ::vnx::ModuleInterface_vnx_restart::static_get_type_code();
+	type_code->methods[6] = ::vnx::ModuleInterface_vnx_close::static_get_type_code();
 	type_code->fields.resize(8);
 	{
 		vnx::TypeField& field = type_code->fields[0];
@@ -268,7 +286,7 @@ void CAN_ProxyBase::vnx_handle_switch(std::shared_ptr<const vnx::Sample> _sample
 	{
 		auto _value = std::dynamic_pointer_cast<const ::pilot::base::CAN_Frame>(_sample->value);
 		if(_value) {
-			handle(_value, _sample);
+			handle(_value);
 			return;
 		}
 	}
@@ -276,13 +294,61 @@ void CAN_ProxyBase::vnx_handle_switch(std::shared_ptr<const vnx::Sample> _sample
 
 std::shared_ptr<vnx::Value> CAN_ProxyBase::vnx_call_switch(std::shared_ptr<const vnx::Value> _method, const vnx::request_id_t& _request_id) {
 	const auto _type_hash = _method->get_type_hash();
-	if(_type_hash == vnx::Hash64(0x305ec4d628960e5dull)) {
+	if(_type_hash == vnx::Hash64(0x17f58f68bf83abc0ull)) {
+		auto _args = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_get_config_object>(_method);
+		if(!_args) {
+			throw std::logic_error("vnx_call_switch(): !_args");
+		}
+		auto _return_value = ::vnx::ModuleInterface_vnx_get_config_object_return::create();
+		_return_value->_ret_0 = vnx_get_config_object();
+		return _return_value;
+	} else if(_type_hash == vnx::Hash64(0xbbc7f1a01044d294ull)) {
+		auto _args = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_get_config>(_method);
+		if(!_args) {
+			throw std::logic_error("vnx_call_switch(): !_args");
+		}
+		auto _return_value = ::vnx::ModuleInterface_vnx_get_config_return::create();
+		_return_value->_ret_0 = vnx_get_config(_args->name);
+		return _return_value;
+	} else if(_type_hash == vnx::Hash64(0xca30f814f17f322full)) {
+		auto _args = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_set_config_object>(_method);
+		if(!_args) {
+			throw std::logic_error("vnx_call_switch(): !_args");
+		}
+		auto _return_value = ::vnx::ModuleInterface_vnx_set_config_object_return::create();
+		vnx_set_config_object(_args->config);
+		return _return_value;
+	} else if(_type_hash == vnx::Hash64(0x362aac91373958b7ull)) {
+		auto _args = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_set_config>(_method);
+		if(!_args) {
+			throw std::logic_error("vnx_call_switch(): !_args");
+		}
+		auto _return_value = ::vnx::ModuleInterface_vnx_set_config_return::create();
+		vnx_set_config(_args->name, _args->value);
+		return _return_value;
+	} else if(_type_hash == vnx::Hash64(0x305ec4d628960e5dull)) {
 		auto _args = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_get_type_code>(_method);
 		if(!_args) {
 			throw std::logic_error("vnx_call_switch(): !_args");
 		}
 		auto _return_value = ::vnx::ModuleInterface_vnx_get_type_code_return::create();
 		_return_value->_ret_0 = vnx_get_type_code();
+		return _return_value;
+	} else if(_type_hash == vnx::Hash64(0x9e95dc280cecca1bull)) {
+		auto _args = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_restart>(_method);
+		if(!_args) {
+			throw std::logic_error("vnx_call_switch(): !_args");
+		}
+		auto _return_value = ::vnx::ModuleInterface_vnx_restart_return::create();
+		vnx_restart();
+		return _return_value;
+	} else if(_type_hash == vnx::Hash64(0x9e165e2b50bad84bull)) {
+		auto _args = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_close>(_method);
+		if(!_args) {
+			throw std::logic_error("vnx_call_switch(): !_args");
+		}
+		auto _return_value = ::vnx::ModuleInterface_vnx_close_return::create();
+		vnx_close();
 		return _return_value;
 	}
 	auto _ex = vnx::NoSuchMethod::create();
