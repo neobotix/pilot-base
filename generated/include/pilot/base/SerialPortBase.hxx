@@ -23,6 +23,7 @@ public:
 	int32_t baud_rate = 115200;
 	vnx::bool_t raw_mode = true;
 	int32_t read_timeout_ms = 200;
+	int32_t shutdown_delay_ms = 200;
 	int32_t signal_interval_ms = 1000;
 	int32_t error_interval_ms = 1000;
 	int32_t stats_interval_ms = 10000;

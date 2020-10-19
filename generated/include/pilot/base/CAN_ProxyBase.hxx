@@ -24,6 +24,7 @@ public:
 	int32_t baud_rate = 0;
 	vnx::bool_t is_big_endian = 0;
 	int32_t read_timeout_ms = 200;
+	int32_t shutdown_delay_ms = 200;
 	int32_t stats_interval_ms = 10000;
 	
 	typedef ::vnx::Module Super;

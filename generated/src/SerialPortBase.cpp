@@ -34,7 +34,7 @@ namespace base {
 
 
 const vnx::Hash64 SerialPortBase::VNX_TYPE_HASH(0x34145bbaf1d9d037ull);
-const vnx::Hash64 SerialPortBase::VNX_CODE_HASH(0xdedc7b5a13f049cbull);
+const vnx::Hash64 SerialPortBase::VNX_CODE_HASH(0x86d6b8c021940973ull);
 
 SerialPortBase::SerialPortBase(const std::string& _vnx_name)
 	:	Module::Module(_vnx_name)
@@ -47,6 +47,7 @@ SerialPortBase::SerialPortBase(const std::string& _vnx_name)
 	vnx::read_config(vnx_name + ".port", port);
 	vnx::read_config(vnx_name + ".raw_mode", raw_mode);
 	vnx::read_config(vnx_name + ".read_timeout_ms", read_timeout_ms);
+	vnx::read_config(vnx_name + ".shutdown_delay_ms", shutdown_delay_ms);
 	vnx::read_config(vnx_name + ".signal_interval_ms", signal_interval_ms);
 	vnx::read_config(vnx_name + ".stats_interval_ms", stats_interval_ms);
 }
@@ -73,9 +74,10 @@ void SerialPortBase::accept(vnx::Visitor& _visitor) const {
 	_visitor.type_field(_type_code->fields[4], 4); vnx::accept(_visitor, baud_rate);
 	_visitor.type_field(_type_code->fields[5], 5); vnx::accept(_visitor, raw_mode);
 	_visitor.type_field(_type_code->fields[6], 6); vnx::accept(_visitor, read_timeout_ms);
-	_visitor.type_field(_type_code->fields[7], 7); vnx::accept(_visitor, signal_interval_ms);
-	_visitor.type_field(_type_code->fields[8], 8); vnx::accept(_visitor, error_interval_ms);
-	_visitor.type_field(_type_code->fields[9], 9); vnx::accept(_visitor, stats_interval_ms);
+	_visitor.type_field(_type_code->fields[7], 7); vnx::accept(_visitor, shutdown_delay_ms);
+	_visitor.type_field(_type_code->fields[8], 8); vnx::accept(_visitor, signal_interval_ms);
+	_visitor.type_field(_type_code->fields[9], 9); vnx::accept(_visitor, error_interval_ms);
+	_visitor.type_field(_type_code->fields[10], 10); vnx::accept(_visitor, stats_interval_ms);
 	_visitor.type_end(*_type_code);
 }
 
@@ -88,6 +90,7 @@ void SerialPortBase::write(std::ostream& _out) const {
 	_out << ", \"baud_rate\": "; vnx::write(_out, baud_rate);
 	_out << ", \"raw_mode\": "; vnx::write(_out, raw_mode);
 	_out << ", \"read_timeout_ms\": "; vnx::write(_out, read_timeout_ms);
+	_out << ", \"shutdown_delay_ms\": "; vnx::write(_out, shutdown_delay_ms);
 	_out << ", \"signal_interval_ms\": "; vnx::write(_out, signal_interval_ms);
 	_out << ", \"error_interval_ms\": "; vnx::write(_out, error_interval_ms);
 	_out << ", \"stats_interval_ms\": "; vnx::write(_out, stats_interval_ms);
@@ -114,6 +117,8 @@ void SerialPortBase::read(std::istream& _in) {
 			vnx::from_string(_entry.second, raw_mode);
 		} else if(_entry.first == "read_timeout_ms") {
 			vnx::from_string(_entry.second, read_timeout_ms);
+		} else if(_entry.first == "shutdown_delay_ms") {
+			vnx::from_string(_entry.second, shutdown_delay_ms);
 		} else if(_entry.first == "signal_interval_ms") {
 			vnx::from_string(_entry.second, signal_interval_ms);
 		} else if(_entry.first == "stats_interval_ms") {
@@ -131,6 +136,7 @@ vnx::Object SerialPortBase::to_object() const {
 	_object["baud_rate"] = baud_rate;
 	_object["raw_mode"] = raw_mode;
 	_object["read_timeout_ms"] = read_timeout_ms;
+	_object["shutdown_delay_ms"] = shutdown_delay_ms;
 	_object["signal_interval_ms"] = signal_interval_ms;
 	_object["error_interval_ms"] = error_interval_ms;
 	_object["stats_interval_ms"] = stats_interval_ms;
@@ -155,6 +161,8 @@ void SerialPortBase::from_object(const vnx::Object& _object) {
 			_entry.second.to(raw_mode);
 		} else if(_entry.first == "read_timeout_ms") {
 			_entry.second.to(read_timeout_ms);
+		} else if(_entry.first == "shutdown_delay_ms") {
+			_entry.second.to(shutdown_delay_ms);
 		} else if(_entry.first == "signal_interval_ms") {
 			_entry.second.to(signal_interval_ms);
 		} else if(_entry.first == "stats_interval_ms") {
@@ -185,6 +193,9 @@ vnx::Variant SerialPortBase::get_field(const std::string& _name) const {
 	if(_name == "read_timeout_ms") {
 		return vnx::Variant(read_timeout_ms);
 	}
+	if(_name == "shutdown_delay_ms") {
+		return vnx::Variant(shutdown_delay_ms);
+	}
 	if(_name == "signal_interval_ms") {
 		return vnx::Variant(signal_interval_ms);
 	}
@@ -212,6 +223,8 @@ void SerialPortBase::set_field(const std::string& _name, const vnx::Variant& _va
 		_value.to(raw_mode);
 	} else if(_name == "read_timeout_ms") {
 		_value.to(read_timeout_ms);
+	} else if(_name == "shutdown_delay_ms") {
+		_value.to(shutdown_delay_ms);
 	} else if(_name == "signal_interval_ms") {
 		_value.to(signal_interval_ms);
 	} else if(_name == "error_interval_ms") {
@@ -247,7 +260,7 @@ std::shared_ptr<vnx::TypeCode> SerialPortBase::static_create_type_code() {
 	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.base.SerialPort";
 	type_code->type_hash = vnx::Hash64(0x34145bbaf1d9d037ull);
-	type_code->code_hash = vnx::Hash64(0xdedc7b5a13f049cbull);
+	type_code->code_hash = vnx::Hash64(0x86d6b8c021940973ull);
 	type_code->is_native = true;
 	type_code->methods.resize(9);
 	type_code->methods[0] = ::vnx::ModuleInterface_vnx_get_config_object::static_get_type_code();
@@ -259,7 +272,7 @@ std::shared_ptr<vnx::TypeCode> SerialPortBase::static_create_type_code() {
 	type_code->methods[6] = ::vnx::ModuleInterface_vnx_close::static_get_type_code();
 	type_code->methods[7] = ::pilot::base::SerialPort_open_port::static_get_type_code();
 	type_code->methods[8] = ::pilot::base::SerialPort_close_port::static_get_type_code();
-	type_code->fields.resize(10);
+	type_code->fields.resize(11);
 	{
 		vnx::TypeField& field = type_code->fields[0];
 		field.is_extended = true;
@@ -304,18 +317,24 @@ std::shared_ptr<vnx::TypeCode> SerialPortBase::static_create_type_code() {
 	}
 	{
 		vnx::TypeField& field = type_code->fields[7];
+		field.name = "shutdown_delay_ms";
+		field.value = vnx::to_string(200);
+		field.code = {7};
+	}
+	{
+		vnx::TypeField& field = type_code->fields[8];
 		field.name = "signal_interval_ms";
 		field.value = vnx::to_string(1000);
 		field.code = {7};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[8];
+		vnx::TypeField& field = type_code->fields[9];
 		field.name = "error_interval_ms";
 		field.value = vnx::to_string(1000);
 		field.code = {7};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[9];
+		vnx::TypeField& field = type_code->fields[10];
 		field.name = "stats_interval_ms";
 		field.value = vnx::to_string(10000);
 		field.code = {7};
@@ -471,17 +490,23 @@ void read(TypeInput& in, ::pilot::base::SerialPortBase& value, const TypeCode* t
 		{
 			const vnx::TypeField* const _field = type_code->field_map[7];
 			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.signal_interval_ms, _field->code.data());
+				vnx::read_value(_buf + _field->offset, value.shutdown_delay_ms, _field->code.data());
 			}
 		}
 		{
 			const vnx::TypeField* const _field = type_code->field_map[8];
 			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.error_interval_ms, _field->code.data());
+				vnx::read_value(_buf + _field->offset, value.signal_interval_ms, _field->code.data());
 			}
 		}
 		{
 			const vnx::TypeField* const _field = type_code->field_map[9];
+			if(_field) {
+				vnx::read_value(_buf + _field->offset, value.error_interval_ms, _field->code.data());
+			}
+		}
+		{
+			const vnx::TypeField* const _field = type_code->field_map[10];
 			if(_field) {
 				vnx::read_value(_buf + _field->offset, value.stats_interval_ms, _field->code.data());
 			}
@@ -511,13 +536,14 @@ void write(TypeOutput& out, const ::pilot::base::SerialPortBase& value, const Ty
 	if(code && code[0] == CODE_STRUCT) {
 		type_code = type_code->depends[code[1]];
 	}
-	char* const _buf = out.write(21);
+	char* const _buf = out.write(25);
 	vnx::write_value(_buf + 0, value.baud_rate);
 	vnx::write_value(_buf + 4, value.raw_mode);
 	vnx::write_value(_buf + 5, value.read_timeout_ms);
-	vnx::write_value(_buf + 9, value.signal_interval_ms);
-	vnx::write_value(_buf + 13, value.error_interval_ms);
-	vnx::write_value(_buf + 17, value.stats_interval_ms);
+	vnx::write_value(_buf + 9, value.shutdown_delay_ms);
+	vnx::write_value(_buf + 13, value.signal_interval_ms);
+	vnx::write_value(_buf + 17, value.error_interval_ms);
+	vnx::write_value(_buf + 21, value.stats_interval_ms);
 	vnx::write(out, value.input, type_code, type_code->fields[0].code.data());
 	vnx::write(out, value.output, type_code, type_code->fields[1].code.data());
 	vnx::write(out, value.output_signals, type_code, type_code->fields[2].code.data());
