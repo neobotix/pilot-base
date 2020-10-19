@@ -32,12 +32,12 @@ void SerialPort::main()
 		set_timer_millis(stats_interval_ms, std::bind(&SerialPort::print_stats, this));
 	}
 
-	// make sure port is opened before entering Super::main()
+	// make sure port is opened before entering Super::main() (so as to not loose initial data)
 	try {
 		open_port();
 	}
-	catch(const vnx::exception& ex) {
-		log(WARN) << ex.value()->what;
+	catch(const std::exception& ex) {
+		log(WARN) << ex.what();
 	}
 
 	// start read loop
@@ -60,9 +60,6 @@ void SerialPort::main()
 
 void SerialPort::handle(std::shared_ptr<const DataPacket> value)
 {
-	if(m_fd < 0) {
-		return;
-	}
 	const auto num_written = write_port(value->payload.data(), value->payload.size());
 	if(num_written == -1 || (size_t)num_written != value->payload.size()) {
 		log(WARN) << "Failed to write " << value->payload.size() << " bytes!";
@@ -110,13 +107,14 @@ void SerialPort::read_loop(const vnx::Hash64 module_addr) const
 				break;
 			}
 		}
-		if(vnx_do_run())
+		while(vnx_do_run())
 		{
 			try {
 				client.open_port();
+				break;
 			}
-			catch(const vnx::exception& ex) {
-				log(WARN) << ex.value()->what;
+			catch(const std::exception& ex) {
+				log(WARN) << ex.what();
 				std::this_thread::sleep_for(std::chrono::milliseconds(error_interval_ms));
 				continue;
 			}
