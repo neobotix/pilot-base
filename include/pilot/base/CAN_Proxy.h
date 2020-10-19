@@ -26,6 +26,8 @@ protected:
 	
 	void handle(std::shared_ptr<const CAN_Frame> value) override;
 	
+	bool vnx_shutdown() override;
+
 	void print_stats();
 	
 	void read_loop();

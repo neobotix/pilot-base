@@ -30,7 +30,6 @@ void CAN_Proxy::main()
 {
 	set_timer_millis(stats_interval_ms, std::bind(&CAN_Proxy::print_stats, this));
 
-
 	switch(adapter){
 #ifdef _WIN32
 	case can_adapter_e::PEAKUSB:
@@ -44,7 +43,6 @@ void CAN_Proxy::main()
 	default:
 		throw std::runtime_error("Can adapter not available on this platform");
 	}
-
 
 	std::thread thread(&CAN_Proxy::read_loop, this);
 	
@@ -63,6 +61,15 @@ void CAN_Proxy::handle(std::shared_ptr<const CAN_Frame> value)
 	catch(const std::exception& ex) {
 		log(WARN).out << ex.what();
 	}
+}
+
+bool CAN_Proxy::vnx_shutdown()
+{
+	if(shutdown_delay_ms <= 0) {
+		return true;
+	}
+	set_timeout_millis(shutdown_delay_ms, std::bind(&CAN_Proxy::exit, this));
+	return false;
 }
 
 void CAN_Proxy::print_stats()

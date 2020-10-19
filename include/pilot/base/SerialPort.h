@@ -35,6 +35,8 @@ protected:
 
 	void handle(std::shared_ptr<const DataPacket> value) override;
 
+	bool vnx_shutdown() override;
+
 private:
 	void signal();
 

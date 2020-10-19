@@ -15,6 +15,8 @@ module SerialPort {
 	
 	int read_timeout_ms = 200;			// read timeout [ms]
 	
+	int shutdown_delay_ms = 200;		// how much to delay shutdown [ms]
+	
 	int signal_interval_ms = 1000;		// signal publish interval (0 = disable) [ms]
 	
 	int error_interval_ms = 1000;		// error retry interval [ms]

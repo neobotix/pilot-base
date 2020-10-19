@@ -72,6 +72,15 @@ void SerialPort::handle(std::shared_ptr<const DataPacket> value)
 	}
 }
 
+bool SerialPort::vnx_shutdown()
+{
+	if(shutdown_delay_ms <= 0) {
+		return true;
+	}
+	set_timeout_millis(shutdown_delay_ms, std::bind(&SerialPort::exit, this));
+	return false;
+}
+
 void SerialPort::read_loop(const vnx::Hash64 module_addr) const
 {
 	SerialPortClient client(module_addr);
