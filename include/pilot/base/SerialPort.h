@@ -46,7 +46,7 @@ private:
 
 private:
 #ifdef _WIN32
-	void* m_fd = -1;
+	void* m_fd = (void*)-1;
 #else
 	std::atomic<int> m_fd {-1};
 #endif
