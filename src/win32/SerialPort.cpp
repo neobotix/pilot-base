@@ -7,6 +7,8 @@
 
 #include <pilot/base/SerialPort.h>
 
+#include <windows.h>
+
 
 namespace pilot {
 namespace base {
