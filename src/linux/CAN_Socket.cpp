@@ -33,7 +33,7 @@ CAN_Socket::CAN_Socket(const std::string& iface)
 	}
 
 	ifreq ifr = {};
-	::strncpy(ifr.ifr_name, iface.c_str(), IFNAMSIZ);
+	::strncpy(ifr.ifr_name, iface.c_str(), IFNAMSIZ - 1);
 	if(::ioctl(sock, SIOCGIFINDEX, &ifr) < 0) {
 		throw std::runtime_error("ioctl() failed!");
 	}
