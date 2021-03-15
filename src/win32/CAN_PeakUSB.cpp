@@ -8,6 +8,8 @@
 #include <pilot/base/CAN_PeakUSB.h>
 #include <vnx/Time.h>
 
+#include <thread>
+#include <chrono>
 
 
 namespace pilot {
@@ -76,20 +78,24 @@ bool CAN_PeakUSB::read(CAN_Frame &frame, int timeout_ms){
 	TPCMsg.MSGTYPE = 0;
 	TPCMsg.ID = 0;
 
-	int ret = pfCAN_Read(m_pcanHandle, &TPCMsg, NULL);
-	if (ret == PCAN_ERROR_QRCVEMPTY || TPCMsg.MSGTYPE == PCAN_MESSAGE_STATUS){
+	const int ret = pfCAN_Read(m_pcanHandle, &TPCMsg, NULL);
+	if(ret != PCAN_ERROR_OK){
+		std::this_thread::sleep_for(std::chono::microseconds(1000));
 		return false;
 	}
 
-
-	frame.time = vnx::get_time_micros();
-	frame.id = TPCMsg.ID;
-	frame.size = TPCMsg.LEN;
-	for(size_t i=0; i<8; i++){
-		frame.data[i] = TPCMsg.DATA[i];
+	switch(TPCMsg.MSGTYPE) {
+		case PCAN_MESSAGE_STANDARD:
+		case PCAN_MESSAGE_EXTENDED:
+			frame.time = vnx::get_time_micros();
+			frame.id = TPCMsg.ID;
+			frame.size = TPCMsg.LEN;
+			for(size_t i=0; i<8; i++){
+				frame.data[i] = TPCMsg.DATA[i];
+			}
+			return true;
 	}
-
-	return true;
+	return false;
 }
 
 void CAN_PeakUSB::write(const CAN_Frame& frame){
@@ -103,7 +109,7 @@ void CAN_PeakUSB::write(const CAN_Frame& frame){
 	}
 
 	pfCAN_Write(m_pcanHandle, &TPCMsg);
-	pfCAN_Status(m_pcanHandle);
+//	pfCAN_Status(m_pcanHandle);
 }
 
 
