@@ -80,7 +80,7 @@ bool CAN_PeakUSB::read(CAN_Frame &frame, int timeout_ms){
 
 	const int ret = pfCAN_Read(m_pcanHandle, &TPCMsg, NULL);
 	if(ret != PCAN_ERROR_OK){
-		std::this_thread::sleep_for(std::chono::microseconds(1000));
+		std::this_thread::sleep_for(std::chrono::microseconds(1000));
 		return false;
 	}
 
