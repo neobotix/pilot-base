@@ -37,7 +37,7 @@ private:
 	typedef TPCANStatus(__stdcall fCAN_Close)(TPCANHandle);
 	typedef TPCANStatus(__stdcall fCAN_Reset)(TPCANHandle);
 	typedef TPCANStatus(__stdcall fCAN_Status)(TPCANHandle);
-	//typedef TPCANStatus(__stdcall fCAN_GetErrorText)(TPCANStatus, WORD, LPSTR);
+	typedef TPCANStatus(__stdcall fCAN_SetValue)(TPCANHandle, TPCANParameter, void*, WORD);
 
 	fCAN_Init* pfCAN_Init;
 	fCAN_InitFD* pfCAN_InitFD;
@@ -46,11 +46,12 @@ private:
 	fCAN_Close* pfCAN_Close;
 	fCAN_Status* pfCAN_Status;
 	fCAN_Reset* pfCAN_Reset;
-	//fCAN_GetErrorText* pfCAN_GetErrorText;
+	fCAN_SetValue *pfCAN_SetValue;
 
 	TPCANHandle m_pcanHandle;
 	HINSTANCE m_hInstance;
 	bool m_initialized = false;
+	HANDLE m_event_read;
 };
 
 

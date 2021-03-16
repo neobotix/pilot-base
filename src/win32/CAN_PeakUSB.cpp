@@ -30,7 +30,7 @@ CAN_PeakUSB::CAN_PeakUSB(int baud_rate){
 	pfCAN_Reset = (fCAN_Reset*)GetProcAddress(m_hInstance, "CAN_Reset");
 	pfCAN_Status = (fCAN_Status*)GetProcAddress(m_hInstance, "CAN_GetStatus");
 	pfCAN_InitFD = (fCAN_InitFD*)GetProcAddress(m_hInstance, "CAN_InitializeFD");
-	//pfCAN_GetErrorText = (fCAN_GetErrorText*)GetProcAddress(hInstance, "CAN_GetErrorText");
+	pfCAN_SetValue = (fCAN_SetValue*)GetProcAddress(m_hInstance, "CAN_SetValue");
 
 
 	int ret = PCAN_ERROR_OK;
@@ -58,6 +58,17 @@ CAN_PeakUSB::CAN_PeakUSB(int baud_rate){
 		throw std::runtime_error("CAN initialization error: " + std::to_string(ret));
 	}
 
+	m_event_read = CreateEvent(NULL, FALSE, FALSE, NULL);
+	if(m_event_read == NULL){
+		throw std::runtime_error("CreateEvent() failed with:" + std::to_string(GetLastError()));
+	}
+	ret = pfCAN_SetValue(m_pcanHandle, PCAN_RECEIVE_EVENT, &m_event_read, sizeof(m_event_read));
+	if(ret != PCAN_ERROR_OK){
+		CloseHandle(m_event_read);
+		m_event_read = NULL;
+		throw std::runtime_error("Setting of event handle failed with: " + std::to_string(ret));
+	}
+
 	m_initialized = true;
 }
 
@@ -68,19 +79,29 @@ CAN_PeakUSB::~CAN_PeakUSB(){
 
 
 void CAN_PeakUSB::close(){
-	pfCAN_Close(m_pcanHandle);
+	if(m_initialized){
+		pfCAN_Close(m_pcanHandle);
+		CloseHandle(m_event_read);
+	}
 	m_initialized = false;
 }
 
 bool CAN_PeakUSB::read(CAN_Frame &frame, int timeout_ms){
+	if(!m_initialized){
+		std::this_thread::sleep_for(std::chrono::milliseconds(timeout_ms));
+		return false;
+	}
+
 	TPCANMsg TPCMsg;
 	TPCMsg.LEN = 8;
 	TPCMsg.MSGTYPE = 0;
 	TPCMsg.ID = 0;
 
-	const int ret = pfCAN_Read(m_pcanHandle, &TPCMsg, NULL);
+	int ret = pfCAN_Read(m_pcanHandle, &TPCMsg, NULL);
+	if(ret == PCAN_ERROR_QRCVEMPTY && WaitForSingleObject(m_event_read, timeout_ms) != WAIT_TIMEOUT){
+		ret = pfCAN_Read(m_pcanHandle, &TPCMsg, NULL);
+	}
 	if(ret != PCAN_ERROR_OK){
-		std::this_thread::sleep_for(std::chrono::microseconds(1000));
 		return false;
 	}
 
@@ -99,6 +120,8 @@ bool CAN_PeakUSB::read(CAN_Frame &frame, int timeout_ms){
 }
 
 void CAN_PeakUSB::write(const CAN_Frame& frame){
+	if(!m_initialized) return;
+
 	TPCANMsg TPCMsg;
 
 	TPCMsg.LEN = frame.size;
@@ -109,7 +132,6 @@ void CAN_PeakUSB::write(const CAN_Frame& frame){
 	}
 
 	pfCAN_Write(m_pcanHandle, &TPCMsg);
-//	pfCAN_Status(m_pcanHandle);
 }
 
 
