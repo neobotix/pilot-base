@@ -33,10 +33,12 @@ public:
 	static const vnx::Hash64 VNX_TYPE_HASH;
 	static const vnx::Hash64 VNX_CODE_HASH;
 	
+	static constexpr uint64_t VNX_TYPE_ID = 0x34145bbaf1d9d037ull;
+	
 	SerialPortBase(const std::string& _vnx_name);
 	
 	vnx::Hash64 get_type_hash() const override;
-	const char* get_type_name() const override;
+	std::string get_type_name() const override;
 	const vnx::TypeCode* get_type_code() const override;
 	
 	void read(std::istream& _in) override;
@@ -57,11 +59,13 @@ public:
 	static std::shared_ptr<vnx::TypeCode> static_create_type_code();
 	
 protected:
+	using Super::handle;
+	
 	virtual void open_port() = 0;
 	virtual void close_port() = 0;
 	virtual void handle(std::shared_ptr<const ::pilot::base::DataPacket> _value) {}
 	
-	void vnx_handle_switch(std::shared_ptr<const vnx::Sample> _sample) override;
+	void vnx_handle_switch(std::shared_ptr<const vnx::Value> _value) override;
 	std::shared_ptr<vnx::Value> vnx_call_switch(std::shared_ptr<const vnx::Value> _method, const vnx::request_id_t& _request_id) override;
 	
 };
@@ -69,5 +73,10 @@ protected:
 
 } // namespace pilot
 } // namespace base
+
+
+namespace vnx {
+
+} // vnx
 
 #endif // INCLUDE_pilot_base_SerialPortBase_HXX_

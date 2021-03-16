@@ -20,7 +20,7 @@ vnx::Hash64 SerialPort_close_port::get_type_hash() const {
 	return VNX_TYPE_HASH;
 }
 
-const char* SerialPort_close_port::get_type_name() const {
+std::string SerialPort_close_port::get_type_name() const {
 	return "pilot.base.SerialPort.close_port";
 }
 
@@ -56,8 +56,9 @@ void SerialPort_close_port::write(std::ostream& _out) const {
 }
 
 void SerialPort_close_port::read(std::istream& _in) {
-	std::map<std::string, std::string> _object;
-	vnx::read_object(_in, _object);
+	if(auto _json = vnx::read_json(_in)) {
+		from_object(_json->to_object());
+	}
 }
 
 vnx::Object SerialPort_close_port::to_object() const {
@@ -98,13 +99,14 @@ const vnx::TypeCode* SerialPort_close_port::static_get_type_code() {
 }
 
 std::shared_ptr<vnx::TypeCode> SerialPort_close_port::static_create_type_code() {
-	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
+	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.base.SerialPort.close_port";
 	type_code->type_hash = vnx::Hash64(0x325a9542af22132full);
 	type_code->code_hash = vnx::Hash64(0xcaa93efea332564dull);
 	type_code->is_native = true;
 	type_code->is_class = true;
 	type_code->is_method = true;
+	type_code->native_size = sizeof(::pilot::base::SerialPort_close_port);
 	type_code->create_value = []() -> std::shared_ptr<vnx::Value> { return std::make_shared<SerialPort_close_port>(); };
 	type_code->return_type = ::pilot::base::SerialPort_close_port_return::static_get_type_code();
 	type_code->build();
@@ -135,18 +137,22 @@ void read(TypeInput& in, ::pilot::base::SerialPort_close_port& value, const Type
 		}
 	}
 	if(!type_code) {
-		throw std::logic_error("read(): type_code == 0");
+		vnx::skip(in, type_code, code);
+		return;
 	}
 	if(code) {
 		switch(code[0]) {
 			case CODE_STRUCT: type_code = type_code->depends[code[1]]; break;
 			case CODE_ALT_STRUCT: type_code = type_code->depends[vnx::flip_bytes(code[1])]; break;
-			default: vnx::skip(in, type_code, code); return;
+			default: {
+				vnx::skip(in, type_code, code);
+				return;
+			}
 		}
 	}
 	if(type_code->is_matched) {
 	}
-	for(const vnx::TypeField* _field : type_code->ext_fields) {
+	for(const auto* _field : type_code->ext_fields) {
 		switch(_field->native_index) {
 			default: vnx::skip(in, type_code, _field->code.data());
 		}
@@ -163,7 +169,7 @@ void write(TypeOutput& out, const ::pilot::base::SerialPort_close_port& value, c
 		out.write_type_code(type_code);
 		vnx::write_class_header<::pilot::base::SerialPort_close_port>(out);
 	}
-	if(code && code[0] == CODE_STRUCT) {
+	else if(code && code[0] == CODE_STRUCT) {
 		type_code = type_code->depends[code[1]];
 	}
 }

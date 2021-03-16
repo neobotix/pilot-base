@@ -17,8 +17,63 @@
 #include <pilot/base/UDP_Receiver_open_port_return.hxx>
 #include <pilot/base/can_adapter_e.hxx>
 
+#include <pilot/base/package.hxx>
 #include <vnx/vnx.h>
 
+
+
+namespace vnx {
+
+void type<::pilot::base::CAN_Frame>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::CAN_Frame());
+}
+
+void type<::pilot::base::DataPacket>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::DataPacket());
+}
+
+void type<::pilot::base::SerialPort_close_port>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::SerialPort_close_port());
+}
+
+void type<::pilot::base::SerialPort_close_port_return>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::SerialPort_close_port_return());
+}
+
+void type<::pilot::base::SerialPort_open_port>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::SerialPort_open_port());
+}
+
+void type<::pilot::base::SerialPort_open_port_return>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::SerialPort_open_port_return());
+}
+
+void type<::pilot::base::SocketSignal>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::SocketSignal());
+}
+
+void type<::pilot::base::UDP_Receiver_close_port>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::UDP_Receiver_close_port());
+}
+
+void type<::pilot::base::UDP_Receiver_close_port_return>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::UDP_Receiver_close_port_return());
+}
+
+void type<::pilot::base::UDP_Receiver_open_port>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::UDP_Receiver_open_port());
+}
+
+void type<::pilot::base::UDP_Receiver_open_port_return>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::UDP_Receiver_open_port_return());
+}
+
+void type<::pilot::base::can_adapter_e>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::can_adapter_e());
+}
+
+
+} // namespace vnx
 
 
 namespace pilot {

@@ -10,20 +10,24 @@
 #include <pilot/base/SerialPort_open_port.hxx>
 #include <pilot/base/SerialPort_open_port_return.hxx>
 #include <vnx/Module.h>
-#include <vnx/ModuleInterface_vnx_close.hxx>
-#include <vnx/ModuleInterface_vnx_close_return.hxx>
 #include <vnx/ModuleInterface_vnx_get_config.hxx>
+#include <vnx/ModuleInterface_vnx_get_config_return.hxx>
 #include <vnx/ModuleInterface_vnx_get_config_object.hxx>
 #include <vnx/ModuleInterface_vnx_get_config_object_return.hxx>
-#include <vnx/ModuleInterface_vnx_get_config_return.hxx>
+#include <vnx/ModuleInterface_vnx_get_module_info.hxx>
+#include <vnx/ModuleInterface_vnx_get_module_info_return.hxx>
 #include <vnx/ModuleInterface_vnx_get_type_code.hxx>
 #include <vnx/ModuleInterface_vnx_get_type_code_return.hxx>
 #include <vnx/ModuleInterface_vnx_restart.hxx>
 #include <vnx/ModuleInterface_vnx_restart_return.hxx>
+#include <vnx/ModuleInterface_vnx_self_test.hxx>
+#include <vnx/ModuleInterface_vnx_self_test_return.hxx>
 #include <vnx/ModuleInterface_vnx_set_config.hxx>
+#include <vnx/ModuleInterface_vnx_set_config_return.hxx>
 #include <vnx/ModuleInterface_vnx_set_config_object.hxx>
 #include <vnx/ModuleInterface_vnx_set_config_object_return.hxx>
-#include <vnx/ModuleInterface_vnx_set_config_return.hxx>
+#include <vnx/ModuleInterface_vnx_stop.hxx>
+#include <vnx/ModuleInterface_vnx_stop_return.hxx>
 #include <vnx/TopicPtr.hpp>
 
 #include <vnx/vnx.h>
@@ -39,16 +43,16 @@ const vnx::Hash64 SerialPortBase::VNX_CODE_HASH(0x86d6b8c021940973ull);
 SerialPortBase::SerialPortBase(const std::string& _vnx_name)
 	:	Module::Module(_vnx_name)
 {
-	vnx::read_config(vnx_name + ".baud_rate", baud_rate);
-	vnx::read_config(vnx_name + ".error_interval_ms", error_interval_ms);
 	vnx::read_config(vnx_name + ".input", input);
 	vnx::read_config(vnx_name + ".output", output);
 	vnx::read_config(vnx_name + ".output_signals", output_signals);
 	vnx::read_config(vnx_name + ".port", port);
+	vnx::read_config(vnx_name + ".baud_rate", baud_rate);
 	vnx::read_config(vnx_name + ".raw_mode", raw_mode);
 	vnx::read_config(vnx_name + ".read_timeout_ms", read_timeout_ms);
 	vnx::read_config(vnx_name + ".shutdown_delay_ms", shutdown_delay_ms);
 	vnx::read_config(vnx_name + ".signal_interval_ms", signal_interval_ms);
+	vnx::read_config(vnx_name + ".error_interval_ms", error_interval_ms);
 	vnx::read_config(vnx_name + ".stats_interval_ms", stats_interval_ms);
 }
 
@@ -56,7 +60,7 @@ vnx::Hash64 SerialPortBase::get_type_hash() const {
 	return VNX_TYPE_HASH;
 }
 
-const char* SerialPortBase::get_type_name() const {
+std::string SerialPortBase::get_type_name() const {
 	return "pilot.base.SerialPort";
 }
 
@@ -98,37 +102,14 @@ void SerialPortBase::write(std::ostream& _out) const {
 }
 
 void SerialPortBase::read(std::istream& _in) {
-	std::map<std::string, std::string> _object;
-	vnx::read_object(_in, _object);
-	for(const auto& _entry : _object) {
-		if(_entry.first == "baud_rate") {
-			vnx::from_string(_entry.second, baud_rate);
-		} else if(_entry.first == "error_interval_ms") {
-			vnx::from_string(_entry.second, error_interval_ms);
-		} else if(_entry.first == "input") {
-			vnx::from_string(_entry.second, input);
-		} else if(_entry.first == "output") {
-			vnx::from_string(_entry.second, output);
-		} else if(_entry.first == "output_signals") {
-			vnx::from_string(_entry.second, output_signals);
-		} else if(_entry.first == "port") {
-			vnx::from_string(_entry.second, port);
-		} else if(_entry.first == "raw_mode") {
-			vnx::from_string(_entry.second, raw_mode);
-		} else if(_entry.first == "read_timeout_ms") {
-			vnx::from_string(_entry.second, read_timeout_ms);
-		} else if(_entry.first == "shutdown_delay_ms") {
-			vnx::from_string(_entry.second, shutdown_delay_ms);
-		} else if(_entry.first == "signal_interval_ms") {
-			vnx::from_string(_entry.second, signal_interval_ms);
-		} else if(_entry.first == "stats_interval_ms") {
-			vnx::from_string(_entry.second, stats_interval_ms);
-		}
+	if(auto _json = vnx::read_json(_in)) {
+		from_object(_json->to_object());
 	}
 }
 
 vnx::Object SerialPortBase::to_object() const {
 	vnx::Object _object;
+	_object["__type"] = "pilot.base.SerialPort";
 	_object["input"] = input;
 	_object["output"] = output;
 	_object["output_signals"] = output_signals;
@@ -257,84 +238,94 @@ const vnx::TypeCode* SerialPortBase::static_get_type_code() {
 }
 
 std::shared_ptr<vnx::TypeCode> SerialPortBase::static_create_type_code() {
-	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
+	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.base.SerialPort";
 	type_code->type_hash = vnx::Hash64(0x34145bbaf1d9d037ull);
 	type_code->code_hash = vnx::Hash64(0x86d6b8c021940973ull);
 	type_code->is_native = true;
-	type_code->methods.resize(9);
+	type_code->native_size = sizeof(::pilot::base::SerialPortBase);
+	type_code->methods.resize(11);
 	type_code->methods[0] = ::vnx::ModuleInterface_vnx_get_config_object::static_get_type_code();
 	type_code->methods[1] = ::vnx::ModuleInterface_vnx_get_config::static_get_type_code();
 	type_code->methods[2] = ::vnx::ModuleInterface_vnx_set_config_object::static_get_type_code();
 	type_code->methods[3] = ::vnx::ModuleInterface_vnx_set_config::static_get_type_code();
 	type_code->methods[4] = ::vnx::ModuleInterface_vnx_get_type_code::static_get_type_code();
-	type_code->methods[5] = ::vnx::ModuleInterface_vnx_restart::static_get_type_code();
-	type_code->methods[6] = ::vnx::ModuleInterface_vnx_close::static_get_type_code();
-	type_code->methods[7] = ::pilot::base::SerialPort_open_port::static_get_type_code();
-	type_code->methods[8] = ::pilot::base::SerialPort_close_port::static_get_type_code();
+	type_code->methods[5] = ::vnx::ModuleInterface_vnx_get_module_info::static_get_type_code();
+	type_code->methods[6] = ::vnx::ModuleInterface_vnx_restart::static_get_type_code();
+	type_code->methods[7] = ::vnx::ModuleInterface_vnx_stop::static_get_type_code();
+	type_code->methods[8] = ::vnx::ModuleInterface_vnx_self_test::static_get_type_code();
+	type_code->methods[9] = ::pilot::base::SerialPort_open_port::static_get_type_code();
+	type_code->methods[10] = ::pilot::base::SerialPort_close_port::static_get_type_code();
 	type_code->fields.resize(11);
 	{
-		vnx::TypeField& field = type_code->fields[0];
+		auto& field = type_code->fields[0];
 		field.is_extended = true;
 		field.name = "input";
 		field.code = {12, 5};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[1];
+		auto& field = type_code->fields[1];
 		field.is_extended = true;
 		field.name = "output";
 		field.code = {12, 5};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[2];
+		auto& field = type_code->fields[2];
 		field.is_extended = true;
 		field.name = "output_signals";
 		field.code = {12, 5};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[3];
+		auto& field = type_code->fields[3];
 		field.is_extended = true;
 		field.name = "port";
 		field.code = {32};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[4];
+		auto& field = type_code->fields[4];
+		field.data_size = 4;
 		field.name = "baud_rate";
 		field.value = vnx::to_string(115200);
 		field.code = {7};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[5];
+		auto& field = type_code->fields[5];
+		field.data_size = 1;
 		field.name = "raw_mode";
 		field.value = vnx::to_string(true);
 		field.code = {31};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[6];
+		auto& field = type_code->fields[6];
+		field.data_size = 4;
 		field.name = "read_timeout_ms";
 		field.value = vnx::to_string(200);
 		field.code = {7};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[7];
+		auto& field = type_code->fields[7];
+		field.data_size = 4;
 		field.name = "shutdown_delay_ms";
 		field.value = vnx::to_string(200);
 		field.code = {7};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[8];
+		auto& field = type_code->fields[8];
+		field.data_size = 4;
 		field.name = "signal_interval_ms";
 		field.value = vnx::to_string(1000);
 		field.code = {7};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[9];
+		auto& field = type_code->fields[9];
+		field.data_size = 4;
 		field.name = "error_interval_ms";
 		field.value = vnx::to_string(1000);
 		field.code = {7};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[10];
+		auto& field = type_code->fields[10];
+		field.data_size = 4;
 		field.name = "stats_interval_ms";
 		field.value = vnx::to_string(10000);
 		field.code = {7};
@@ -343,93 +334,91 @@ std::shared_ptr<vnx::TypeCode> SerialPortBase::static_create_type_code() {
 	return type_code;
 }
 
-void SerialPortBase::vnx_handle_switch(std::shared_ptr<const vnx::Sample> _sample) {
-	{
-		auto _value = std::dynamic_pointer_cast<const ::pilot::base::DataPacket>(_sample->value);
-		if(_value) {
-			handle(_value);
-			return;
+void SerialPortBase::vnx_handle_switch(std::shared_ptr<const vnx::Value> _value) {
+	const auto* _type_code = _value->get_type_code();
+	while(_type_code) {
+		switch(_type_code->type_hash) {
+			case 0xcd0d2bd202ac0fb0ull:
+				handle(std::static_pointer_cast<const ::pilot::base::DataPacket>(_value));
+				return;
+			default:
+				_type_code = _type_code->super;
 		}
 	}
+	handle(std::static_pointer_cast<const vnx::Value>(_value));
 }
 
 std::shared_ptr<vnx::Value> SerialPortBase::vnx_call_switch(std::shared_ptr<const vnx::Value> _method, const vnx::request_id_t& _request_id) {
-	const auto _type_hash = _method->get_type_hash();
-	if(_type_hash == vnx::Hash64(0x17f58f68bf83abc0ull)) {
-		auto _args = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_get_config_object>(_method);
-		if(!_args) {
-			throw std::logic_error("vnx_call_switch(): !_args");
+	switch(_method->get_type_hash()) {
+		case 0x17f58f68bf83abc0ull: {
+			auto _args = std::static_pointer_cast<const ::vnx::ModuleInterface_vnx_get_config_object>(_method);
+			auto _return_value = ::vnx::ModuleInterface_vnx_get_config_object_return::create();
+			_return_value->_ret_0 = vnx_get_config_object();
+			return _return_value;
 		}
-		auto _return_value = ::vnx::ModuleInterface_vnx_get_config_object_return::create();
-		_return_value->_ret_0 = vnx_get_config_object();
-		return _return_value;
-	} else if(_type_hash == vnx::Hash64(0xbbc7f1a01044d294ull)) {
-		auto _args = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_get_config>(_method);
-		if(!_args) {
-			throw std::logic_error("vnx_call_switch(): !_args");
+		case 0xbbc7f1a01044d294ull: {
+			auto _args = std::static_pointer_cast<const ::vnx::ModuleInterface_vnx_get_config>(_method);
+			auto _return_value = ::vnx::ModuleInterface_vnx_get_config_return::create();
+			_return_value->_ret_0 = vnx_get_config(_args->name);
+			return _return_value;
 		}
-		auto _return_value = ::vnx::ModuleInterface_vnx_get_config_return::create();
-		_return_value->_ret_0 = vnx_get_config(_args->name);
-		return _return_value;
-	} else if(_type_hash == vnx::Hash64(0xca30f814f17f322full)) {
-		auto _args = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_set_config_object>(_method);
-		if(!_args) {
-			throw std::logic_error("vnx_call_switch(): !_args");
+		case 0xca30f814f17f322full: {
+			auto _args = std::static_pointer_cast<const ::vnx::ModuleInterface_vnx_set_config_object>(_method);
+			auto _return_value = ::vnx::ModuleInterface_vnx_set_config_object_return::create();
+			vnx_set_config_object(_args->config);
+			return _return_value;
 		}
-		auto _return_value = ::vnx::ModuleInterface_vnx_set_config_object_return::create();
-		vnx_set_config_object(_args->config);
-		return _return_value;
-	} else if(_type_hash == vnx::Hash64(0x362aac91373958b7ull)) {
-		auto _args = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_set_config>(_method);
-		if(!_args) {
-			throw std::logic_error("vnx_call_switch(): !_args");
+		case 0x362aac91373958b7ull: {
+			auto _args = std::static_pointer_cast<const ::vnx::ModuleInterface_vnx_set_config>(_method);
+			auto _return_value = ::vnx::ModuleInterface_vnx_set_config_return::create();
+			vnx_set_config(_args->name, _args->value);
+			return _return_value;
 		}
-		auto _return_value = ::vnx::ModuleInterface_vnx_set_config_return::create();
-		vnx_set_config(_args->name, _args->value);
-		return _return_value;
-	} else if(_type_hash == vnx::Hash64(0x305ec4d628960e5dull)) {
-		auto _args = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_get_type_code>(_method);
-		if(!_args) {
-			throw std::logic_error("vnx_call_switch(): !_args");
+		case 0x305ec4d628960e5dull: {
+			auto _args = std::static_pointer_cast<const ::vnx::ModuleInterface_vnx_get_type_code>(_method);
+			auto _return_value = ::vnx::ModuleInterface_vnx_get_type_code_return::create();
+			_return_value->_ret_0 = vnx_get_type_code();
+			return _return_value;
 		}
-		auto _return_value = ::vnx::ModuleInterface_vnx_get_type_code_return::create();
-		_return_value->_ret_0 = vnx_get_type_code();
-		return _return_value;
-	} else if(_type_hash == vnx::Hash64(0x9e95dc280cecca1bull)) {
-		auto _args = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_restart>(_method);
-		if(!_args) {
-			throw std::logic_error("vnx_call_switch(): !_args");
+		case 0xf6d82bdf66d034a1ull: {
+			auto _args = std::static_pointer_cast<const ::vnx::ModuleInterface_vnx_get_module_info>(_method);
+			auto _return_value = ::vnx::ModuleInterface_vnx_get_module_info_return::create();
+			_return_value->_ret_0 = vnx_get_module_info();
+			return _return_value;
 		}
-		auto _return_value = ::vnx::ModuleInterface_vnx_restart_return::create();
-		vnx_restart();
-		return _return_value;
-	} else if(_type_hash == vnx::Hash64(0x9e165e2b50bad84bull)) {
-		auto _args = std::dynamic_pointer_cast<const ::vnx::ModuleInterface_vnx_close>(_method);
-		if(!_args) {
-			throw std::logic_error("vnx_call_switch(): !_args");
+		case 0x9e95dc280cecca1bull: {
+			auto _args = std::static_pointer_cast<const ::vnx::ModuleInterface_vnx_restart>(_method);
+			auto _return_value = ::vnx::ModuleInterface_vnx_restart_return::create();
+			vnx_restart();
+			return _return_value;
 		}
-		auto _return_value = ::vnx::ModuleInterface_vnx_close_return::create();
-		vnx_close();
-		return _return_value;
-	} else if(_type_hash == vnx::Hash64(0xf8db604b35c6b25dull)) {
-		auto _args = std::dynamic_pointer_cast<const ::pilot::base::SerialPort_open_port>(_method);
-		if(!_args) {
-			throw std::logic_error("vnx_call_switch(): !_args");
+		case 0x7ab49ce3d1bfc0d2ull: {
+			auto _args = std::static_pointer_cast<const ::vnx::ModuleInterface_vnx_stop>(_method);
+			auto _return_value = ::vnx::ModuleInterface_vnx_stop_return::create();
+			vnx_stop();
+			return _return_value;
 		}
-		auto _return_value = ::pilot::base::SerialPort_open_port_return::create();
-		open_port();
-		return _return_value;
-	} else if(_type_hash == vnx::Hash64(0x325a9542af22132full)) {
-		auto _args = std::dynamic_pointer_cast<const ::pilot::base::SerialPort_close_port>(_method);
-		if(!_args) {
-			throw std::logic_error("vnx_call_switch(): !_args");
+		case 0x6ce3775b41a42697ull: {
+			auto _args = std::static_pointer_cast<const ::vnx::ModuleInterface_vnx_self_test>(_method);
+			auto _return_value = ::vnx::ModuleInterface_vnx_self_test_return::create();
+			_return_value->_ret_0 = vnx_self_test();
+			return _return_value;
 		}
-		auto _return_value = ::pilot::base::SerialPort_close_port_return::create();
-		close_port();
-		return _return_value;
+		case 0xf8db604b35c6b25dull: {
+			auto _args = std::static_pointer_cast<const ::pilot::base::SerialPort_open_port>(_method);
+			auto _return_value = ::pilot::base::SerialPort_open_port_return::create();
+			open_port();
+			return _return_value;
+		}
+		case 0x325a9542af22132full: {
+			auto _args = std::static_pointer_cast<const ::pilot::base::SerialPort_close_port>(_method);
+			auto _return_value = ::pilot::base::SerialPort_close_port_return::create();
+			close_port();
+			return _return_value;
+		}
 	}
 	auto _ex = vnx::NoSuchMethod::create();
-	_ex->dst_mac = vnx_request ? vnx_request->dst_mac : 0;
+	_ex->dst_mac = vnx_request ? vnx_request->dst_mac : vnx::Hash64();
 	_ex->method = _method->get_type_name();
 	return _ex;
 }
@@ -458,61 +447,44 @@ void read(TypeInput& in, ::pilot::base::SerialPortBase& value, const TypeCode* t
 		}
 	}
 	if(!type_code) {
-		throw std::logic_error("read(): type_code == 0");
+		vnx::skip(in, type_code, code);
+		return;
 	}
 	if(code) {
 		switch(code[0]) {
 			case CODE_STRUCT: type_code = type_code->depends[code[1]]; break;
 			case CODE_ALT_STRUCT: type_code = type_code->depends[vnx::flip_bytes(code[1])]; break;
-			default: vnx::skip(in, type_code, code); return;
+			default: {
+				vnx::skip(in, type_code, code);
+				return;
+			}
 		}
 	}
 	const char* const _buf = in.read(type_code->total_field_size);
 	if(type_code->is_matched) {
-		{
-			const vnx::TypeField* const _field = type_code->field_map[4];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.baud_rate, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[4]) {
+			vnx::read_value(_buf + _field->offset, value.baud_rate, _field->code.data());
 		}
-		{
-			const vnx::TypeField* const _field = type_code->field_map[5];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.raw_mode, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[5]) {
+			vnx::read_value(_buf + _field->offset, value.raw_mode, _field->code.data());
 		}
-		{
-			const vnx::TypeField* const _field = type_code->field_map[6];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.read_timeout_ms, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[6]) {
+			vnx::read_value(_buf + _field->offset, value.read_timeout_ms, _field->code.data());
 		}
-		{
-			const vnx::TypeField* const _field = type_code->field_map[7];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.shutdown_delay_ms, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[7]) {
+			vnx::read_value(_buf + _field->offset, value.shutdown_delay_ms, _field->code.data());
 		}
-		{
-			const vnx::TypeField* const _field = type_code->field_map[8];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.signal_interval_ms, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[8]) {
+			vnx::read_value(_buf + _field->offset, value.signal_interval_ms, _field->code.data());
 		}
-		{
-			const vnx::TypeField* const _field = type_code->field_map[9];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.error_interval_ms, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[9]) {
+			vnx::read_value(_buf + _field->offset, value.error_interval_ms, _field->code.data());
 		}
-		{
-			const vnx::TypeField* const _field = type_code->field_map[10];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.stats_interval_ms, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[10]) {
+			vnx::read_value(_buf + _field->offset, value.stats_interval_ms, _field->code.data());
 		}
 	}
-	for(const vnx::TypeField* _field : type_code->ext_fields) {
+	for(const auto* _field : type_code->ext_fields) {
 		switch(_field->native_index) {
 			case 0: vnx::read(in, value.input, type_code, _field->code.data()); break;
 			case 1: vnx::read(in, value.output, type_code, _field->code.data()); break;
@@ -533,7 +505,7 @@ void write(TypeOutput& out, const ::pilot::base::SerialPortBase& value, const Ty
 		out.write_type_code(type_code);
 		vnx::write_class_header<::pilot::base::SerialPortBase>(out);
 	}
-	if(code && code[0] == CODE_STRUCT) {
+	else if(code && code[0] == CODE_STRUCT) {
 		type_code = type_code->depends[code[1]];
 	}
 	char* const _buf = out.write(25);

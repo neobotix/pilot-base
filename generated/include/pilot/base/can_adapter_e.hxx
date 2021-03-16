@@ -13,25 +13,29 @@ namespace base {
 
 struct can_adapter_e {
 	
-	enum {
-		PEAKUSB = 373846577,
-		SOCKETCAN = 1771438529,
+	enum enum_t : uint32_t {
+		PEAKUSB = 373846577l,
+		SOCKETCAN = 1771438529l,
 	};
 	
-	uint32_t value = 0;
+	::pilot::base::can_adapter_e::enum_t value = ::pilot::base::can_adapter_e::enum_t(0);
 	
 	static const vnx::Hash64 VNX_TYPE_HASH;
 	static const vnx::Hash64 VNX_CODE_HASH;
 	
+	static constexpr uint64_t VNX_TYPE_ID = 0x7a7d5bef82a9fdfcull;
+	
 	can_adapter_e() {}
-	can_adapter_e(uint32_t _value) { value = _value; }
+	can_adapter_e(const enum_t& _value) { value = _value; }
+	can_adapter_e(const ::pilot::base::can_adapter_e& _other) { value = _other.value; }
 	
 	vnx::Hash64 get_type_hash() const;
-	const char* get_type_name() const;
+	std::string get_type_name() const;
 	const vnx::TypeCode* get_type_code() const;
 	
-	operator uint32_t() const { return value; }
-	can_adapter_e& operator=(uint32_t _value) { value = _value; return *this; }
+	operator enum_t() const { return value; }
+	can_adapter_e& operator=(const enum_t& _value) { value = _value; return *this; }
+	can_adapter_e& operator=(const ::pilot::base::can_adapter_e& _other) { value = _other.value; return *this; }
 	
 	static std::shared_ptr<can_adapter_e> create();
 	std::shared_ptr<can_adapter_e> clone() const;
@@ -43,6 +47,13 @@ struct can_adapter_e {
 	void write(std::ostream& _out) const;
 	
 	void accept(vnx::Visitor& _visitor) const;
+	
+	std::string to_string() const;
+	std::string to_string_value() const;
+	std::string to_string_value_full() const;
+	
+	void from_string(const std::string& str);
+	void from_string_value(const std::string& name);
 	
 	vnx::Object to_object() const;
 	void from_object(const vnx::Object& object);
@@ -61,5 +72,37 @@ struct can_adapter_e {
 
 } // namespace pilot
 } // namespace base
+
+
+namespace vnx {
+
+void read(TypeInput& in, ::pilot::base::can_adapter_e::enum_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+
+void write(TypeOutput& out, const ::pilot::base::can_adapter_e::enum_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+
+template<>
+std::string to_string(const ::pilot::base::can_adapter_e& _value); ///< \private
+
+template<>
+std::string to_string_value(const ::pilot::base::can_adapter_e& _value); ///< \private
+
+template<>
+std::string to_string_value_full(const ::pilot::base::can_adapter_e& _value); ///< \private
+
+template<>
+std::string to_string(const ::pilot::base::can_adapter_e::enum_t& _value); ///< \private
+
+template<>
+std::string to_string_value(const ::pilot::base::can_adapter_e::enum_t& _value); ///< \private
+
+template<>
+std::string to_string_value_full(const ::pilot::base::can_adapter_e::enum_t& _value); ///< \private
+
+template<>
+struct is_equivalent<::pilot::base::can_adapter_e> {
+	bool operator()(const uint16_t* code, const TypeCode* type_code);
+};
+
+} // vnx
 
 #endif // INCLUDE_pilot_base_can_adapter_e_HXX_

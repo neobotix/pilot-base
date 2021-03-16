@@ -12,13 +12,13 @@ namespace base {
 
 
 const vnx::Hash64 can_adapter_e::VNX_TYPE_HASH(0x7a7d5bef82a9fdfcull);
-const vnx::Hash64 can_adapter_e::VNX_CODE_HASH(0x1e15b728affad377ull);
+const vnx::Hash64 can_adapter_e::VNX_CODE_HASH(0xb3cd63f3528d04a2ull);
 
 vnx::Hash64 can_adapter_e::get_type_hash() const {
 	return VNX_TYPE_HASH;
 }
 
-const char* can_adapter_e::get_type_name() const {
+std::string can_adapter_e::get_type_name() const {
 	return "pilot.base.can_adapter_e";
 }
 
@@ -42,6 +42,48 @@ void can_adapter_e::write(vnx::TypeOutput& _out, const vnx::TypeCode* _type_code
 	vnx::write(_out, *this, _type_code, _code);
 }
 
+std::string can_adapter_e::to_string() const {
+	switch(value) {
+		case PEAKUSB: return "\"PEAKUSB\"";
+		case SOCKETCAN: return "\"SOCKETCAN\"";
+	}
+	return std::to_string(value);
+}
+
+std::string can_adapter_e::to_string_value() const {
+	switch(value) {
+		case PEAKUSB: return "PEAKUSB";
+		case SOCKETCAN: return "SOCKETCAN";
+	}
+	return std::to_string(value);
+}
+
+std::string can_adapter_e::to_string_value_full() const {
+	switch(value) {
+		case PEAKUSB: return "pilot.base.can_adapter_e.PEAKUSB";
+		case SOCKETCAN: return "pilot.base.can_adapter_e.SOCKETCAN";
+	}
+	return std::to_string(value);
+}
+
+void can_adapter_e::from_string(const std::string& _str) {
+	std::string _name;
+	vnx::from_string(_str, _name);
+	from_string_value(_name);
+}
+
+void can_adapter_e::from_string_value(const std::string& _name) {
+	vnx::Variant var;
+	vnx::from_string_value(_name, var);
+	if(var.is_string()) {
+		if(_name == "PEAKUSB") value = PEAKUSB;
+		else if(_name == "SOCKETCAN") value = SOCKETCAN;
+		else value = enum_t(vnx::hash64(_name));
+	} else {
+		value = enum_t(std::stoul(_name.c_str(), nullptr, 0));
+	}
+}
+
 void can_adapter_e::accept(vnx::Visitor& _visitor) const {
 	std::string _name;
 	switch(value) {
@@ -60,15 +102,12 @@ void can_adapter_e::write(std::ostream& _out) const {
 }
 
 void can_adapter_e::read(std::istream& _in) {
-	std::string _name;
-	vnx::read(_in, _name);
-	if(_name == "PEAKUSB") value = 373846577;
-	else if(_name == "SOCKETCAN") value = 1771438529;
-	else value = std::atoi(_name.c_str());
+	from_string_value(vnx::read(_in).to_string_value());
 }
 
 vnx::Object can_adapter_e::to_object() const {
 	vnx::Object _object;
+	_object["__type"] = "pilot.base.can_adapter_e";
 	_object["value"] = value;
 	return _object;
 }
@@ -117,16 +156,18 @@ const vnx::TypeCode* can_adapter_e::static_get_type_code() {
 }
 
 std::shared_ptr<vnx::TypeCode> can_adapter_e::static_create_type_code() {
-	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
+	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.base.can_adapter_e";
 	type_code->type_hash = vnx::Hash64(0x7a7d5bef82a9fdfcull);
-	type_code->code_hash = vnx::Hash64(0x1e15b728affad377ull);
+	type_code->code_hash = vnx::Hash64(0xb3cd63f3528d04a2ull);
 	type_code->is_native = true;
 	type_code->is_enum = true;
+	type_code->native_size = sizeof(::pilot::base::can_adapter_e);
 	type_code->create_value = []() -> std::shared_ptr<vnx::Value> { return std::make_shared<vnx::Struct<can_adapter_e>>(); };
 	type_code->fields.resize(1);
 	{
-		vnx::TypeField& field = type_code->fields[0];
+		auto& field = type_code->fields[0];
+		field.data_size = 4;
 		field.name = "value";
 		field.code = {3};
 	}
@@ -165,7 +206,7 @@ void read(TypeInput& in, ::pilot::base::can_adapter_e& value, const TypeCode* ty
 		if(tmp.is_string()) {
 			vnx::from_string(tmp.to_string(), value);
 		} else if(tmp.is_ulong()) {
-			value = ::pilot::base::can_adapter_e(tmp.to<uint32_t>());
+			value = ::pilot::base::can_adapter_e::enum_t(tmp.to<uint32_t>());
 		} else {
 			value = ::pilot::base::can_adapter_e();
 		}
@@ -175,19 +216,19 @@ void read(TypeInput& in, ::pilot::base::can_adapter_e& value, const TypeCode* ty
 		switch(code[0]) {
 			case CODE_STRUCT: type_code = type_code->depends[code[1]]; break;
 			case CODE_ALT_STRUCT: type_code = type_code->depends[vnx::flip_bytes(code[1])]; break;
-			default: vnx::skip(in, type_code, code); return;
+			default: {
+				vnx::skip(in, type_code, code);
+				return;
+			}
 		}
 	}
 	const char* const _buf = in.read(type_code->total_field_size);
 	if(type_code->is_matched) {
-		{
-			const vnx::TypeField* const _field = type_code->field_map[0];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.value, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[0]) {
+			vnx::read_value(_buf + _field->offset, value.value, _field->code.data());
 		}
 	}
-	for(const vnx::TypeField* _field : type_code->ext_fields) {
+	for(const auto* _field : type_code->ext_fields) {
 		switch(_field->native_index) {
 			default: vnx::skip(in, type_code, _field->code.data());
 		}
@@ -204,7 +245,7 @@ void write(TypeOutput& out, const ::pilot::base::can_adapter_e& value, const Typ
 		out.write_type_code(type_code);
 		vnx::write_class_header<::pilot::base::can_adapter_e>(out);
 	}
-	if(code && code[0] == CODE_STRUCT) {
+	else if(code && code[0] == CODE_STRUCT) {
 		type_code = type_code->depends[code[1]];
 	}
 	char* const _buf = out.write(4);
@@ -221,6 +262,54 @@ void write(std::ostream& out, const ::pilot::base::can_adapter_e& value) {
 
 void accept(Visitor& visitor, const ::pilot::base::can_adapter_e& value) {
 	value.accept(visitor);
+}
+
+void read(TypeInput& in, ::pilot::base::can_adapter_e::enum_t& value, const TypeCode* type_code, const uint16_t* code) {
+	uint32_t tmp = 0;
+	vnx::read(in, tmp, type_code, code);
+	value = ::pilot::base::can_adapter_e::enum_t(tmp);
+}
+
+void write(TypeOutput& out, const ::pilot::base::can_adapter_e::enum_t& value, const TypeCode* type_code, const uint16_t* code) {
+	vnx::write(out, uint32_t(value), type_code, code);
+}
+
+template<>
+std::string to_string(const ::pilot::base::can_adapter_e& _value) {
+	return _value.to_string();
+}
+
+template<>
+std::string to_string_value(const ::pilot::base::can_adapter_e& _value) {
+	return _value.to_string_value();
+}
+
+template<>
+std::string to_string_value_full(const ::pilot::base::can_adapter_e& _value) {
+	return _value.to_string_value_full();
+}
+
+template<>
+std::string to_string(const ::pilot::base::can_adapter_e::enum_t& _value) {
+	return ::pilot::base::can_adapter_e(_value).to_string();
+}
+
+template<>
+std::string to_string_value(const ::pilot::base::can_adapter_e::enum_t& _value) {
+	return ::pilot::base::can_adapter_e(_value).to_string_value();
+}
+
+template<>
+std::string to_string_value_full(const ::pilot::base::can_adapter_e::enum_t& _value) {
+	return ::pilot::base::can_adapter_e(_value).to_string_value_full();
+}
+
+bool is_equivalent<::pilot::base::can_adapter_e>::operator()(const uint16_t* code, const TypeCode* type_code) {
+	if(code[0] != CODE_STRUCT || !type_code) {
+		return false;
+	}
+	type_code = type_code->depends[code[1]];
+	return type_code->type_hash == ::pilot::base::can_adapter_e::VNX_TYPE_HASH && type_code->is_equivalent;
 }
 
 } // vnx
