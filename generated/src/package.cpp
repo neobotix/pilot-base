@@ -3,6 +3,8 @@
 
 #include <pilot/base/CAN_Frame.hxx>
 #include <pilot/base/CAN_ProxyBase.hxx>
+#include <pilot/base/CAN_Proxy_send.hxx>
+#include <pilot/base/CAN_Proxy_send_return.hxx>
 #include <pilot/base/DataPacket.hxx>
 #include <pilot/base/SerialPortBase.hxx>
 #include <pilot/base/SerialPort_close_port.hxx>
@@ -28,48 +30,116 @@ void type<::pilot::base::CAN_Frame>::create_dynamic_code(std::vector<uint16_t>& 
 	create_dynamic_code(code, ::pilot::base::CAN_Frame());
 }
 
+void type<::pilot::base::CAN_Frame>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::CAN_Frame& value, bool special) {
+	code.push_back(CODE_OBJECT);
+}
+
+void type<::pilot::base::CAN_Proxy_send>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::CAN_Proxy_send());
+}
+
+void type<::pilot::base::CAN_Proxy_send>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::CAN_Proxy_send& value, bool special) {
+	code.push_back(CODE_OBJECT);
+}
+
+void type<::pilot::base::CAN_Proxy_send_return>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::CAN_Proxy_send_return());
+}
+
+void type<::pilot::base::CAN_Proxy_send_return>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::CAN_Proxy_send_return& value, bool special) {
+	code.push_back(CODE_OBJECT);
+}
+
 void type<::pilot::base::DataPacket>::create_dynamic_code(std::vector<uint16_t>& code) {
 	create_dynamic_code(code, ::pilot::base::DataPacket());
+}
+
+void type<::pilot::base::DataPacket>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::DataPacket& value, bool special) {
+	code.push_back(CODE_OBJECT);
 }
 
 void type<::pilot::base::SerialPort_close_port>::create_dynamic_code(std::vector<uint16_t>& code) {
 	create_dynamic_code(code, ::pilot::base::SerialPort_close_port());
 }
 
+void type<::pilot::base::SerialPort_close_port>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::SerialPort_close_port& value, bool special) {
+	code.push_back(CODE_OBJECT);
+}
+
 void type<::pilot::base::SerialPort_close_port_return>::create_dynamic_code(std::vector<uint16_t>& code) {
 	create_dynamic_code(code, ::pilot::base::SerialPort_close_port_return());
+}
+
+void type<::pilot::base::SerialPort_close_port_return>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::SerialPort_close_port_return& value, bool special) {
+	code.push_back(CODE_OBJECT);
 }
 
 void type<::pilot::base::SerialPort_open_port>::create_dynamic_code(std::vector<uint16_t>& code) {
 	create_dynamic_code(code, ::pilot::base::SerialPort_open_port());
 }
 
+void type<::pilot::base::SerialPort_open_port>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::SerialPort_open_port& value, bool special) {
+	code.push_back(CODE_OBJECT);
+}
+
 void type<::pilot::base::SerialPort_open_port_return>::create_dynamic_code(std::vector<uint16_t>& code) {
 	create_dynamic_code(code, ::pilot::base::SerialPort_open_port_return());
+}
+
+void type<::pilot::base::SerialPort_open_port_return>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::SerialPort_open_port_return& value, bool special) {
+	code.push_back(CODE_OBJECT);
 }
 
 void type<::pilot::base::SocketSignal>::create_dynamic_code(std::vector<uint16_t>& code) {
 	create_dynamic_code(code, ::pilot::base::SocketSignal());
 }
 
+void type<::pilot::base::SocketSignal>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::SocketSignal& value, bool special) {
+	code.push_back(CODE_OBJECT);
+}
+
 void type<::pilot::base::UDP_Receiver_close_port>::create_dynamic_code(std::vector<uint16_t>& code) {
 	create_dynamic_code(code, ::pilot::base::UDP_Receiver_close_port());
+}
+
+void type<::pilot::base::UDP_Receiver_close_port>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::UDP_Receiver_close_port& value, bool special) {
+	code.push_back(CODE_OBJECT);
 }
 
 void type<::pilot::base::UDP_Receiver_close_port_return>::create_dynamic_code(std::vector<uint16_t>& code) {
 	create_dynamic_code(code, ::pilot::base::UDP_Receiver_close_port_return());
 }
 
+void type<::pilot::base::UDP_Receiver_close_port_return>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::UDP_Receiver_close_port_return& value, bool special) {
+	code.push_back(CODE_OBJECT);
+}
+
 void type<::pilot::base::UDP_Receiver_open_port>::create_dynamic_code(std::vector<uint16_t>& code) {
 	create_dynamic_code(code, ::pilot::base::UDP_Receiver_open_port());
+}
+
+void type<::pilot::base::UDP_Receiver_open_port>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::UDP_Receiver_open_port& value, bool special) {
+	code.push_back(CODE_OBJECT);
 }
 
 void type<::pilot::base::UDP_Receiver_open_port_return>::create_dynamic_code(std::vector<uint16_t>& code) {
 	create_dynamic_code(code, ::pilot::base::UDP_Receiver_open_port_return());
 }
 
+void type<::pilot::base::UDP_Receiver_open_port_return>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::UDP_Receiver_open_port_return& value, bool special) {
+	code.push_back(CODE_OBJECT);
+}
+
 void type<::pilot::base::can_adapter_e>::create_dynamic_code(std::vector<uint16_t>& code) {
 	create_dynamic_code(code, ::pilot::base::can_adapter_e());
+}
+
+void type<::pilot::base::can_adapter_e>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::can_adapter_e& value, bool special) {
+	if(!special || value.is_valid()) {
+		code.push_back(CODE_STRING);
+	} else {
+		code.push_back(CODE_UINT32);
+	}
 }
 
 
@@ -83,6 +153,8 @@ namespace base {
 static void register_all_types() {
 	vnx::register_type_code(::pilot::base::CAN_Frame::static_create_type_code());
 	vnx::register_type_code(::pilot::base::CAN_ProxyBase::static_create_type_code());
+	vnx::register_type_code(::pilot::base::CAN_Proxy_send::static_create_type_code());
+	vnx::register_type_code(::pilot::base::CAN_Proxy_send_return::static_create_type_code());
 	vnx::register_type_code(::pilot::base::DataPacket::static_create_type_code());
 	vnx::register_type_code(::pilot::base::SerialPortBase::static_create_type_code());
 	vnx::register_type_code(::pilot::base::SerialPort_close_port::static_create_type_code());
@@ -106,6 +178,8 @@ static struct vnx_static_init {
 
 const vnx::TypeCode* const vnx_native_type_code_CAN_Frame = vnx::get_type_code(vnx::Hash64(0x4d70a2725dc4def6ull));
 const vnx::TypeCode* const vnx_native_type_code_CAN_ProxyBase = vnx::get_type_code(vnx::Hash64(0x17c6e6ba3900a740ull));
+const vnx::TypeCode* const vnx_native_type_code_CAN_Proxy_send = vnx::get_type_code(vnx::Hash64(0xfac9f3d0e6b114e0ull));
+const vnx::TypeCode* const vnx_native_type_code_CAN_Proxy_send_return = vnx::get_type_code(vnx::Hash64(0xd07ac71047b63fedull));
 const vnx::TypeCode* const vnx_native_type_code_DataPacket = vnx::get_type_code(vnx::Hash64(0xcd0d2bd202ac0fb0ull));
 const vnx::TypeCode* const vnx_native_type_code_SerialPortBase = vnx::get_type_code(vnx::Hash64(0x34145bbaf1d9d037ull));
 const vnx::TypeCode* const vnx_native_type_code_SerialPort_close_port = vnx::get_type_code(vnx::Hash64(0x325a9542af22132full));

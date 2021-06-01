@@ -60,6 +60,7 @@ public:
 protected:
 	using Super::handle;
 	
+	virtual void send(const ::pilot::base::CAN_Frame& frame) = 0;
 	virtual void handle(std::shared_ptr<const ::pilot::base::CAN_Frame> _value) {}
 	
 	void vnx_handle_switch(std::shared_ptr<const vnx::Value> _value) override;

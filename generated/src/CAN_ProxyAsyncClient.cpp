@@ -4,6 +4,8 @@
 #include <pilot/base/package.hxx>
 #include <pilot/base/CAN_ProxyAsyncClient.hxx>
 #include <pilot/base/CAN_Frame.hxx>
+#include <pilot/base/CAN_Proxy_send.hxx>
+#include <pilot/base/CAN_Proxy_send_return.hxx>
 #include <pilot/base/can_adapter_e.hxx>
 #include <vnx/Module.h>
 #include <vnx/ModuleInterface_vnx_get_config.hxx>
@@ -155,6 +157,19 @@ uint64_t CAN_ProxyAsyncClient::vnx_self_test(const std::function<void(const vnx:
 	return _request_id;
 }
 
+uint64_t CAN_ProxyAsyncClient::send(const ::pilot::base::CAN_Frame& frame, const std::function<void()>& _callback, const std::function<void(const vnx::exception&)>& _error_callback) {
+	auto _method = ::pilot::base::CAN_Proxy_send::create();
+	_method->frame = frame;
+	const auto _request_id = ++vnx_next_id;
+	{
+		std::lock_guard<std::mutex> _lock(vnx_mutex);
+		vnx_pending[_request_id] = 9;
+		vnx_queue_send[_request_id] = std::make_pair(_callback, _error_callback);
+	}
+	vnx_request(_method, _request_id);
+	return _request_id;
+}
+
 int32_t CAN_ProxyAsyncClient::vnx_purge_request(uint64_t _request_id, const vnx::exception& _ex) {
 	std::unique_lock<std::mutex> _lock(vnx_mutex);
 	const auto _iter = vnx_pending.find(_request_id);
@@ -265,6 +280,18 @@ int32_t CAN_ProxyAsyncClient::vnx_purge_request(uint64_t _request_id, const vnx:
 			if(_iter != vnx_queue_vnx_self_test.end()) {
 				const auto _callback = std::move(_iter->second.second);
 				vnx_queue_vnx_self_test.erase(_iter);
+				_lock.unlock();
+				if(_callback) {
+					_callback(_ex);
+				}
+			}
+			break;
+		}
+		case 9: {
+			const auto _iter = vnx_queue_send.find(_request_id);
+			if(_iter != vnx_queue_send.end()) {
+				const auto _callback = std::move(_iter->second.second);
+				vnx_queue_send.erase(_iter);
 				_lock.unlock();
 				if(_callback) {
 					_callback(_ex);
@@ -429,6 +456,19 @@ int32_t CAN_ProxyAsyncClient::vnx_callback_switch(uint64_t _request_id, std::sha
 				} else {
 					throw std::logic_error("CAN_ProxyAsyncClient: invalid return value");
 				}
+			}
+			break;
+		}
+		case 9: {
+			const auto _iter = vnx_queue_send.find(_request_id);
+			if(_iter == vnx_queue_send.end()) {
+				throw std::runtime_error("CAN_ProxyAsyncClient: callback not found");
+			}
+			const auto _callback = std::move(_iter->second.first);
+			vnx_queue_send.erase(_iter);
+			_lock.unlock();
+			if(_callback) {
+				_callback();
 			}
 			break;
 		}

@@ -46,6 +46,10 @@ public:
 	
 	vnx::bool_t vnx_self_test();
 	
+	void send(const ::pilot::base::CAN_Frame& frame = ::pilot::base::CAN_Frame());
+	
+	void send_async(const ::pilot::base::CAN_Frame& frame = ::pilot::base::CAN_Frame());
+	
 };
 
 

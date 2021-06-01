@@ -4,6 +4,8 @@
 #include <pilot/base/package.hxx>
 #include <pilot/base/CAN_ProxyClient.hxx>
 #include <pilot/base/CAN_Frame.hxx>
+#include <pilot/base/CAN_Proxy_send.hxx>
+#include <pilot/base/CAN_Proxy_send_return.hxx>
 #include <pilot/base/can_adapter_e.hxx>
 #include <vnx/Module.h>
 #include <vnx/ModuleInterface_vnx_get_config.hxx>
@@ -148,6 +150,18 @@ vnx::bool_t CAN_ProxyClient::vnx_self_test() {
 	} else {
 		throw std::logic_error("CAN_ProxyClient: invalid return value");
 	}
+}
+
+void CAN_ProxyClient::send(const ::pilot::base::CAN_Frame& frame) {
+	auto _method = ::pilot::base::CAN_Proxy_send::create();
+	_method->frame = frame;
+	vnx_request(_method, false);
+}
+
+void CAN_ProxyClient::send_async(const ::pilot::base::CAN_Frame& frame) {
+	auto _method = ::pilot::base::CAN_Proxy_send::create();
+	_method->frame = frame;
+	vnx_request(_method, true);
 }
 
 

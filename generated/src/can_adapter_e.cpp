@@ -42,6 +42,14 @@ void can_adapter_e::write(vnx::TypeOutput& _out, const vnx::TypeCode* _type_code
 	vnx::write(_out, *this, _type_code, _code);
 }
 
+vnx::bool_t can_adapter_e::is_valid() const {
+	switch(value) {
+		case PEAKUSB: return true;
+		case SOCKETCAN: return true;
+	}
+	return false;
+}
+
 std::string can_adapter_e::to_string() const {
 	switch(value) {
 		case PEAKUSB: return "\"PEAKUSB\"";
@@ -237,7 +245,11 @@ void read(TypeInput& in, ::pilot::base::can_adapter_e& value, const TypeCode* ty
 
 void write(TypeOutput& out, const ::pilot::base::can_adapter_e& value, const TypeCode* type_code, const uint16_t* code) {
 	if(code && code[0] == CODE_STRING) {
-		vnx::write(out, vnx::to_string_value(value), nullptr, code);
+		vnx::write(out, value.to_string_value(), nullptr, code);
+		return;
+	}
+	if(code && code[0] == CODE_UINT32) {
+		vnx::write(out, value.value, nullptr, code);
 		return;
 	}
 	if(!type_code || (code && code[0] == CODE_ANY)) {

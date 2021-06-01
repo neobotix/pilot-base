@@ -5,6 +5,8 @@
 #include <pilot/base/CAN_ProxyBase.hxx>
 #include <vnx/NoSuchMethod.hxx>
 #include <pilot/base/CAN_Frame.hxx>
+#include <pilot/base/CAN_Proxy_send.hxx>
+#include <pilot/base/CAN_Proxy_send_return.hxx>
 #include <pilot/base/can_adapter_e.hxx>
 #include <vnx/Module.h>
 #include <vnx/ModuleInterface_vnx_get_config.hxx>
@@ -221,7 +223,7 @@ std::shared_ptr<vnx::TypeCode> CAN_ProxyBase::static_create_type_code() {
 	type_code->native_size = sizeof(::pilot::base::CAN_ProxyBase);
 	type_code->depends.resize(1);
 	type_code->depends[0] = ::pilot::base::can_adapter_e::static_get_type_code();
-	type_code->methods.resize(9);
+	type_code->methods.resize(10);
 	type_code->methods[0] = ::vnx::ModuleInterface_vnx_get_config_object::static_get_type_code();
 	type_code->methods[1] = ::vnx::ModuleInterface_vnx_get_config::static_get_type_code();
 	type_code->methods[2] = ::vnx::ModuleInterface_vnx_set_config_object::static_get_type_code();
@@ -231,6 +233,7 @@ std::shared_ptr<vnx::TypeCode> CAN_ProxyBase::static_create_type_code() {
 	type_code->methods[6] = ::vnx::ModuleInterface_vnx_restart::static_get_type_code();
 	type_code->methods[7] = ::vnx::ModuleInterface_vnx_stop::static_get_type_code();
 	type_code->methods[8] = ::vnx::ModuleInterface_vnx_self_test::static_get_type_code();
+	type_code->methods[9] = ::pilot::base::CAN_Proxy_send::static_get_type_code();
 	type_code->fields.resize(9);
 	{
 		auto& field = type_code->fields[0];
@@ -362,6 +365,12 @@ std::shared_ptr<vnx::Value> CAN_ProxyBase::vnx_call_switch(std::shared_ptr<const
 			auto _args = std::static_pointer_cast<const ::vnx::ModuleInterface_vnx_self_test>(_method);
 			auto _return_value = ::vnx::ModuleInterface_vnx_self_test_return::create();
 			_return_value->_ret_0 = vnx_self_test();
+			return _return_value;
+		}
+		case 0xfac9f3d0e6b114e0ull: {
+			auto _args = std::static_pointer_cast<const ::pilot::base::CAN_Proxy_send>(_method);
+			auto _return_value = ::pilot::base::CAN_Proxy_send_return::create();
+			send(_args->frame);
 			return _return_value;
 		}
 	}
