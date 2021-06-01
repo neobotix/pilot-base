@@ -23,6 +23,8 @@ CAN_Proxy::CAN_Proxy(const std::string& _vnx_name)
 
 void CAN_Proxy::init()
 {
+	vnx::open_pipe(vnx_name, this, 10);
+
 	subscribe(input, 10);
 }
 
