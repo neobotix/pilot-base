@@ -20,8 +20,10 @@ public:
 	static const vnx::Hash64 VNX_TYPE_HASH;
 	static const vnx::Hash64 VNX_CODE_HASH;
 	
+	static constexpr uint64_t VNX_TYPE_ID = 0x8efa3a2c8d9bf9edull;
+	
 	vnx::Hash64 get_type_hash() const override;
-	const char* get_type_name() const override;
+	std::string get_type_name() const override;
 	const vnx::TypeCode* get_type_code() const override;
 	
 	static std::shared_ptr<UDP_Receiver_close_port> create();
@@ -52,5 +54,10 @@ public:
 
 } // namespace pilot
 } // namespace base
+
+
+namespace vnx {
+
+} // vnx
 
 #endif // INCLUDE_pilot_base_UDP_Receiver_close_port_HXX_

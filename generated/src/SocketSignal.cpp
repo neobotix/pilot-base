@@ -19,7 +19,7 @@ vnx::Hash64 SocketSignal::get_type_hash() const {
 	return VNX_TYPE_HASH;
 }
 
-const char* SocketSignal::get_type_name() const {
+std::string SocketSignal::get_type_name() const {
 	return "pilot.base.SocketSignal";
 }
 
@@ -63,18 +63,8 @@ void SocketSignal::write(std::ostream& _out) const {
 }
 
 void SocketSignal::read(std::istream& _in) {
-	std::map<std::string, std::string> _object;
-	vnx::read_object(_in, _object);
-	for(const auto& _entry : _object) {
-		if(_entry.first == "is_open") {
-			vnx::from_string(_entry.second, is_open);
-		} else if(_entry.first == "is_readable") {
-			vnx::from_string(_entry.second, is_readable);
-		} else if(_entry.first == "is_writable") {
-			vnx::from_string(_entry.second, is_writable);
-		} else if(_entry.first == "port") {
-			vnx::from_string(_entry.second, port);
-		}
+	if(auto _json = vnx::read_json(_in)) {
+		from_object(_json->to_object());
 	}
 }
 
@@ -153,32 +143,36 @@ const vnx::TypeCode* SocketSignal::static_get_type_code() {
 }
 
 std::shared_ptr<vnx::TypeCode> SocketSignal::static_create_type_code() {
-	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
+	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.base.SocketSignal";
 	type_code->type_hash = vnx::Hash64(0x91f51fd310ed96deull);
 	type_code->code_hash = vnx::Hash64(0xb96779577ebb9c9bull);
 	type_code->is_native = true;
 	type_code->is_class = true;
+	type_code->native_size = sizeof(::pilot::base::SocketSignal);
 	type_code->create_value = []() -> std::shared_ptr<vnx::Value> { return std::make_shared<SocketSignal>(); };
 	type_code->fields.resize(4);
 	{
-		vnx::TypeField& field = type_code->fields[0];
+		auto& field = type_code->fields[0];
 		field.is_extended = true;
 		field.name = "port";
 		field.code = {32};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[1];
+		auto& field = type_code->fields[1];
+		field.data_size = 1;
 		field.name = "is_open";
 		field.code = {31};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[2];
+		auto& field = type_code->fields[2];
+		field.data_size = 1;
 		field.name = "is_readable";
 		field.code = {31};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[3];
+		auto& field = type_code->fields[3];
+		field.data_size = 1;
 		field.name = "is_writable";
 		field.code = {31};
 	}
@@ -210,37 +204,32 @@ void read(TypeInput& in, ::pilot::base::SocketSignal& value, const TypeCode* typ
 		}
 	}
 	if(!type_code) {
-		throw std::logic_error("read(): type_code == 0");
+		vnx::skip(in, type_code, code);
+		return;
 	}
 	if(code) {
 		switch(code[0]) {
 			case CODE_STRUCT: type_code = type_code->depends[code[1]]; break;
 			case CODE_ALT_STRUCT: type_code = type_code->depends[vnx::flip_bytes(code[1])]; break;
-			default: vnx::skip(in, type_code, code); return;
+			default: {
+				vnx::skip(in, type_code, code);
+				return;
+			}
 		}
 	}
 	const char* const _buf = in.read(type_code->total_field_size);
 	if(type_code->is_matched) {
-		{
-			const vnx::TypeField* const _field = type_code->field_map[1];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.is_open, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[1]) {
+			vnx::read_value(_buf + _field->offset, value.is_open, _field->code.data());
 		}
-		{
-			const vnx::TypeField* const _field = type_code->field_map[2];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.is_readable, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[2]) {
+			vnx::read_value(_buf + _field->offset, value.is_readable, _field->code.data());
 		}
-		{
-			const vnx::TypeField* const _field = type_code->field_map[3];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.is_writable, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[3]) {
+			vnx::read_value(_buf + _field->offset, value.is_writable, _field->code.data());
 		}
 	}
-	for(const vnx::TypeField* _field : type_code->ext_fields) {
+	for(const auto* _field : type_code->ext_fields) {
 		switch(_field->native_index) {
 			case 0: vnx::read(in, value.port, type_code, _field->code.data()); break;
 			default: vnx::skip(in, type_code, _field->code.data());
@@ -258,7 +247,7 @@ void write(TypeOutput& out, const ::pilot::base::SocketSignal& value, const Type
 		out.write_type_code(type_code);
 		vnx::write_class_header<::pilot::base::SocketSignal>(out);
 	}
-	if(code && code[0] == CODE_STRUCT) {
+	else if(code && code[0] == CODE_STRUCT) {
 		type_code = type_code->depends[code[1]];
 	}
 	char* const _buf = out.write(3);

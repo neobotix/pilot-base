@@ -19,7 +19,7 @@ vnx::Hash64 DataPacket::get_type_hash() const {
 	return VNX_TYPE_HASH;
 }
 
-const char* DataPacket::get_type_name() const {
+std::string DataPacket::get_type_name() const {
 	return "pilot.base.DataPacket";
 }
 
@@ -59,14 +59,8 @@ void DataPacket::write(std::ostream& _out) const {
 }
 
 void DataPacket::read(std::istream& _in) {
-	std::map<std::string, std::string> _object;
-	vnx::read_object(_in, _object);
-	for(const auto& _entry : _object) {
-		if(_entry.first == "payload") {
-			vnx::from_string(_entry.second, payload);
-		} else if(_entry.first == "time") {
-			vnx::from_string(_entry.second, time);
-		}
+	if(auto _json = vnx::read_json(_in)) {
+		from_object(_json->to_object());
 	}
 }
 
@@ -129,21 +123,23 @@ const vnx::TypeCode* DataPacket::static_get_type_code() {
 }
 
 std::shared_ptr<vnx::TypeCode> DataPacket::static_create_type_code() {
-	std::shared_ptr<vnx::TypeCode> type_code = std::make_shared<vnx::TypeCode>();
+	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.base.DataPacket";
 	type_code->type_hash = vnx::Hash64(0xcd0d2bd202ac0fb0ull);
 	type_code->code_hash = vnx::Hash64(0xa99fba6efbaffb7cull);
 	type_code->is_native = true;
 	type_code->is_class = true;
+	type_code->native_size = sizeof(::pilot::base::DataPacket);
 	type_code->create_value = []() -> std::shared_ptr<vnx::Value> { return std::make_shared<DataPacket>(); };
 	type_code->fields.resize(2);
 	{
-		vnx::TypeField& field = type_code->fields[0];
+		auto& field = type_code->fields[0];
+		field.data_size = 8;
 		field.name = "time";
 		field.code = {8};
 	}
 	{
-		vnx::TypeField& field = type_code->fields[1];
+		auto& field = type_code->fields[1];
 		field.is_extended = true;
 		field.name = "payload";
 		field.code = {12, 1};
@@ -176,25 +172,26 @@ void read(TypeInput& in, ::pilot::base::DataPacket& value, const TypeCode* type_
 		}
 	}
 	if(!type_code) {
-		throw std::logic_error("read(): type_code == 0");
+		vnx::skip(in, type_code, code);
+		return;
 	}
 	if(code) {
 		switch(code[0]) {
 			case CODE_STRUCT: type_code = type_code->depends[code[1]]; break;
 			case CODE_ALT_STRUCT: type_code = type_code->depends[vnx::flip_bytes(code[1])]; break;
-			default: vnx::skip(in, type_code, code); return;
+			default: {
+				vnx::skip(in, type_code, code);
+				return;
+			}
 		}
 	}
 	const char* const _buf = in.read(type_code->total_field_size);
 	if(type_code->is_matched) {
-		{
-			const vnx::TypeField* const _field = type_code->field_map[0];
-			if(_field) {
-				vnx::read_value(_buf + _field->offset, value.time, _field->code.data());
-			}
+		if(const auto* const _field = type_code->field_map[0]) {
+			vnx::read_value(_buf + _field->offset, value.time, _field->code.data());
 		}
 	}
-	for(const vnx::TypeField* _field : type_code->ext_fields) {
+	for(const auto* _field : type_code->ext_fields) {
 		switch(_field->native_index) {
 			case 1: vnx::read(in, value.payload, type_code, _field->code.data()); break;
 			default: vnx::skip(in, type_code, _field->code.data());
@@ -212,7 +209,7 @@ void write(TypeOutput& out, const ::pilot::base::DataPacket& value, const TypeCo
 		out.write_type_code(type_code);
 		vnx::write_class_header<::pilot::base::DataPacket>(out);
 	}
-	if(code && code[0] == CODE_STRUCT) {
+	else if(code && code[0] == CODE_STRUCT) {
 		type_code = type_code->depends[code[1]];
 	}
 	char* const _buf = out.write(8);
