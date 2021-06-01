@@ -21,6 +21,8 @@ module CAN_Proxy {
 	int stats_interval_ms = 10000;			// status message interval (0 = disable) [ms]
 	
 	
+	void send(CAN_Frame frame);
+	
 	void handle(CAN_Frame sample);
 	
 }

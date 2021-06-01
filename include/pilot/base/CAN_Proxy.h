@@ -24,6 +24,8 @@ protected:
 
 	void main() override;
 	
+	void send(const CAN_Frame& frame) override;
+
 	void handle(std::shared_ptr<const CAN_Frame> value) override;
 	
 	bool vnx_shutdown() override;
@@ -37,6 +39,7 @@ private:
 	
 	int64_t num_read = 0;
 	int64_t num_write = 0;
+	int64_t num_write_fail = 0;
 	
 };
 

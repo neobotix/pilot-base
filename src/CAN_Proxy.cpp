@@ -41,7 +41,7 @@ void CAN_Proxy::main()
 		break;
 #endif
 	default:
-		throw std::runtime_error("Can adapter not available on this platform");
+		throw std::runtime_error("CAN adapter not available on this platform");
 	}
 
 	std::thread thread(&CAN_Proxy::read_loop, this);
@@ -52,11 +52,18 @@ void CAN_Proxy::main()
 	thread.join();				// wait for read_loop()
 }
 
+void CAN_Proxy::send(const CAN_Frame& frame)
+{
+	num_write_fail++;
+	socket->write(frame);
+	num_write_fail--;
+	num_write++;
+}
+
 void CAN_Proxy::handle(std::shared_ptr<const CAN_Frame> value)
 {
 	try {
-		socket->write(*value);
-		num_write++;
+		send(*value);
 	}
 	catch(const std::exception& ex) {
 		log(WARN).out << ex.what();
@@ -75,7 +82,8 @@ bool CAN_Proxy::vnx_shutdown()
 void CAN_Proxy::print_stats()
 {
 	log(INFO).out << (1000 * num_read) / stats_interval_ms << " msgs/s receive, "
-				<< (1000 * num_write) / stats_interval_ms << " msgs/s send";
+				<< (1000 * num_write) / stats_interval_ms << " msgs/s send, "
+				<< num_write_fail << " failed";
 	num_read = 0;
 	num_write = 0;
 }
