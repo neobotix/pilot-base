@@ -23,11 +23,11 @@ public:
 
 	~CAN_PeakUSB();
 
-	void close();
+	void close() override;
 
-	bool read(CAN_Frame &frame, int timeout_ms);
+	bool read(CAN_Frame &frame, int timeout_ms) override;
 
-	void write(const CAN_Frame& frame);
+	void write(const CAN_Frame& frame) override;
 
 private:
 	typedef TPCANStatus(__stdcall fCAN_Init)(TPCANHandle, TPCANBaudrate, TPCANType, DWORD, WORD);

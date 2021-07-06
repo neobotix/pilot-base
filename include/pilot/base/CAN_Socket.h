@@ -21,11 +21,11 @@ public:
 	
 	~CAN_Socket();
 	
-	void close();
+	void close() override;
 	
-	bool read(CAN_Frame &frame, int timout_ms);
+	bool read(CAN_Frame &frame, int timout_ms) override;
 	
-	void write(const CAN_Frame& frame);
+	void write(const CAN_Frame& frame) override;
 	
 private:
 	int sock = -1;
