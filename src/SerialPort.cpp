@@ -95,7 +95,7 @@ void SerialPort::read_loop(const vnx::Hash64 module_addr) const
 				const auto num_bytes = read_port(sample->payload.data(), sample->payload.size(), read_timeout_ms);
 				if(num_bytes > 0) {
 					sample->payload.resize(num_bytes);
-					publish(sample, output, BLOCKING);
+					publish(sample, output);
 					m_bytes_read += num_bytes;
 				}
 			}
