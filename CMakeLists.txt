@@ -27,6 +27,7 @@ add_library(pilot_base SHARED
 	src/CAN_Frame.cpp
 	src/CAN_Proxy.cpp
 	src/UDP_Receiver.cpp
+	src/NetworkStream.cpp
 )
 
 target_include_directories(pilot_base PUBLIC include generated/include)

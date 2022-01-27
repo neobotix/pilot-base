@@ -1,0 +1,18 @@
+package pilot.base;
+
+
+module NetworkStream{
+	vnx.TopicPtr input;
+	vnx.TopicPtr output;
+
+	string address;                           // e.g. 'localhost:1234' or '/tmp/node.sock'
+
+	uint read_buffer_size = 4096;             // amount requested per read [bytes]
+	int stats_interval_ms = 10000;            // status message interval (0 = disable) [ms]
+	int error_interval_ms = 1000;             // error retry interval [ms]
+
+	void connect();
+	void disconnect();
+
+	void handle(DataPacket data);
+}
