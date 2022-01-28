@@ -25,6 +25,7 @@ protected:
 	void init() override;
 	void main() override;
 	
+	bool is_connected() const override;
 	void connect() override;
 	void disconnect() override;
 
@@ -35,7 +36,7 @@ private:
 	int socket = -1;
 	vnx::SocketInputStream input_stream;
 	vnx::SocketOutputStream output_stream;
-	bool is_connected = false;
+	bool connected = false;
 
 	int64_t num_read = 0;
 	int64_t num_write = 0;

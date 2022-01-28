@@ -70,6 +70,11 @@ void NetworkStream::main(){
 }
 
 
+bool NetworkStream::is_connected() const{
+	return connected;
+}
+
+
 void NetworkStream::connect(){
 	if(socket == -1){
 		socket = endpoint->open();
@@ -77,7 +82,7 @@ void NetworkStream::connect(){
 		output_stream.reset(socket);
 	}
 	endpoint->connect(socket);
-	is_connected = true;
+	connected = true;
 }
 
 
@@ -91,7 +96,7 @@ void NetworkStream::disconnect(){
 		socket = -1;
 		input_stream.reset(socket);
 		output_stream.reset(socket);
-		is_connected = false;
+		connected = false;
 	}
 }
 
@@ -111,7 +116,7 @@ void NetworkStream::write(const unsigned char *buf, size_t len){
 
 
 void NetworkStream::handle(std::shared_ptr<const DataPacket> value){
-	if(is_connected){
+	if(is_connected()){
 		num_write_fail++;
 		write(value->payload.data(), value->payload.size());
 		num_write_fail--;
@@ -134,7 +139,7 @@ void NetworkStream::read_loop(const vnx::Hash64 &module_addr){
 	NetworkStreamClient client(module_addr);
 
 	while(vnx_do_run()){
-		while(vnx_do_run() && is_connected){
+		while(vnx_do_run() && client.is_connected()){
 			auto data = DataPacket::create();
 			data->payload.resize(read_buffer_size);
 			try{
@@ -143,6 +148,9 @@ void NetworkStream::read_loop(const vnx::Hash64 &module_addr){
 				data->time = vnx::get_time_micros();
 				publish(data, output);
 				num_read++;
+			}catch(const std::underflow_error &ex){
+				log(INFO) << ex.what();
+				break;
 			}catch(const std::exception& ex){
 				log(WARN) << ex.what();
 				break;

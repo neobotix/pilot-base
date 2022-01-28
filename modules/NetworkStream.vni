@@ -11,6 +11,7 @@ module NetworkStream{
 	int stats_interval_ms = 10000;            // status message interval (0 = disable) [ms]
 	int error_interval_ms = 1000;             // error retry interval [ms]
 
+	bool is_connected() const;
 	void connect();
 	void disconnect();
 
