@@ -29,20 +29,20 @@ CAN_Socket::CAN_Socket(const std::string& iface)
 {
 	sock = ::socket(PF_CAN, SOCK_RAW, CAN_RAW);
 	if(sock < 0) {
-		throw std::runtime_error("socket() failed!");
+		throw std::runtime_error("socket() failed with: " + std::string(strerror(errno)));
 	}
 
 	ifreq ifr = {};
 	::strncpy(ifr.ifr_name, iface.c_str(), IFNAMSIZ - 1);
 	if(::ioctl(sock, SIOCGIFINDEX, &ifr) < 0) {
-		throw std::runtime_error("ioctl() failed!");
+		throw std::runtime_error("ioctl() failed with: " + std::string(strerror(errno)));
 	}
 
 	sockaddr_can addr = {};
 	addr.can_family = AF_CAN;
 	addr.can_ifindex = ifr.ifr_ifindex;
 	if(::bind(sock, (sockaddr*)(&addr), sizeof(addr)) < 0) {
-		throw std::runtime_error("bind() failed!");
+		throw std::runtime_error("bind() failed with: " + std::string(strerror(errno)));
 	}
 }
 
