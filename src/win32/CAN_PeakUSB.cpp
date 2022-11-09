@@ -31,6 +31,7 @@ CAN_PeakUSB::CAN_PeakUSB(int baud_rate){
 	pfCAN_Status = (fCAN_Status*)GetProcAddress(m_hInstance, "CAN_GetStatus");
 	pfCAN_InitFD = (fCAN_InitFD*)GetProcAddress(m_hInstance, "CAN_InitializeFD");
 	pfCAN_SetValue = (fCAN_SetValue*)GetProcAddress(m_hInstance, "CAN_SetValue");
+	pfCAN_GetErrorText = (fCAN_GetErrorText*)GetProcAddress(m_hInstance, "CAN_GetErrorText");
 
 
 	int ret = PCAN_ERROR_OK;
@@ -55,7 +56,7 @@ CAN_PeakUSB::CAN_PeakUSB(int baud_rate){
 	}
 
 	if(ret != PCAN_ERROR_OK){
-		throw std::runtime_error("CAN initialization error: " + std::to_string(ret));
+		throw std::runtime_error("CAN initialization error: " + get_error_text(ret));
 	}
 
 	m_event_read = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -66,7 +67,7 @@ CAN_PeakUSB::CAN_PeakUSB(int baud_rate){
 	if(ret != PCAN_ERROR_OK){
 		CloseHandle(m_event_read);
 		m_event_read = NULL;
-		throw std::runtime_error("Setting of event handle failed with: " + std::to_string(ret));
+		throw std::runtime_error("Setting of event handle failed with: " + get_error_text(ret));
 	}
 
 	m_initialized = true;
@@ -97,12 +98,14 @@ bool CAN_PeakUSB::read(CAN_Frame &frame, int timeout_ms){
 	TPCMsg.MSGTYPE = 0;
 	TPCMsg.ID = 0;
 
-	int ret = pfCAN_Read(m_pcanHandle, &TPCMsg, NULL);
+	TPCANStatus ret = pfCAN_Read(m_pcanHandle, &TPCMsg, NULL);
 	if(ret == PCAN_ERROR_QRCVEMPTY && WaitForSingleObject(m_event_read, timeout_ms) != WAIT_TIMEOUT){
 		ret = pfCAN_Read(m_pcanHandle, &TPCMsg, NULL);
 	}
-	if(ret != PCAN_ERROR_OK){
+	if(ret == PCAN_ERROR_QRCVEMPTY){
 		return false;
+	}else if(ret != PCAN_ERROR_OK){
+		throw std::runtime_error("CAN_Read() failed with: " + get_error_text(ret));
 	}
 
 	switch(TPCMsg.MSGTYPE) {
@@ -131,7 +134,26 @@ void CAN_PeakUSB::write(const CAN_Frame& frame){
 		TPCMsg.DATA[i] = frame.data[i];
 	}
 
-	pfCAN_Write(m_pcanHandle, &TPCMsg);
+	const TPCANStatus ret = pfCAN_Write(m_pcanHandle, &TPCMsg);
+	if(ret != PCAN_ERROR_OK){
+		throw std::runtime_error("CAN_Write() failed with: " + get_error_text(ret));
+	}
+}
+
+
+std::string CAN_PeakUSB::get_error_text(const TPCANStatus &status) const{
+	// Maximum length is 255 characters, according to the docs.
+	char str[256];
+	const WORD language = 0;
+	std::string result;
+
+	const TPCANStatus ret = pfCAN_GetErrorText(status, language, str);
+	if(ret != PCAN_ERROR_OK){
+		result = "Code " + std::to_string(status) + "(failed to get error text)";
+	}else{
+		result = str;
+	}
+	return result;
 }
 
 
