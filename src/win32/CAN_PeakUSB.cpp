@@ -149,7 +149,7 @@ std::string CAN_PeakUSB::get_error_text(const TPCANStatus &status) const{
 
 	const TPCANStatus ret = pfCAN_GetErrorText(status, language, str);
 	if(ret != PCAN_ERROR_OK){
-		result = "Code " + std::to_string(status) + "(failed to get error text)";
+		result = "Code " + std::to_string(status) + " (getting error text failed with Code " + std::to_string(ret) + ")";
 	}else{
 		result = str;
 	}
