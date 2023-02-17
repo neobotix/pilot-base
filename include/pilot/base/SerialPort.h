@@ -34,6 +34,8 @@ protected:
 	bool vnx_shutdown() override;
 
 private:
+	bool is_open() const;
+
 	void signal();
 
 	void print_stats();
@@ -46,9 +48,9 @@ private:
 
 private:
 #ifdef _WIN32
-	void* m_fd = (void*)-1;
+	void* m_fd;
 #else
-	std::atomic<int> m_fd {-1};
+	std::atomic<int> m_fd;
 #endif
 
 	mutable volatile size_t m_bytes_read = 0;

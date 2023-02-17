@@ -13,6 +13,12 @@
 namespace pilot {
 namespace base {
 
+SerialPort::SerialPort(const std::string& _vnx_name)
+	:	SerialPortBase(_vnx_name),
+		m_fd(INVALID_HANDLE_VALUE)
+{
+}
+
 void SerialPort::open_port()
 {
 	close_port();
@@ -98,6 +104,10 @@ ssize_t SerialPort::write_port(const void* buf, size_t len) const
 	}
 
 	return numBytesWritten;
+}
+
+bool SerialPort::is_open() const{
+	return (m_fd != INVALID_HANDLE_VALUE);
 }
 
 

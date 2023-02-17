@@ -13,11 +13,6 @@
 namespace pilot {
 namespace base {
 
-SerialPort::SerialPort(const std::string& _vnx_name)
-	:	SerialPortBase(_vnx_name)
-{
-}
-
 void SerialPort::init()
 {
 	subscribe(input, 100);					// receive binary data packets
@@ -126,7 +121,7 @@ void SerialPort::signal()
 {
 	auto out = SocketSignal::create();
 	out->port = vnx_name;
-	if(m_fd >= 0) {
+	if(is_open()) {
 		out->is_open = true;
 		out->is_readable = true;
 		out->is_writable = true;
