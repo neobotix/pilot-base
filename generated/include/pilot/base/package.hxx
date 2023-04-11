@@ -18,6 +18,13 @@ class CAN_ProxyBase;
 class CAN_Proxy_send;
 class CAN_Proxy_send_return;
 class DataPacket;
+class NetworkStreamBase;
+class NetworkStream_connect;
+class NetworkStream_connect_return;
+class NetworkStream_disconnect;
+class NetworkStream_disconnect_return;
+class NetworkStream_is_connected;
+class NetworkStream_is_connected_return;
 class SerialPortBase;
 class SerialPort_close_port;
 class SerialPort_close_port_return;
@@ -36,6 +43,13 @@ extern const vnx::TypeCode* const vnx_native_type_code_CAN_ProxyBase; ///< \priv
 extern const vnx::TypeCode* const vnx_native_type_code_CAN_Proxy_send; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_CAN_Proxy_send_return; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_DataPacket; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_NetworkStreamBase; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_NetworkStream_connect; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_NetworkStream_connect_return; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_NetworkStream_disconnect; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_NetworkStream_disconnect_return; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_NetworkStream_is_connected; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_NetworkStream_is_connected_return; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_SerialPortBase; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_SerialPort_close_port; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_SerialPort_close_port_return; ///< \private
@@ -60,6 +74,13 @@ void read(TypeInput& in, ::pilot::base::CAN_ProxyBase& value, const TypeCode* ty
 void read(TypeInput& in, ::pilot::base::CAN_Proxy_send& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::CAN_Proxy_send_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::DataPacket& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::NetworkStreamBase& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::NetworkStream_connect& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::NetworkStream_connect_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::NetworkStream_disconnect& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::NetworkStream_disconnect_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::NetworkStream_is_connected& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::NetworkStream_is_connected_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::SerialPortBase& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::SerialPort_close_port& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::SerialPort_close_port_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
@@ -78,6 +99,13 @@ void write(TypeOutput& out, const ::pilot::base::CAN_ProxyBase& value, const Typ
 void write(TypeOutput& out, const ::pilot::base::CAN_Proxy_send& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::CAN_Proxy_send_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::DataPacket& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::NetworkStreamBase& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::NetworkStream_connect& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::NetworkStream_connect_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::NetworkStream_disconnect& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::NetworkStream_disconnect_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::NetworkStream_is_connected& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::NetworkStream_is_connected_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::SerialPortBase& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::SerialPort_close_port& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::SerialPort_close_port_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
@@ -96,6 +124,13 @@ void read(std::istream& in, ::pilot::base::CAN_ProxyBase& value); ///< \private
 void read(std::istream& in, ::pilot::base::CAN_Proxy_send& value); ///< \private
 void read(std::istream& in, ::pilot::base::CAN_Proxy_send_return& value); ///< \private
 void read(std::istream& in, ::pilot::base::DataPacket& value); ///< \private
+void read(std::istream& in, ::pilot::base::NetworkStreamBase& value); ///< \private
+void read(std::istream& in, ::pilot::base::NetworkStream_connect& value); ///< \private
+void read(std::istream& in, ::pilot::base::NetworkStream_connect_return& value); ///< \private
+void read(std::istream& in, ::pilot::base::NetworkStream_disconnect& value); ///< \private
+void read(std::istream& in, ::pilot::base::NetworkStream_disconnect_return& value); ///< \private
+void read(std::istream& in, ::pilot::base::NetworkStream_is_connected& value); ///< \private
+void read(std::istream& in, ::pilot::base::NetworkStream_is_connected_return& value); ///< \private
 void read(std::istream& in, ::pilot::base::SerialPortBase& value); ///< \private
 void read(std::istream& in, ::pilot::base::SerialPort_close_port& value); ///< \private
 void read(std::istream& in, ::pilot::base::SerialPort_close_port_return& value); ///< \private
@@ -114,6 +149,13 @@ void write(std::ostream& out, const ::pilot::base::CAN_ProxyBase& value); ///< \
 void write(std::ostream& out, const ::pilot::base::CAN_Proxy_send& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::CAN_Proxy_send_return& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::DataPacket& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::NetworkStreamBase& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::NetworkStream_connect& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::NetworkStream_connect_return& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::NetworkStream_disconnect& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::NetworkStream_disconnect_return& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::NetworkStream_is_connected& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::NetworkStream_is_connected_return& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::SerialPortBase& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::SerialPort_close_port& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::SerialPort_close_port_return& value); ///< \private
@@ -132,6 +174,13 @@ void accept(Visitor& visitor, const ::pilot::base::CAN_ProxyBase& value); ///< \
 void accept(Visitor& visitor, const ::pilot::base::CAN_Proxy_send& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::CAN_Proxy_send_return& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::DataPacket& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::NetworkStreamBase& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::NetworkStream_connect& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::NetworkStream_connect_return& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::NetworkStream_disconnect& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::NetworkStream_disconnect_return& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::NetworkStream_is_connected& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::NetworkStream_is_connected_return& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::SerialPortBase& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::SerialPort_close_port& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::SerialPort_close_port_return& value); ///< \private
@@ -251,6 +300,158 @@ struct type<::pilot::base::DataPacket> {
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code);
 	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::DataPacket& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::NetworkStreamBase> {
+	void read(TypeInput& in, ::pilot::base::NetworkStreamBase& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::NetworkStreamBase& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::NetworkStreamBase& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::NetworkStreamBase& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::NetworkStreamBase& value) {
+		vnx::accept(visitor, value);
+	}
+};
+
+/// \private
+template<>
+struct type<::pilot::base::NetworkStream_connect> {
+	void read(TypeInput& in, ::pilot::base::NetworkStream_connect& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::NetworkStream_connect& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::NetworkStream_connect& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::NetworkStream_connect& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::NetworkStream_connect& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::NetworkStream_connect& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::NetworkStream_connect_return> {
+	void read(TypeInput& in, ::pilot::base::NetworkStream_connect_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::NetworkStream_connect_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::NetworkStream_connect_return& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::NetworkStream_connect_return& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::NetworkStream_connect_return& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::NetworkStream_connect_return& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::NetworkStream_disconnect> {
+	void read(TypeInput& in, ::pilot::base::NetworkStream_disconnect& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::NetworkStream_disconnect& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::NetworkStream_disconnect& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::NetworkStream_disconnect& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::NetworkStream_disconnect& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::NetworkStream_disconnect& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::NetworkStream_disconnect_return> {
+	void read(TypeInput& in, ::pilot::base::NetworkStream_disconnect_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::NetworkStream_disconnect_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::NetworkStream_disconnect_return& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::NetworkStream_disconnect_return& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::NetworkStream_disconnect_return& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::NetworkStream_disconnect_return& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::NetworkStream_is_connected> {
+	void read(TypeInput& in, ::pilot::base::NetworkStream_is_connected& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::NetworkStream_is_connected& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::NetworkStream_is_connected& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::NetworkStream_is_connected& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::NetworkStream_is_connected& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::NetworkStream_is_connected& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::NetworkStream_is_connected_return> {
+	void read(TypeInput& in, ::pilot::base::NetworkStream_is_connected_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::NetworkStream_is_connected_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::NetworkStream_is_connected_return& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::NetworkStream_is_connected_return& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::NetworkStream_is_connected_return& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::NetworkStream_is_connected_return& value, bool special = false);
 };
 
 /// \private

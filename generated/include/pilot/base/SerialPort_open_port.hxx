@@ -22,6 +22,8 @@ public:
 	
 	static constexpr uint64_t VNX_TYPE_ID = 0xf8db604b35c6b25dull;
 	
+	SerialPort_open_port() {}
+	
 	vnx::Hash64 get_type_hash() const override;
 	std::string get_type_name() const override;
 	const vnx::TypeCode* get_type_code() const override;

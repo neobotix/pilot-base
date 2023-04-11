@@ -148,6 +148,7 @@ void read(TypeInput& in, ::pilot::base::UDP_Receiver_close_port_return& value, c
 			}
 		}
 	}
+	in.read(type_code->total_field_size);
 	if(type_code->is_matched) {
 	}
 	for(const auto* _field : type_code->ext_fields) {

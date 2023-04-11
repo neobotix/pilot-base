@@ -26,6 +26,7 @@ struct can_adapter_e {
 	static constexpr uint64_t VNX_TYPE_ID = 0x7a7d5bef82a9fdfcull;
 	
 	can_adapter_e() {}
+	
 	can_adapter_e(const enum_t& _value) { value = _value; }
 	can_adapter_e(const ::pilot::base::can_adapter_e& _other) { value = _other.value; }
 	

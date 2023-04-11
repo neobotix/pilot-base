@@ -6,6 +6,13 @@
 #include <pilot/base/CAN_Proxy_send.hxx>
 #include <pilot/base/CAN_Proxy_send_return.hxx>
 #include <pilot/base/DataPacket.hxx>
+#include <pilot/base/NetworkStreamBase.hxx>
+#include <pilot/base/NetworkStream_connect.hxx>
+#include <pilot/base/NetworkStream_connect_return.hxx>
+#include <pilot/base/NetworkStream_disconnect.hxx>
+#include <pilot/base/NetworkStream_disconnect_return.hxx>
+#include <pilot/base/NetworkStream_is_connected.hxx>
+#include <pilot/base/NetworkStream_is_connected_return.hxx>
 #include <pilot/base/SerialPortBase.hxx>
 #include <pilot/base/SerialPort_close_port.hxx>
 #include <pilot/base/SerialPort_close_port_return.hxx>
@@ -55,6 +62,54 @@ void type<::pilot::base::DataPacket>::create_dynamic_code(std::vector<uint16_t>&
 }
 
 void type<::pilot::base::DataPacket>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::DataPacket& value, bool special) {
+	code.push_back(CODE_OBJECT);
+}
+
+void type<::pilot::base::NetworkStream_connect>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::NetworkStream_connect());
+}
+
+void type<::pilot::base::NetworkStream_connect>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::NetworkStream_connect& value, bool special) {
+	code.push_back(CODE_OBJECT);
+}
+
+void type<::pilot::base::NetworkStream_connect_return>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::NetworkStream_connect_return());
+}
+
+void type<::pilot::base::NetworkStream_connect_return>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::NetworkStream_connect_return& value, bool special) {
+	code.push_back(CODE_OBJECT);
+}
+
+void type<::pilot::base::NetworkStream_disconnect>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::NetworkStream_disconnect());
+}
+
+void type<::pilot::base::NetworkStream_disconnect>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::NetworkStream_disconnect& value, bool special) {
+	code.push_back(CODE_OBJECT);
+}
+
+void type<::pilot::base::NetworkStream_disconnect_return>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::NetworkStream_disconnect_return());
+}
+
+void type<::pilot::base::NetworkStream_disconnect_return>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::NetworkStream_disconnect_return& value, bool special) {
+	code.push_back(CODE_OBJECT);
+}
+
+void type<::pilot::base::NetworkStream_is_connected>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::NetworkStream_is_connected());
+}
+
+void type<::pilot::base::NetworkStream_is_connected>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::NetworkStream_is_connected& value, bool special) {
+	code.push_back(CODE_OBJECT);
+}
+
+void type<::pilot::base::NetworkStream_is_connected_return>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::NetworkStream_is_connected_return());
+}
+
+void type<::pilot::base::NetworkStream_is_connected_return>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::NetworkStream_is_connected_return& value, bool special) {
 	code.push_back(CODE_OBJECT);
 }
 
@@ -156,6 +211,13 @@ static void register_all_types() {
 	vnx::register_type_code(::pilot::base::CAN_Proxy_send::static_create_type_code());
 	vnx::register_type_code(::pilot::base::CAN_Proxy_send_return::static_create_type_code());
 	vnx::register_type_code(::pilot::base::DataPacket::static_create_type_code());
+	vnx::register_type_code(::pilot::base::NetworkStreamBase::static_create_type_code());
+	vnx::register_type_code(::pilot::base::NetworkStream_connect::static_create_type_code());
+	vnx::register_type_code(::pilot::base::NetworkStream_connect_return::static_create_type_code());
+	vnx::register_type_code(::pilot::base::NetworkStream_disconnect::static_create_type_code());
+	vnx::register_type_code(::pilot::base::NetworkStream_disconnect_return::static_create_type_code());
+	vnx::register_type_code(::pilot::base::NetworkStream_is_connected::static_create_type_code());
+	vnx::register_type_code(::pilot::base::NetworkStream_is_connected_return::static_create_type_code());
 	vnx::register_type_code(::pilot::base::SerialPortBase::static_create_type_code());
 	vnx::register_type_code(::pilot::base::SerialPort_close_port::static_create_type_code());
 	vnx::register_type_code(::pilot::base::SerialPort_close_port_return::static_create_type_code());
@@ -181,6 +243,13 @@ const vnx::TypeCode* const vnx_native_type_code_CAN_ProxyBase = vnx::get_type_co
 const vnx::TypeCode* const vnx_native_type_code_CAN_Proxy_send = vnx::get_type_code(vnx::Hash64(0xfac9f3d0e6b114e0ull));
 const vnx::TypeCode* const vnx_native_type_code_CAN_Proxy_send_return = vnx::get_type_code(vnx::Hash64(0xd07ac71047b63fedull));
 const vnx::TypeCode* const vnx_native_type_code_DataPacket = vnx::get_type_code(vnx::Hash64(0xcd0d2bd202ac0fb0ull));
+const vnx::TypeCode* const vnx_native_type_code_NetworkStreamBase = vnx::get_type_code(vnx::Hash64(0xf148d90d9b345113ull));
+const vnx::TypeCode* const vnx_native_type_code_NetworkStream_connect = vnx::get_type_code(vnx::Hash64(0x5d1ba9f28b73deffull));
+const vnx::TypeCode* const vnx_native_type_code_NetworkStream_connect_return = vnx::get_type_code(vnx::Hash64(0x4e1ecb58b5748247ull));
+const vnx::TypeCode* const vnx_native_type_code_NetworkStream_disconnect = vnx::get_type_code(vnx::Hash64(0x717989a7028c00b8ull));
+const vnx::TypeCode* const vnx_native_type_code_NetworkStream_disconnect_return = vnx::get_type_code(vnx::Hash64(0x798dafe5dee15bd7ull));
+const vnx::TypeCode* const vnx_native_type_code_NetworkStream_is_connected = vnx::get_type_code(vnx::Hash64(0x43ce78fb38d0a151ull));
+const vnx::TypeCode* const vnx_native_type_code_NetworkStream_is_connected_return = vnx::get_type_code(vnx::Hash64(0xc9d1bce2bfaef9full));
 const vnx::TypeCode* const vnx_native_type_code_SerialPortBase = vnx::get_type_code(vnx::Hash64(0x34145bbaf1d9d037ull));
 const vnx::TypeCode* const vnx_native_type_code_SerialPort_close_port = vnx::get_type_code(vnx::Hash64(0x325a9542af22132full));
 const vnx::TypeCode* const vnx_native_type_code_SerialPort_close_port_return = vnx::get_type_code(vnx::Hash64(0xeab3f48d8b486944ull));

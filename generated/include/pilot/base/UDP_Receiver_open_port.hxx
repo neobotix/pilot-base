@@ -22,6 +22,8 @@ public:
 	
 	static constexpr uint64_t VNX_TYPE_ID = 0xc54c97600d1fd67eull;
 	
+	UDP_Receiver_open_port() {}
+	
 	vnx::Hash64 get_type_hash() const override;
 	std::string get_type_name() const override;
 	const vnx::TypeCode* get_type_code() const override;
