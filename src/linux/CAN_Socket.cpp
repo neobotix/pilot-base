@@ -90,6 +90,9 @@ void CAN_Socket::write(const CAN_Frame& frame)
 {
 	::can_frame out = {};
 	out.can_id = frame.id;
+	if(frame.id > 2047){
+		out.can_id |= CAN_EFF_FLAG;
+	}
 	out.can_dlc = frame.size;
 	for(int i = 0; i < 8; ++i) {
 		out.data[i] = frame.data[i];

@@ -129,7 +129,11 @@ void CAN_PeakUSB::write(const CAN_Frame& frame){
 
 	TPCMsg.LEN = frame.size;
 	TPCMsg.ID = frame.id;
-	TPCMsg.MSGTYPE = 0;
+	if(frame.id > 2047){
+		TPCMsg.MSGTYPE = PCAN_MESSAGE_EXTENDED;
+	}else{
+		TPCMsg.MSGTYPE = PCAN_MESSAGE_STANDARD;
+	}
 	for(size_t i=0; i<8; i++){
 		TPCMsg.DATA[i] = frame.data[i];
 	}
