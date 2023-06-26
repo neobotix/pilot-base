@@ -1,0 +1,11 @@
+package pilot.base.canopen;
+
+enum sdo_ccs_e{
+	INIT_DOWNLOAD,
+	INIT_UPLOAD,
+	SEGMENT_DOWNLOAD,
+	SEGMENT_UPLOAD,
+	BLOCK_DOWNLOAD,
+	BLOCK_UPLOAD,
+	ABORT,
+}

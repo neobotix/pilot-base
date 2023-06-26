@@ -1,0 +1,8 @@
+package pilot.base.canopen;
+
+enum nmt_state_e{
+	BOOT_UP,
+	STOPPED,
+	OPERATIONAL,
+	PRE_OPERATIONAL,
+}

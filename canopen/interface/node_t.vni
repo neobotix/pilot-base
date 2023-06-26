@@ -1,0 +1,40 @@
+package pilot.base.canopen;
+
+import pilot.base.CAN_Frame;
+
+struct node_t{
+	uint id;
+	bool use_predefined_connection_set = true;                                                             // calculate CAN IDs based on node_id
+
+	uint emcy;
+	uint tx_pdo_1;
+	uint tx_pdo_2;
+	uint tx_pdo_3;
+	uint tx_pdo_4;
+	uint rx_pdo_1;
+	uint rx_pdo_2;
+	uint rx_pdo_3;
+	uint rx_pdo_4;
+	uint tx_sdo;
+	uint rx_sdo;
+	uint nmt;
+
+	set<emcy_register_e> emcy_register;
+
+	static CAN_Frame *sync();
+	static CAN_Frame *module_control(nmt_command_e command, uchar node_id);                                // node_id = 0 for broadcast
+
+	void calculate_can_ids();                                                                              // no effect if !use_predefined_connection_set
+	CAN_Frame *heartbeat(nmt_state_e state) const;
+	emcy_code_e handle_emcy(CAN_Frame frame);
+
+	sdo_scs_e get_sdo_scs(CAN_Frame frame) const;                                                          // type of message sent from server (i.e. device)
+	sdo_ccs_e get_sdo_ccs(CAN_Frame frame) const;                                                          // type of message sent from client (i.e. SPS)
+	sdo_error_e get_sdo_error(CAN_Frame frame) const;
+
+	CAN_Frame *download_expedited(ushort index, uchar subindex, uint data, uint num_bytes=4) const;
+	vector<CAN_Frame *> download_segmented(ushort index, uchar subindex, vector<uchar> data) const;
+	CAN_Frame *upload_request(ushort index, uchar subindex) const;
+	pair<CAN_Frame *, CAN_Frame *> upload_segment_request(ushort index, uchar subindex) const;             // send the two frames alternatingly until all data uploaded
+	pair<vector<uchar>, bool> get_uploaded_data(CAN_Frame frame) const;                                    // (data, is_finished); in case of segmented transfer init (data_size [little endian], false)
+}

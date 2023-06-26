@@ -9,6 +9,9 @@ if [ -z "$VNX_INCLUDE" ]; then
 fi
 
 cd $(dirname "$0")
+DIR="$(pwd)"
+
+./canopen/codegen.sh "${DIR}/interface/ $VNX_INCLUDE"
 
 vnxcppcodegen --cleanup generated/ pilot.base interface/ modules/ $VNX_INCLUDE
 
