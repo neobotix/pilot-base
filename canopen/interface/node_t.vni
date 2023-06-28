@@ -33,8 +33,15 @@ struct node_t{
 	sdo_error_e get_sdo_error(CAN_Frame frame) const;
 
 	CAN_Frame *download_expedited(ushort index, uchar subindex, uint data, uint num_bytes=4) const;
+	CAN_Frame *upload_expedited(ushort index, uchar subindex, uint data, uint num_bytes=4) const;
 	vector<CAN_Frame *> download_segmented(ushort index, uchar subindex, vector<uchar> data) const;
+	vector<CAN_Frame *> upload_segmented(ushort index, uchar subindex, vector<uchar> data) const;
 	CAN_Frame *upload_request(ushort index, uchar subindex) const;
+	CAN_Frame *download_confirm(ushort index, uchar subindex) const;
 	pair<CAN_Frame *, CAN_Frame *> upload_segment_request(ushort index, uchar subindex) const;             // send the two frames alternatingly until all data uploaded
+	pair<CAN_Frame *, CAN_Frame *> download_segment_request(ushort index, uchar subindex) const;           // send the two frames alternatingly until all data downloaded
 	pair<vector<uchar>, bool> get_uploaded_data(CAN_Frame frame) const;                                    // (data, is_finished); in case of segmented transfer init (data_size [little endian], false)
+	pair<vector<uchar>, bool> get_downloaded_data(CAN_Frame frame) const;                                  // see get_uploaded_data()
+	CAN_Frame *abort_server(ushort index, uchar subindex, sdo_error_e error) const;
+	CAN_Frame *abort_client(ushort index, uchar subindex, sdo_error_e error) const;
 }
