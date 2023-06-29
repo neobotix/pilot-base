@@ -46,5 +46,6 @@ install(DIRECTORY include/ DESTINATION include)
 install(DIRECTORY generated/include/ DESTINATION include)
 install(DIRECTORY modules/ DESTINATION interface/pilot/base)
 install(DIRECTORY interface/ DESTINATION interface/pilot/base)
-
 install(TARGETS pilot_base DESTINATION lib)
+
+add_subdirectory(canopen)

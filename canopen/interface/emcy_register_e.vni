@@ -1,0 +1,12 @@
+package pilot.base.canopen;
+
+enum emcy_register_e{
+	GENERIC,
+	CURRENT,
+	VOLTAGE,
+	TEMPERATURE,
+	COMMUNICATION,
+	DEVICE_PROFILE_SPECIFIC,
+	MANUFACTURER_SPECIFIC,
+}
+
