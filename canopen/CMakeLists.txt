@@ -21,8 +21,8 @@ target_link_libraries(pilot_base_canopen
 	pilot_base
 )
 
-install(DIRECTORY generated/include DESTINATION include/)
-install(DIRECTORY interface DESTINATION interface/pilot/base/canopen/)
+install(DIRECTORY generated/include/ DESTINATION include)
+install(DIRECTORY interface/ DESTINATION interface/pilot/base/canopen)
 install(TARGETS pilot_base_canopen DESTINATION lib)
 
 
