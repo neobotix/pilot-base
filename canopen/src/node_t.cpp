@@ -193,25 +193,30 @@ static std::pair<std::vector<uint8_t>, bool> get_transferred_data_first_frame(co
 	const bool is_expedited = (frame.data[0] >> 1) & 0b1;
 	const bool size_indicator = frame.data[0] & 0b1;
 	if(is_expedited){
-		if(!size_indicator){
-			throw std::runtime_error("Expedited transfer with no data size given");
+		size_t num_bytes;
+		if(size_indicator){
+			num_bytes = 4 - no_data;
+		}else{
+			// "Unspecified" number of bytes to be transferred
+			num_bytes = 4;
 		}
-		const size_t num_bytes = 4 - no_data;
 		std::vector<uint8_t> data;
 		for(size_t i=0; i<num_bytes; i++){
 			data.push_back(frame.data[4+i]);
 		}
 		return std::make_pair(data, true);
 	}else{
-		if(!size_indicator){
-			throw std::runtime_error("Segmented transfer init with no data size given");
-		}
-		//const uint32_t data_length = frame.data[4] | (frame.data[5] << 8) | (frame.data[6] << 16) | (frame.data[7] << 24);
 		std::vector<uint8_t> data;
-		for(size_t i=0; i<4; i++){
-			data.push_back(frame.data[4+i]);
+		if(size_indicator){
+			//const uint32_t data_length = frame.data[4] | (frame.data[5] << 8) | (frame.data[6] << 16) | (frame.data[7] << 24);
+			for(size_t i=0; i<4; i++){
+				data.push_back(frame.data[4+i]);
+			}
+			return std::make_pair(data, false);
+		}else{
+			// data[4..7] is "reserved for further use"
+			return std::make_pair(data, true);
 		}
-		return std::make_pair(data, false);
 	}
 }
 
