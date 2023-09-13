@@ -1,0 +1,13 @@
+package pilot.base;
+
+module UDP_Sender{
+	vnx.TopicPtr input;                                 // pilot.base.DataPacket
+
+	string address;                                     // destination address
+	int port;                                           // destination port
+
+	int stats_interval_ms = 10000;
+
+	void handle(DataPacket value);
+}
+
