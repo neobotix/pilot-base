@@ -41,7 +41,7 @@ void UDP_Sender::handle(std::shared_ptr<const DataPacket> value){
 		const auto buf = value->payload.data() + sent;
 		const size_t len = value->payload.size() - sent;
 #ifdef _WIN32
-		const auto result = send(socket, reinterpret_cast<const char*>(buf), size, 0);
+		const auto result = send(socket, reinterpret_cast<const char*>(buf), len, 0);
 #else
 		const auto result = send(socket, buf, len, MSG_NOSIGNAL);
 #endif
@@ -50,8 +50,9 @@ void UDP_Sender::handle(std::shared_ptr<const DataPacket> value){
 		}
 		sent += result;
 		bytes_sent += result;
+		packet_counter++;
 	}
-	packet_counter++;
+	message_counter++;
 }
 
 
@@ -106,9 +107,13 @@ void UDP_Sender::cleanup(){
 
 
 void UDP_Sender::print_stats(){
-	log(INFO) << (1000 * packet_counter) / stats_interval_ms << " packets/s, "
-			<< ((1000 * bytes_sent) / 1024) / stats_interval_ms << " KiB/s sent";
+	log(INFO)
+		<< (1000 * message_counter) / stats_interval_ms << " msg/s, "
+		<< (1000 * packet_counter) / stats_interval_ms << " pkt/s, "
+		<< ((1000 * bytes_sent) / 1024) / stats_interval_ms << " KiB/s sent"
+	;
 	bytes_sent = 0;
+	message_counter = 0;
 	packet_counter = 0;
 }
 

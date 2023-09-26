@@ -29,6 +29,7 @@ private:
 	const socket_t INVALID_SOCKET = -1;
 #endif
 	socket_t socket;
+	size_t message_counter = 0;
 	size_t packet_counter = 0;
 	size_t bytes_sent = 0;
 
