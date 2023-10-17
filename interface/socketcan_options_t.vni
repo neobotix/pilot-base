@@ -1,0 +1,10 @@
+package pilot.base;
+
+struct socketcan_options_t{
+	vector<uint> filter_list;                                   // a list of CAN IDs to filter for on driver level, allow-list by default
+	bool is_block_list = false;                                 // set to true if filter_list is a block-list
+	bool receive_error_frames = false;
+	bool loopback = true;
+	bool receive_own_messages = false;
+}
+

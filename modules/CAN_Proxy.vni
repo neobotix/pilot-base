@@ -13,7 +13,9 @@ module CAN_Proxy {
 	int baud_rate;							// (if needed) baud rate [baud/s]
 	
 	bool is_big_endian;						// if data received is big endian
-	
+
+	socketcan_options_t socket_options;		// (if needed) CAN socket options
+
 	int read_timeout_ms = 200;				// [ms]
 	
 	int shutdown_delay_ms = 200;			// how much to delay shutdown [ms]

@@ -39,7 +39,7 @@ void CAN_Proxy::main()
 		break;
 #else
 	case can_adapter_e::SOCKETCAN:
-		socket = std::make_shared<CAN_Socket>(device);
+		socket = std::make_shared<CAN_Socket>(device, socket_options);
 		break;
 #endif
 	default:
