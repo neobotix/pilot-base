@@ -27,10 +27,8 @@ CAN_PeakUSB::CAN_PeakUSB(int baud_rate){
 	pfCAN_Write = (fCAN_Write*)GetProcAddress(m_hInstance, "CAN_Write");
 	pfCAN_Read = (fCAN_Read*)GetProcAddress(m_hInstance, "CAN_Read");
 	pfCAN_Close = (fCAN_Close*)GetProcAddress(m_hInstance, "CAN_Uninitialize");
-	pfCAN_Reset = (fCAN_Reset*)GetProcAddress(m_hInstance, "CAN_Reset");
-	pfCAN_Status = (fCAN_Status*)GetProcAddress(m_hInstance, "CAN_GetStatus");
-	pfCAN_InitFD = (fCAN_InitFD*)GetProcAddress(m_hInstance, "CAN_InitializeFD");
 	pfCAN_SetValue = (fCAN_SetValue*)GetProcAddress(m_hInstance, "CAN_SetValue");
+	pfCAN_FilterMessages = (fCAN_FilterMessages*)GetProcAddress(m_hInstance, "CAN_FilterMessages");
 	pfCAN_GetErrorText = (fCAN_GetErrorText*)GetProcAddress(m_hInstance, "CAN_GetErrorText");
 
 

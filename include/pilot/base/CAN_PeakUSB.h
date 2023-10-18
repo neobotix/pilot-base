@@ -31,23 +31,19 @@ public:
 
 private:
 	typedef TPCANStatus(__stdcall fCAN_Init)(TPCANHandle, TPCANBaudrate, TPCANType, DWORD, WORD);
-	typedef TPCANStatus(__stdcall fCAN_InitFD)(TPCANHandle, TPCANBitrateFD);
 	typedef TPCANStatus(__stdcall fCAN_Read)(TPCANHandle, TPCANMsg*, TPCANTimestamp*);
 	typedef TPCANStatus(__stdcall fCAN_Write)(TPCANHandle, TPCANMsg*);
 	typedef TPCANStatus(__stdcall fCAN_Close)(TPCANHandle);
-	typedef TPCANStatus(__stdcall fCAN_Reset)(TPCANHandle);
-	typedef TPCANStatus(__stdcall fCAN_Status)(TPCANHandle);
 	typedef TPCANStatus(__stdcall fCAN_SetValue)(TPCANHandle, TPCANParameter, void*, WORD);
+	typedef TPCANStatus(__stdcall fCAN_FilterMessages)(TPCANHandle, DWORD, DWORD, TPCANMode);
 	typedef TPCANStatus(__stdcall fCAN_GetErrorText)(TPCANStatus, WORD, LPSTR);
 
 	fCAN_Init* pfCAN_Init;
-	fCAN_InitFD* pfCAN_InitFD;
-	fCAN_Write* pfCAN_Write;
 	fCAN_Read* pfCAN_Read;
+	fCAN_Write* pfCAN_Write;
 	fCAN_Close* pfCAN_Close;
-	fCAN_Status* pfCAN_Status;
-	fCAN_Reset* pfCAN_Reset;
 	fCAN_SetValue *pfCAN_SetValue;
+	fCAN_FilterMessages *pfCAN_FilterMessages;
 	fCAN_GetErrorText *pfCAN_GetErrorText;
 
 	TPCANHandle m_pcanHandle;

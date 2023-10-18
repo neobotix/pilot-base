@@ -17,7 +17,7 @@ namespace base {
 
 class CAN_Socket : public CAN_Interface {
 public:
-	CAN_Socket(const std::string& iface);
+	CAN_Socket(const std::string& iface, const socketcan_options_t &socket_options);
 	
 	~CAN_Socket();
 	
