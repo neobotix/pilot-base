@@ -7,6 +7,7 @@
 #include <vnx/Client.h>
 #include <pilot/base/CAN_Frame.hxx>
 #include <pilot/base/can_adapter_e.hxx>
+#include <pilot/base/socketcan_options_t.hxx>
 #include <vnx/Module.h>
 #include <vnx/TopicPtr.hpp>
 

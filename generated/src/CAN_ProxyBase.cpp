@@ -8,6 +8,7 @@
 #include <pilot/base/CAN_Proxy_send.hxx>
 #include <pilot/base/CAN_Proxy_send_return.hxx>
 #include <pilot/base/can_adapter_e.hxx>
+#include <pilot/base/socketcan_options_t.hxx>
 #include <vnx/Module.h>
 #include <vnx/ModuleInterface_vnx_get_config.hxx>
 #include <vnx/ModuleInterface_vnx_get_config_return.hxx>
@@ -37,7 +38,7 @@ namespace base {
 
 
 const vnx::Hash64 CAN_ProxyBase::VNX_TYPE_HASH(0x17c6e6ba3900a740ull);
-const vnx::Hash64 CAN_ProxyBase::VNX_CODE_HASH(0x26fda8333022fd9aull);
+const vnx::Hash64 CAN_ProxyBase::VNX_CODE_HASH(0xf46e55c35d9e9d3eull);
 
 CAN_ProxyBase::CAN_ProxyBase(const std::string& _vnx_name)
 	:	Module::Module(_vnx_name)
@@ -48,6 +49,7 @@ CAN_ProxyBase::CAN_ProxyBase(const std::string& _vnx_name)
 	vnx::read_config(vnx_name + ".device", device);
 	vnx::read_config(vnx_name + ".baud_rate", baud_rate);
 	vnx::read_config(vnx_name + ".is_big_endian", is_big_endian);
+	vnx::read_config(vnx_name + ".socket_options", socket_options);
 	vnx::read_config(vnx_name + ".read_timeout_ms", read_timeout_ms);
 	vnx::read_config(vnx_name + ".shutdown_delay_ms", shutdown_delay_ms);
 	vnx::read_config(vnx_name + ".stats_interval_ms", stats_interval_ms);
@@ -74,9 +76,10 @@ void CAN_ProxyBase::accept(vnx::Visitor& _visitor) const {
 	_visitor.type_field(_type_code->fields[3], 3); vnx::accept(_visitor, device);
 	_visitor.type_field(_type_code->fields[4], 4); vnx::accept(_visitor, baud_rate);
 	_visitor.type_field(_type_code->fields[5], 5); vnx::accept(_visitor, is_big_endian);
-	_visitor.type_field(_type_code->fields[6], 6); vnx::accept(_visitor, read_timeout_ms);
-	_visitor.type_field(_type_code->fields[7], 7); vnx::accept(_visitor, shutdown_delay_ms);
-	_visitor.type_field(_type_code->fields[8], 8); vnx::accept(_visitor, stats_interval_ms);
+	_visitor.type_field(_type_code->fields[6], 6); vnx::accept(_visitor, socket_options);
+	_visitor.type_field(_type_code->fields[7], 7); vnx::accept(_visitor, read_timeout_ms);
+	_visitor.type_field(_type_code->fields[8], 8); vnx::accept(_visitor, shutdown_delay_ms);
+	_visitor.type_field(_type_code->fields[9], 9); vnx::accept(_visitor, stats_interval_ms);
 	_visitor.type_end(*_type_code);
 }
 
@@ -88,6 +91,7 @@ void CAN_ProxyBase::write(std::ostream& _out) const {
 	_out << ", \"device\": "; vnx::write(_out, device);
 	_out << ", \"baud_rate\": "; vnx::write(_out, baud_rate);
 	_out << ", \"is_big_endian\": "; vnx::write(_out, is_big_endian);
+	_out << ", \"socket_options\": "; vnx::write(_out, socket_options);
 	_out << ", \"read_timeout_ms\": "; vnx::write(_out, read_timeout_ms);
 	_out << ", \"shutdown_delay_ms\": "; vnx::write(_out, shutdown_delay_ms);
 	_out << ", \"stats_interval_ms\": "; vnx::write(_out, stats_interval_ms);
@@ -109,6 +113,7 @@ vnx::Object CAN_ProxyBase::to_object() const {
 	_object["device"] = device;
 	_object["baud_rate"] = baud_rate;
 	_object["is_big_endian"] = is_big_endian;
+	_object["socket_options"] = socket_options;
 	_object["read_timeout_ms"] = read_timeout_ms;
 	_object["shutdown_delay_ms"] = shutdown_delay_ms;
 	_object["stats_interval_ms"] = stats_interval_ms;
@@ -133,6 +138,8 @@ void CAN_ProxyBase::from_object(const vnx::Object& _object) {
 			_entry.second.to(read_timeout_ms);
 		} else if(_entry.first == "shutdown_delay_ms") {
 			_entry.second.to(shutdown_delay_ms);
+		} else if(_entry.first == "socket_options") {
+			_entry.second.to(socket_options);
 		} else if(_entry.first == "stats_interval_ms") {
 			_entry.second.to(stats_interval_ms);
 		}
@@ -157,6 +164,9 @@ vnx::Variant CAN_ProxyBase::get_field(const std::string& _name) const {
 	}
 	if(_name == "is_big_endian") {
 		return vnx::Variant(is_big_endian);
+	}
+	if(_name == "socket_options") {
+		return vnx::Variant(socket_options);
 	}
 	if(_name == "read_timeout_ms") {
 		return vnx::Variant(read_timeout_ms);
@@ -183,6 +193,8 @@ void CAN_ProxyBase::set_field(const std::string& _name, const vnx::Variant& _val
 		_value.to(baud_rate);
 	} else if(_name == "is_big_endian") {
 		_value.to(is_big_endian);
+	} else if(_name == "socket_options") {
+		_value.to(socket_options);
 	} else if(_name == "read_timeout_ms") {
 		_value.to(read_timeout_ms);
 	} else if(_name == "shutdown_delay_ms") {
@@ -218,11 +230,12 @@ std::shared_ptr<vnx::TypeCode> CAN_ProxyBase::static_create_type_code() {
 	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.base.CAN_Proxy";
 	type_code->type_hash = vnx::Hash64(0x17c6e6ba3900a740ull);
-	type_code->code_hash = vnx::Hash64(0x26fda8333022fd9aull);
+	type_code->code_hash = vnx::Hash64(0xf46e55c35d9e9d3eull);
 	type_code->is_native = true;
 	type_code->native_size = sizeof(::pilot::base::CAN_ProxyBase);
-	type_code->depends.resize(1);
+	type_code->depends.resize(2);
 	type_code->depends[0] = ::pilot::base::can_adapter_e::static_get_type_code();
+	type_code->depends[1] = ::pilot::base::socketcan_options_t::static_get_type_code();
 	type_code->methods.resize(10);
 	type_code->methods[0] = ::vnx::ModuleInterface_vnx_get_config_object::static_get_type_code();
 	type_code->methods[1] = ::vnx::ModuleInterface_vnx_get_config::static_get_type_code();
@@ -234,7 +247,7 @@ std::shared_ptr<vnx::TypeCode> CAN_ProxyBase::static_create_type_code() {
 	type_code->methods[7] = ::vnx::ModuleInterface_vnx_stop::static_get_type_code();
 	type_code->methods[8] = ::vnx::ModuleInterface_vnx_self_test::static_get_type_code();
 	type_code->methods[9] = ::pilot::base::CAN_Proxy_send::static_get_type_code();
-	type_code->fields.resize(9);
+	type_code->fields.resize(10);
 	{
 		auto& field = type_code->fields[0];
 		field.is_extended = true;
@@ -274,20 +287,26 @@ std::shared_ptr<vnx::TypeCode> CAN_ProxyBase::static_create_type_code() {
 	}
 	{
 		auto& field = type_code->fields[6];
+		field.is_extended = true;
+		field.name = "socket_options";
+		field.code = {19, 1};
+	}
+	{
+		auto& field = type_code->fields[7];
 		field.data_size = 4;
 		field.name = "read_timeout_ms";
 		field.value = vnx::to_string(200);
 		field.code = {7};
 	}
 	{
-		auto& field = type_code->fields[7];
+		auto& field = type_code->fields[8];
 		field.data_size = 4;
 		field.name = "shutdown_delay_ms";
 		field.value = vnx::to_string(200);
 		field.code = {7};
 	}
 	{
-		auto& field = type_code->fields[8];
+		auto& field = type_code->fields[9];
 		field.data_size = 4;
 		field.name = "stats_interval_ms";
 		field.value = vnx::to_string(10000);
@@ -425,13 +444,13 @@ void read(TypeInput& in, ::pilot::base::CAN_ProxyBase& value, const TypeCode* ty
 		if(const auto* const _field = type_code->field_map[5]) {
 			vnx::read_value(_buf + _field->offset, value.is_big_endian, _field->code.data());
 		}
-		if(const auto* const _field = type_code->field_map[6]) {
+		if(const auto* const _field = type_code->field_map[7]) {
 			vnx::read_value(_buf + _field->offset, value.read_timeout_ms, _field->code.data());
 		}
-		if(const auto* const _field = type_code->field_map[7]) {
+		if(const auto* const _field = type_code->field_map[8]) {
 			vnx::read_value(_buf + _field->offset, value.shutdown_delay_ms, _field->code.data());
 		}
-		if(const auto* const _field = type_code->field_map[8]) {
+		if(const auto* const _field = type_code->field_map[9]) {
 			vnx::read_value(_buf + _field->offset, value.stats_interval_ms, _field->code.data());
 		}
 	}
@@ -441,6 +460,7 @@ void read(TypeInput& in, ::pilot::base::CAN_ProxyBase& value, const TypeCode* ty
 			case 1: vnx::read(in, value.output, type_code, _field->code.data()); break;
 			case 2: vnx::read(in, value.adapter, type_code, _field->code.data()); break;
 			case 3: vnx::read(in, value.device, type_code, _field->code.data()); break;
+			case 6: vnx::read(in, value.socket_options, type_code, _field->code.data()); break;
 			default: vnx::skip(in, type_code, _field->code.data());
 		}
 	}
@@ -469,6 +489,7 @@ void write(TypeOutput& out, const ::pilot::base::CAN_ProxyBase& value, const Typ
 	vnx::write(out, value.output, type_code, type_code->fields[1].code.data());
 	vnx::write(out, value.adapter, type_code, type_code->fields[2].code.data());
 	vnx::write(out, value.device, type_code, type_code->fields[3].code.data());
+	vnx::write(out, value.socket_options, type_code, type_code->fields[6].code.data());
 }
 
 void read(std::istream& in, ::pilot::base::CAN_ProxyBase& value) {

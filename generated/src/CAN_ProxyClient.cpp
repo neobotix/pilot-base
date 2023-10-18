@@ -7,6 +7,7 @@
 #include <pilot/base/CAN_Proxy_send.hxx>
 #include <pilot/base/CAN_Proxy_send_return.hxx>
 #include <pilot/base/can_adapter_e.hxx>
+#include <pilot/base/socketcan_options_t.hxx>
 #include <vnx/Module.h>
 #include <vnx/ModuleInterface_vnx_get_config.hxx>
 #include <vnx/ModuleInterface_vnx_get_config_return.hxx>

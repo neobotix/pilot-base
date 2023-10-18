@@ -26,6 +26,7 @@
 #include <pilot/base/UDP_Receiver_open_port_return.hxx>
 #include <pilot/base/UDP_SenderBase.hxx>
 #include <pilot/base/can_adapter_e.hxx>
+#include <pilot/base/socketcan_options_t.hxx>
 
 #include <pilot/base/package.hxx>
 #include <vnx/vnx.h>
@@ -198,6 +199,14 @@ void type<::pilot::base::can_adapter_e>::create_dynamic_code(std::vector<uint16_
 	}
 }
 
+void type<::pilot::base::socketcan_options_t>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::socketcan_options_t());
+}
+
+void type<::pilot::base::socketcan_options_t>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::socketcan_options_t& value, bool special) {
+	code.push_back(CODE_OBJECT);
+}
+
 
 } // namespace vnx
 
@@ -232,6 +241,7 @@ static void register_all_types() {
 	vnx::register_type_code(::pilot::base::UDP_Receiver_open_port_return::static_create_type_code());
 	vnx::register_type_code(::pilot::base::UDP_SenderBase::static_create_type_code());
 	vnx::register_type_code(::pilot::base::can_adapter_e::static_create_type_code());
+	vnx::register_type_code(::pilot::base::socketcan_options_t::static_create_type_code());
 }
 
 static struct vnx_static_init {
@@ -265,6 +275,7 @@ const vnx::TypeCode* const vnx_native_type_code_UDP_Receiver_open_port = vnx::ge
 const vnx::TypeCode* const vnx_native_type_code_UDP_Receiver_open_port_return = vnx::get_type_code(vnx::Hash64(0xe3f9850d4fab4010ull));
 const vnx::TypeCode* const vnx_native_type_code_UDP_SenderBase = vnx::get_type_code(vnx::Hash64(0xdefb7c71f4bfa0a0ull));
 const vnx::TypeCode* const vnx_native_type_code_can_adapter_e = vnx::get_type_code(vnx::Hash64(0x7a7d5bef82a9fdfcull));
+const vnx::TypeCode* const vnx_native_type_code_socketcan_options_t = vnx::get_type_code(vnx::Hash64(0x21d4bbca201847deull));
 
 } // namespace pilot
 } // namespace base
