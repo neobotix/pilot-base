@@ -14,7 +14,7 @@ namespace pilot {
 namespace base {
 
 
-ssize_t udp_recv_packet(void* buf, size_t len, int timeout_ms)
+ssize_t udp_recv_packet(int socket, void* buf, size_t len, int timeout_ms)
 {
 	if(timeout_ms >= 0){
 		fd_set fdset;
