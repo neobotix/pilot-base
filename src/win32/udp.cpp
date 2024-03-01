@@ -7,6 +7,7 @@
 
 #include <pilot/base/udp.h>
 
+#include <stdexcept>
 #include <winsock2.h>
 
 
