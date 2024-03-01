@@ -17,8 +17,12 @@ class UDP_SenderBase : public ::vnx::Module {
 public:
 	
 	::vnx::TopicPtr input;
+	::vnx::TopicPtr output;
 	std::string address;
 	int32_t port = 0;
+	int32_t max_receive_packet_size = 65536;
+	int32_t read_timeout_ms = 200;
+	int32_t error_interval_ms = 1000;
 	int32_t stats_interval_ms = 10000;
 	
 	typedef ::vnx::Module Super;
