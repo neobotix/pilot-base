@@ -11,12 +11,14 @@ if(WIN32)
 		src/win32/SerialPort.cpp
 		src/win32/UDP_Receiver.cpp
 		src/win32/CAN_PeakUSB.cpp
+		src/win32/udp.cpp
 	)
 else()
 	list(APPEND PLATFORM_SOURCE_FILES
 		src/linux/SerialPort.cpp
 		src/linux/UDP_Receiver.cpp
 		src/linux/CAN_Socket.cpp
+		src/linux/udp.cpp
 	)
 endif()
 

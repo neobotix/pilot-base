@@ -28,8 +28,6 @@ protected:
 	void close_port() override;
 
 private:
-	ssize_t recv_packet(void* buf, size_t len, int timeout_ms) const;
-
 	void read_loop(const vnx::Hash64 module_addr) const noexcept;
 
 	void print_stats();

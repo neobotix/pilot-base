@@ -6,6 +6,7 @@
  */
 
 #include <pilot/base/UDP_Receiver.h>
+#include <pilot/base/udp.h>
 #include <pilot/base/UDP_ReceiverClient.hxx>
 #include <pilot/base/DataPacket.hxx>
 
@@ -64,7 +65,7 @@ void UDP_Receiver::read_loop(const vnx::Hash64 module_addr) const noexcept
 				sample->payload.resize(max_packet_size);
 
 				// read data
-				const auto num_bytes = recv_packet(sample->payload.data(), sample->payload.size(), read_timeout_ms);
+				const auto num_bytes = udp_recv_packet(m_fd, sample->payload.data(), sample->payload.size(), read_timeout_ms);
 				if(num_bytes > 0) {
 					sample->payload.resize(num_bytes);
 					publish(sample, output);

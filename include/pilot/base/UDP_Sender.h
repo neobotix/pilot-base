@@ -33,9 +33,13 @@ private:
 	size_t packet_counter = 0;
 	size_t bytes_sent = 0;
 
+	size_t packet_received_counter = 0;
+	size_t bytes_received = 0;
+
 	void setup();
 	void cleanup();
 	void print_stats();
+	void read_loop();
 
 };
 

@@ -38,26 +38,6 @@ void UDP_Receiver::close_port()
 	m_fd = -1;
 }
 
-ssize_t UDP_Receiver::recv_packet(void* buf, size_t len, int timeout_ms) const
-{
-	if(timeout_ms >= 0){
-		fd_set fdset;
-		FD_ZERO(&fdset);
-		FD_SET(m_fd, &fdset);
-		timeval tv = {timeout_ms / 1000, (timeout_ms % 1000) * 1000};
-
-		int ret = select(m_fd+1, &fdset, NULL, NULL, &tv);
-		if(ret < 1) return 0;
-	}
-
-	ssize_t result = recv(m_fd, (char*)buf, len, 0);
-	if(result == -1){
-		throw std::runtime_error("recv() error: " + std::to_string(WSAGetLastError()));
-	}
-
-	return result;
-}
-
 
 } // base
 } // pilot

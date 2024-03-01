@@ -1,4 +1,5 @@
 #include <pilot/base/UDP_Sender.h>
+#include <pilot/base/udp.h>
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -29,9 +30,13 @@ void UDP_Sender::main(){
 
 	setup();
 
+	std::thread read_thread(std::bind(&UDP_Sender::read_loop, this));
+
 	Super::main();
 
 	cleanup();
+
+	read_thread.join();
 }
 
 
@@ -106,15 +111,51 @@ void UDP_Sender::cleanup(){
 }
 
 
+void UDP_Sender::read_loop(){
+	while(vnx_do_run()){
+		try {
+			auto sample = DataPacket::create();
+			sample->time = vnx::get_time_micros();
+			sample->payload.resize(max_receive_packet_size);
+
+			// read data
+			const auto num_bytes = udp_recv_packet(socket, sample->payload.data(), sample->payload.size(), read_timeout_ms);
+			if(num_bytes > 0) {
+				sample->payload.resize(num_bytes);
+				publish(sample, output);
+				bytes_received += num_bytes;
+				packet_received_counter++;
+			}
+		}
+		catch(const std::exception& ex) {
+			if(vnx_do_run()) {
+				// Spams the log
+				//log(WARN) << ex.what();
+				std::this_thread::sleep_for(std::chrono::milliseconds(error_interval_ms));
+			}
+		}
+	}
+}
+
+
 void UDP_Sender::print_stats(){
 	log(INFO)
-		<< (1000 * message_counter) / stats_interval_ms << " msg/s, "
-		<< (1000 * packet_counter) / stats_interval_ms << " pkt/s, "
-		<< ((1000 * bytes_sent) / 1024) / stats_interval_ms << " KiB/s sent"
+		<< (1000 * message_counter) / stats_interval_ms << " msg/s"
+		<< ", "
+		<< (1000 * packet_counter) / stats_interval_ms << " pkt/s"
+		<< ", "
+		<< ((1000 * bytes_sent) / 1024) / stats_interval_ms << " KiB/s"
+		<< "sent"
+		<< ", "
+		<< (1000 * packet_received_counter) / stats_interval_ms << " pkt/s"
+		<< ((1000 * bytes_received) / 1024) / stats_interval_ms << " KiB/s"
+		<< "received"
 	;
 	bytes_sent = 0;
 	message_counter = 0;
 	packet_counter = 0;
+	packet_received_counter = 0;
+	bytes_received = 0;
 }
 
 
