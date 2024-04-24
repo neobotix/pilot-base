@@ -1,0 +1,7 @@
+package pilot.base;
+
+struct in_address_t{
+	string address;
+	int port;
+}
+

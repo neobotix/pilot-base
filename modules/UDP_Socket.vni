@@ -1,0 +1,18 @@
+package pilot.base;
+
+module UDP_Socket{
+	vnx.TopicPtr input;                                // pilot.base.DataPacket
+	vnx.TopicPtr output;                               // pilot.base.DataPacket
+
+	int port = 0;                                      // UDP port to listen on (0 for automatic)
+	optional<in_address_t> address;                    // remote address to send to; if set, incoming messages can only be received from there
+
+	int max_packet_size = 65536;                       // maximum receive packet size [bytes]
+	int read_timeout_ms = 200;                         // read timeout [ms]
+	int init_interval_ms = 1000;
+	int error_interval_ms = 1000;                      // error retry interval [ms]
+	int stats_interval_ms = 10000;                     // status message interval (0 = disable) [ms]
+
+	void handle(DataPacket value);
+}
+
