@@ -31,13 +31,9 @@ class SerialPort_close_port_return;
 class SerialPort_open_port;
 class SerialPort_open_port_return;
 class SocketSignal;
-class UDP_ReceiverBase;
-class UDP_Receiver_close_port;
-class UDP_Receiver_close_port_return;
-class UDP_Receiver_open_port;
-class UDP_Receiver_open_port_return;
-class UDP_SenderBase;
+class UDP_SocketBase;
 struct can_adapter_e;
+struct in_address_t;
 struct socketcan_options_t;
 
 extern const vnx::TypeCode* const vnx_native_type_code_CAN_Frame; ///< \private
@@ -58,13 +54,9 @@ extern const vnx::TypeCode* const vnx_native_type_code_SerialPort_close_port_ret
 extern const vnx::TypeCode* const vnx_native_type_code_SerialPort_open_port; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_SerialPort_open_port_return; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_SocketSignal; ///< \private
-extern const vnx::TypeCode* const vnx_native_type_code_UDP_ReceiverBase; ///< \private
-extern const vnx::TypeCode* const vnx_native_type_code_UDP_Receiver_close_port; ///< \private
-extern const vnx::TypeCode* const vnx_native_type_code_UDP_Receiver_close_port_return; ///< \private
-extern const vnx::TypeCode* const vnx_native_type_code_UDP_Receiver_open_port; ///< \private
-extern const vnx::TypeCode* const vnx_native_type_code_UDP_Receiver_open_port_return; ///< \private
-extern const vnx::TypeCode* const vnx_native_type_code_UDP_SenderBase; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_UDP_SocketBase; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_can_adapter_e; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_in_address_t; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_socketcan_options_t; ///< \private
 
 } // namespace pilot
@@ -91,13 +83,9 @@ void read(TypeInput& in, ::pilot::base::SerialPort_close_port_return& value, con
 void read(TypeInput& in, ::pilot::base::SerialPort_open_port& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::SerialPort_open_port_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::SocketSignal& value, const TypeCode* type_code, const uint16_t* code); ///< \private
-void read(TypeInput& in, ::pilot::base::UDP_ReceiverBase& value, const TypeCode* type_code, const uint16_t* code); ///< \private
-void read(TypeInput& in, ::pilot::base::UDP_Receiver_close_port& value, const TypeCode* type_code, const uint16_t* code); ///< \private
-void read(TypeInput& in, ::pilot::base::UDP_Receiver_close_port_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
-void read(TypeInput& in, ::pilot::base::UDP_Receiver_open_port& value, const TypeCode* type_code, const uint16_t* code); ///< \private
-void read(TypeInput& in, ::pilot::base::UDP_Receiver_open_port_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
-void read(TypeInput& in, ::pilot::base::UDP_SenderBase& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::UDP_SocketBase& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::can_adapter_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::in_address_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::socketcan_options_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 
 void write(TypeOutput& out, const ::pilot::base::CAN_Frame& value, const TypeCode* type_code, const uint16_t* code); ///< \private
@@ -118,13 +106,9 @@ void write(TypeOutput& out, const ::pilot::base::SerialPort_close_port_return& v
 void write(TypeOutput& out, const ::pilot::base::SerialPort_open_port& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::SerialPort_open_port_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::SocketSignal& value, const TypeCode* type_code, const uint16_t* code); ///< \private
-void write(TypeOutput& out, const ::pilot::base::UDP_ReceiverBase& value, const TypeCode* type_code, const uint16_t* code); ///< \private
-void write(TypeOutput& out, const ::pilot::base::UDP_Receiver_close_port& value, const TypeCode* type_code, const uint16_t* code); ///< \private
-void write(TypeOutput& out, const ::pilot::base::UDP_Receiver_close_port_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
-void write(TypeOutput& out, const ::pilot::base::UDP_Receiver_open_port& value, const TypeCode* type_code, const uint16_t* code); ///< \private
-void write(TypeOutput& out, const ::pilot::base::UDP_Receiver_open_port_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
-void write(TypeOutput& out, const ::pilot::base::UDP_SenderBase& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::UDP_SocketBase& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::can_adapter_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::in_address_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::socketcan_options_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 
 void read(std::istream& in, ::pilot::base::CAN_Frame& value); ///< \private
@@ -145,13 +129,9 @@ void read(std::istream& in, ::pilot::base::SerialPort_close_port_return& value);
 void read(std::istream& in, ::pilot::base::SerialPort_open_port& value); ///< \private
 void read(std::istream& in, ::pilot::base::SerialPort_open_port_return& value); ///< \private
 void read(std::istream& in, ::pilot::base::SocketSignal& value); ///< \private
-void read(std::istream& in, ::pilot::base::UDP_ReceiverBase& value); ///< \private
-void read(std::istream& in, ::pilot::base::UDP_Receiver_close_port& value); ///< \private
-void read(std::istream& in, ::pilot::base::UDP_Receiver_close_port_return& value); ///< \private
-void read(std::istream& in, ::pilot::base::UDP_Receiver_open_port& value); ///< \private
-void read(std::istream& in, ::pilot::base::UDP_Receiver_open_port_return& value); ///< \private
-void read(std::istream& in, ::pilot::base::UDP_SenderBase& value); ///< \private
+void read(std::istream& in, ::pilot::base::UDP_SocketBase& value); ///< \private
 void read(std::istream& in, ::pilot::base::can_adapter_e& value); ///< \private
+void read(std::istream& in, ::pilot::base::in_address_t& value); ///< \private
 void read(std::istream& in, ::pilot::base::socketcan_options_t& value); ///< \private
 
 void write(std::ostream& out, const ::pilot::base::CAN_Frame& value); ///< \private
@@ -172,13 +152,9 @@ void write(std::ostream& out, const ::pilot::base::SerialPort_close_port_return&
 void write(std::ostream& out, const ::pilot::base::SerialPort_open_port& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::SerialPort_open_port_return& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::SocketSignal& value); ///< \private
-void write(std::ostream& out, const ::pilot::base::UDP_ReceiverBase& value); ///< \private
-void write(std::ostream& out, const ::pilot::base::UDP_Receiver_close_port& value); ///< \private
-void write(std::ostream& out, const ::pilot::base::UDP_Receiver_close_port_return& value); ///< \private
-void write(std::ostream& out, const ::pilot::base::UDP_Receiver_open_port& value); ///< \private
-void write(std::ostream& out, const ::pilot::base::UDP_Receiver_open_port_return& value); ///< \private
-void write(std::ostream& out, const ::pilot::base::UDP_SenderBase& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::UDP_SocketBase& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::can_adapter_e& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::in_address_t& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::socketcan_options_t& value); ///< \private
 
 void accept(Visitor& visitor, const ::pilot::base::CAN_Frame& value); ///< \private
@@ -199,13 +175,9 @@ void accept(Visitor& visitor, const ::pilot::base::SerialPort_close_port_return&
 void accept(Visitor& visitor, const ::pilot::base::SerialPort_open_port& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::SerialPort_open_port_return& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::SocketSignal& value); ///< \private
-void accept(Visitor& visitor, const ::pilot::base::UDP_ReceiverBase& value); ///< \private
-void accept(Visitor& visitor, const ::pilot::base::UDP_Receiver_close_port& value); ///< \private
-void accept(Visitor& visitor, const ::pilot::base::UDP_Receiver_close_port_return& value); ///< \private
-void accept(Visitor& visitor, const ::pilot::base::UDP_Receiver_open_port& value); ///< \private
-void accept(Visitor& visitor, const ::pilot::base::UDP_Receiver_open_port_return& value); ///< \private
-void accept(Visitor& visitor, const ::pilot::base::UDP_SenderBase& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::UDP_SocketBase& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::can_adapter_e& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::in_address_t& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::socketcan_options_t& value); ///< \private
 
 /// \private
@@ -600,128 +572,20 @@ struct type<::pilot::base::SocketSignal> {
 
 /// \private
 template<>
-struct type<::pilot::base::UDP_ReceiverBase> {
-	void read(TypeInput& in, ::pilot::base::UDP_ReceiverBase& value, const TypeCode* type_code, const uint16_t* code) {
+struct type<::pilot::base::UDP_SocketBase> {
+	void read(TypeInput& in, ::pilot::base::UDP_SocketBase& value, const TypeCode* type_code, const uint16_t* code) {
 		vnx::read(in, value, type_code, code);
 	}
-	void write(TypeOutput& out, const ::pilot::base::UDP_ReceiverBase& value, const TypeCode* type_code, const uint16_t* code) {
+	void write(TypeOutput& out, const ::pilot::base::UDP_SocketBase& value, const TypeCode* type_code, const uint16_t* code) {
 		vnx::write(out, value, type_code, code);
 	}
-	void read(std::istream& in, ::pilot::base::UDP_ReceiverBase& value) {
+	void read(std::istream& in, ::pilot::base::UDP_SocketBase& value) {
 		vnx::read(in, value);
 	}
-	void write(std::ostream& out, const ::pilot::base::UDP_ReceiverBase& value) {
+	void write(std::ostream& out, const ::pilot::base::UDP_SocketBase& value) {
 		vnx::write(out, value);
 	}
-	void accept(Visitor& visitor, const ::pilot::base::UDP_ReceiverBase& value) {
-		vnx::accept(visitor, value);
-	}
-};
-
-/// \private
-template<>
-struct type<::pilot::base::UDP_Receiver_close_port> {
-	void read(TypeInput& in, ::pilot::base::UDP_Receiver_close_port& value, const TypeCode* type_code, const uint16_t* code) {
-		vnx::read(in, value, type_code, code);
-	}
-	void write(TypeOutput& out, const ::pilot::base::UDP_Receiver_close_port& value, const TypeCode* type_code, const uint16_t* code) {
-		vnx::write(out, value, type_code, code);
-	}
-	void read(std::istream& in, ::pilot::base::UDP_Receiver_close_port& value) {
-		vnx::read(in, value);
-	}
-	void write(std::ostream& out, const ::pilot::base::UDP_Receiver_close_port& value) {
-		vnx::write(out, value);
-	}
-	void accept(Visitor& visitor, const ::pilot::base::UDP_Receiver_close_port& value) {
-		vnx::accept(visitor, value);
-	}
-	void create_dynamic_code(std::vector<uint16_t>& code);
-	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::UDP_Receiver_close_port& value, bool special = false);
-};
-
-/// \private
-template<>
-struct type<::pilot::base::UDP_Receiver_close_port_return> {
-	void read(TypeInput& in, ::pilot::base::UDP_Receiver_close_port_return& value, const TypeCode* type_code, const uint16_t* code) {
-		vnx::read(in, value, type_code, code);
-	}
-	void write(TypeOutput& out, const ::pilot::base::UDP_Receiver_close_port_return& value, const TypeCode* type_code, const uint16_t* code) {
-		vnx::write(out, value, type_code, code);
-	}
-	void read(std::istream& in, ::pilot::base::UDP_Receiver_close_port_return& value) {
-		vnx::read(in, value);
-	}
-	void write(std::ostream& out, const ::pilot::base::UDP_Receiver_close_port_return& value) {
-		vnx::write(out, value);
-	}
-	void accept(Visitor& visitor, const ::pilot::base::UDP_Receiver_close_port_return& value) {
-		vnx::accept(visitor, value);
-	}
-	void create_dynamic_code(std::vector<uint16_t>& code);
-	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::UDP_Receiver_close_port_return& value, bool special = false);
-};
-
-/// \private
-template<>
-struct type<::pilot::base::UDP_Receiver_open_port> {
-	void read(TypeInput& in, ::pilot::base::UDP_Receiver_open_port& value, const TypeCode* type_code, const uint16_t* code) {
-		vnx::read(in, value, type_code, code);
-	}
-	void write(TypeOutput& out, const ::pilot::base::UDP_Receiver_open_port& value, const TypeCode* type_code, const uint16_t* code) {
-		vnx::write(out, value, type_code, code);
-	}
-	void read(std::istream& in, ::pilot::base::UDP_Receiver_open_port& value) {
-		vnx::read(in, value);
-	}
-	void write(std::ostream& out, const ::pilot::base::UDP_Receiver_open_port& value) {
-		vnx::write(out, value);
-	}
-	void accept(Visitor& visitor, const ::pilot::base::UDP_Receiver_open_port& value) {
-		vnx::accept(visitor, value);
-	}
-	void create_dynamic_code(std::vector<uint16_t>& code);
-	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::UDP_Receiver_open_port& value, bool special = false);
-};
-
-/// \private
-template<>
-struct type<::pilot::base::UDP_Receiver_open_port_return> {
-	void read(TypeInput& in, ::pilot::base::UDP_Receiver_open_port_return& value, const TypeCode* type_code, const uint16_t* code) {
-		vnx::read(in, value, type_code, code);
-	}
-	void write(TypeOutput& out, const ::pilot::base::UDP_Receiver_open_port_return& value, const TypeCode* type_code, const uint16_t* code) {
-		vnx::write(out, value, type_code, code);
-	}
-	void read(std::istream& in, ::pilot::base::UDP_Receiver_open_port_return& value) {
-		vnx::read(in, value);
-	}
-	void write(std::ostream& out, const ::pilot::base::UDP_Receiver_open_port_return& value) {
-		vnx::write(out, value);
-	}
-	void accept(Visitor& visitor, const ::pilot::base::UDP_Receiver_open_port_return& value) {
-		vnx::accept(visitor, value);
-	}
-	void create_dynamic_code(std::vector<uint16_t>& code);
-	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::UDP_Receiver_open_port_return& value, bool special = false);
-};
-
-/// \private
-template<>
-struct type<::pilot::base::UDP_SenderBase> {
-	void read(TypeInput& in, ::pilot::base::UDP_SenderBase& value, const TypeCode* type_code, const uint16_t* code) {
-		vnx::read(in, value, type_code, code);
-	}
-	void write(TypeOutput& out, const ::pilot::base::UDP_SenderBase& value, const TypeCode* type_code, const uint16_t* code) {
-		vnx::write(out, value, type_code, code);
-	}
-	void read(std::istream& in, ::pilot::base::UDP_SenderBase& value) {
-		vnx::read(in, value);
-	}
-	void write(std::ostream& out, const ::pilot::base::UDP_SenderBase& value) {
-		vnx::write(out, value);
-	}
-	void accept(Visitor& visitor, const ::pilot::base::UDP_SenderBase& value) {
+	void accept(Visitor& visitor, const ::pilot::base::UDP_SocketBase& value) {
 		vnx::accept(visitor, value);
 	}
 };
@@ -746,6 +610,28 @@ struct type<::pilot::base::can_adapter_e> {
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code);
 	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::can_adapter_e& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::in_address_t> {
+	void read(TypeInput& in, ::pilot::base::in_address_t& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::in_address_t& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::in_address_t& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::in_address_t& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::in_address_t& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::in_address_t& value, bool special = false);
 };
 
 /// \private

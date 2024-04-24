@@ -19,13 +19,9 @@
 #include <pilot/base/SerialPort_open_port.hxx>
 #include <pilot/base/SerialPort_open_port_return.hxx>
 #include <pilot/base/SocketSignal.hxx>
-#include <pilot/base/UDP_ReceiverBase.hxx>
-#include <pilot/base/UDP_Receiver_close_port.hxx>
-#include <pilot/base/UDP_Receiver_close_port_return.hxx>
-#include <pilot/base/UDP_Receiver_open_port.hxx>
-#include <pilot/base/UDP_Receiver_open_port_return.hxx>
-#include <pilot/base/UDP_SenderBase.hxx>
+#include <pilot/base/UDP_SocketBase.hxx>
 #include <pilot/base/can_adapter_e.hxx>
+#include <pilot/base/in_address_t.hxx>
 #include <pilot/base/socketcan_options_t.hxx>
 
 #include <pilot/base/package.hxx>
@@ -155,38 +151,6 @@ void type<::pilot::base::SocketSignal>::create_dynamic_code(std::vector<uint16_t
 	code.push_back(CODE_OBJECT);
 }
 
-void type<::pilot::base::UDP_Receiver_close_port>::create_dynamic_code(std::vector<uint16_t>& code) {
-	create_dynamic_code(code, ::pilot::base::UDP_Receiver_close_port());
-}
-
-void type<::pilot::base::UDP_Receiver_close_port>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::UDP_Receiver_close_port& value, bool special) {
-	code.push_back(CODE_OBJECT);
-}
-
-void type<::pilot::base::UDP_Receiver_close_port_return>::create_dynamic_code(std::vector<uint16_t>& code) {
-	create_dynamic_code(code, ::pilot::base::UDP_Receiver_close_port_return());
-}
-
-void type<::pilot::base::UDP_Receiver_close_port_return>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::UDP_Receiver_close_port_return& value, bool special) {
-	code.push_back(CODE_OBJECT);
-}
-
-void type<::pilot::base::UDP_Receiver_open_port>::create_dynamic_code(std::vector<uint16_t>& code) {
-	create_dynamic_code(code, ::pilot::base::UDP_Receiver_open_port());
-}
-
-void type<::pilot::base::UDP_Receiver_open_port>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::UDP_Receiver_open_port& value, bool special) {
-	code.push_back(CODE_OBJECT);
-}
-
-void type<::pilot::base::UDP_Receiver_open_port_return>::create_dynamic_code(std::vector<uint16_t>& code) {
-	create_dynamic_code(code, ::pilot::base::UDP_Receiver_open_port_return());
-}
-
-void type<::pilot::base::UDP_Receiver_open_port_return>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::UDP_Receiver_open_port_return& value, bool special) {
-	code.push_back(CODE_OBJECT);
-}
-
 void type<::pilot::base::can_adapter_e>::create_dynamic_code(std::vector<uint16_t>& code) {
 	create_dynamic_code(code, ::pilot::base::can_adapter_e());
 }
@@ -197,6 +161,14 @@ void type<::pilot::base::can_adapter_e>::create_dynamic_code(std::vector<uint16_
 	} else {
 		code.push_back(CODE_UINT32);
 	}
+}
+
+void type<::pilot::base::in_address_t>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::in_address_t());
+}
+
+void type<::pilot::base::in_address_t>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::in_address_t& value, bool special) {
+	code.push_back(CODE_OBJECT);
 }
 
 void type<::pilot::base::socketcan_options_t>::create_dynamic_code(std::vector<uint16_t>& code) {
@@ -234,13 +206,9 @@ static void register_all_types() {
 	vnx::register_type_code(::pilot::base::SerialPort_open_port::static_create_type_code());
 	vnx::register_type_code(::pilot::base::SerialPort_open_port_return::static_create_type_code());
 	vnx::register_type_code(::pilot::base::SocketSignal::static_create_type_code());
-	vnx::register_type_code(::pilot::base::UDP_ReceiverBase::static_create_type_code());
-	vnx::register_type_code(::pilot::base::UDP_Receiver_close_port::static_create_type_code());
-	vnx::register_type_code(::pilot::base::UDP_Receiver_close_port_return::static_create_type_code());
-	vnx::register_type_code(::pilot::base::UDP_Receiver_open_port::static_create_type_code());
-	vnx::register_type_code(::pilot::base::UDP_Receiver_open_port_return::static_create_type_code());
-	vnx::register_type_code(::pilot::base::UDP_SenderBase::static_create_type_code());
+	vnx::register_type_code(::pilot::base::UDP_SocketBase::static_create_type_code());
 	vnx::register_type_code(::pilot::base::can_adapter_e::static_create_type_code());
+	vnx::register_type_code(::pilot::base::in_address_t::static_create_type_code());
 	vnx::register_type_code(::pilot::base::socketcan_options_t::static_create_type_code());
 }
 
@@ -268,13 +236,9 @@ const vnx::TypeCode* const vnx_native_type_code_SerialPort_close_port_return = v
 const vnx::TypeCode* const vnx_native_type_code_SerialPort_open_port = vnx::get_type_code(vnx::Hash64(0xf8db604b35c6b25dull));
 const vnx::TypeCode* const vnx_native_type_code_SerialPort_open_port_return = vnx::get_type_code(vnx::Hash64(0xbe277f383728e0full));
 const vnx::TypeCode* const vnx_native_type_code_SocketSignal = vnx::get_type_code(vnx::Hash64(0x91f51fd310ed96deull));
-const vnx::TypeCode* const vnx_native_type_code_UDP_ReceiverBase = vnx::get_type_code(vnx::Hash64(0x5c0111dff18f907bull));
-const vnx::TypeCode* const vnx_native_type_code_UDP_Receiver_close_port = vnx::get_type_code(vnx::Hash64(0x8efa3a2c8d9bf9edull));
-const vnx::TypeCode* const vnx_native_type_code_UDP_Receiver_close_port_return = vnx::get_type_code(vnx::Hash64(0x5c1b70238fc1cba2ull));
-const vnx::TypeCode* const vnx_native_type_code_UDP_Receiver_open_port = vnx::get_type_code(vnx::Hash64(0xc54c97600d1fd67eull));
-const vnx::TypeCode* const vnx_native_type_code_UDP_Receiver_open_port_return = vnx::get_type_code(vnx::Hash64(0xe3f9850d4fab4010ull));
-const vnx::TypeCode* const vnx_native_type_code_UDP_SenderBase = vnx::get_type_code(vnx::Hash64(0xdefb7c71f4bfa0a0ull));
+const vnx::TypeCode* const vnx_native_type_code_UDP_SocketBase = vnx::get_type_code(vnx::Hash64(0xed63df42c27a66ebull));
 const vnx::TypeCode* const vnx_native_type_code_can_adapter_e = vnx::get_type_code(vnx::Hash64(0x7a7d5bef82a9fdfcull));
+const vnx::TypeCode* const vnx_native_type_code_in_address_t = vnx::get_type_code(vnx::Hash64(0xf0ba186b6082b1d2ull));
 const vnx::TypeCode* const vnx_native_type_code_socketcan_options_t = vnx::get_type_code(vnx::Hash64(0x21d4bbca201847deull));
 
 } // namespace pilot
