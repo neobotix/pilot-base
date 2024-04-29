@@ -22,6 +22,7 @@ public:
 	uint32_t read_buffer_size = 4096;
 	int32_t stats_interval_ms = 10000;
 	int32_t error_interval_ms = 1000;
+	int32_t shutdown_delay_ms = 200;
 	
 	typedef ::vnx::Module Super;
 	

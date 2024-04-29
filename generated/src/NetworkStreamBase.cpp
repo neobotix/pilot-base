@@ -40,7 +40,7 @@ namespace base {
 
 
 const vnx::Hash64 NetworkStreamBase::VNX_TYPE_HASH(0xf148d90d9b345113ull);
-const vnx::Hash64 NetworkStreamBase::VNX_CODE_HASH(0xc96e3a618620cd89ull);
+const vnx::Hash64 NetworkStreamBase::VNX_CODE_HASH(0x90ce0dbec6a7dc78ull);
 
 NetworkStreamBase::NetworkStreamBase(const std::string& _vnx_name)
 	:	Module::Module(_vnx_name)
@@ -51,6 +51,7 @@ NetworkStreamBase::NetworkStreamBase(const std::string& _vnx_name)
 	vnx::read_config(vnx_name + ".read_buffer_size", read_buffer_size);
 	vnx::read_config(vnx_name + ".stats_interval_ms", stats_interval_ms);
 	vnx::read_config(vnx_name + ".error_interval_ms", error_interval_ms);
+	vnx::read_config(vnx_name + ".shutdown_delay_ms", shutdown_delay_ms);
 }
 
 vnx::Hash64 NetworkStreamBase::get_type_hash() const {
@@ -74,6 +75,7 @@ void NetworkStreamBase::accept(vnx::Visitor& _visitor) const {
 	_visitor.type_field(_type_code->fields[3], 3); vnx::accept(_visitor, read_buffer_size);
 	_visitor.type_field(_type_code->fields[4], 4); vnx::accept(_visitor, stats_interval_ms);
 	_visitor.type_field(_type_code->fields[5], 5); vnx::accept(_visitor, error_interval_ms);
+	_visitor.type_field(_type_code->fields[6], 6); vnx::accept(_visitor, shutdown_delay_ms);
 	_visitor.type_end(*_type_code);
 }
 
@@ -85,6 +87,7 @@ void NetworkStreamBase::write(std::ostream& _out) const {
 	_out << ", \"read_buffer_size\": "; vnx::write(_out, read_buffer_size);
 	_out << ", \"stats_interval_ms\": "; vnx::write(_out, stats_interval_ms);
 	_out << ", \"error_interval_ms\": "; vnx::write(_out, error_interval_ms);
+	_out << ", \"shutdown_delay_ms\": "; vnx::write(_out, shutdown_delay_ms);
 	_out << "}";
 }
 
@@ -103,6 +106,7 @@ vnx::Object NetworkStreamBase::to_object() const {
 	_object["read_buffer_size"] = read_buffer_size;
 	_object["stats_interval_ms"] = stats_interval_ms;
 	_object["error_interval_ms"] = error_interval_ms;
+	_object["shutdown_delay_ms"] = shutdown_delay_ms;
 	return _object;
 }
 
@@ -118,6 +122,8 @@ void NetworkStreamBase::from_object(const vnx::Object& _object) {
 			_entry.second.to(output);
 		} else if(_entry.first == "read_buffer_size") {
 			_entry.second.to(read_buffer_size);
+		} else if(_entry.first == "shutdown_delay_ms") {
+			_entry.second.to(shutdown_delay_ms);
 		} else if(_entry.first == "stats_interval_ms") {
 			_entry.second.to(stats_interval_ms);
 		}
@@ -143,6 +149,9 @@ vnx::Variant NetworkStreamBase::get_field(const std::string& _name) const {
 	if(_name == "error_interval_ms") {
 		return vnx::Variant(error_interval_ms);
 	}
+	if(_name == "shutdown_delay_ms") {
+		return vnx::Variant(shutdown_delay_ms);
+	}
 	return vnx::Variant();
 }
 
@@ -159,6 +168,8 @@ void NetworkStreamBase::set_field(const std::string& _name, const vnx::Variant& 
 		_value.to(stats_interval_ms);
 	} else if(_name == "error_interval_ms") {
 		_value.to(error_interval_ms);
+	} else if(_name == "shutdown_delay_ms") {
+		_value.to(shutdown_delay_ms);
 	} else {
 		throw std::logic_error("no such field: '" + _name + "'");
 	}
@@ -188,7 +199,7 @@ std::shared_ptr<vnx::TypeCode> NetworkStreamBase::static_create_type_code() {
 	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.base.NetworkStream";
 	type_code->type_hash = vnx::Hash64(0xf148d90d9b345113ull);
-	type_code->code_hash = vnx::Hash64(0xc96e3a618620cd89ull);
+	type_code->code_hash = vnx::Hash64(0x90ce0dbec6a7dc78ull);
 	type_code->is_native = true;
 	type_code->native_size = sizeof(::pilot::base::NetworkStreamBase);
 	type_code->methods.resize(12);
@@ -204,7 +215,7 @@ std::shared_ptr<vnx::TypeCode> NetworkStreamBase::static_create_type_code() {
 	type_code->methods[9] = ::pilot::base::NetworkStream_is_connected::static_get_type_code();
 	type_code->methods[10] = ::pilot::base::NetworkStream_connect::static_get_type_code();
 	type_code->methods[11] = ::pilot::base::NetworkStream_disconnect::static_get_type_code();
-	type_code->fields.resize(6);
+	type_code->fields.resize(7);
 	{
 		auto& field = type_code->fields[0];
 		field.is_extended = true;
@@ -242,6 +253,13 @@ std::shared_ptr<vnx::TypeCode> NetworkStreamBase::static_create_type_code() {
 		field.data_size = 4;
 		field.name = "error_interval_ms";
 		field.value = vnx::to_string(1000);
+		field.code = {7};
+	}
+	{
+		auto& field = type_code->fields[6];
+		field.data_size = 4;
+		field.name = "shutdown_delay_ms";
+		field.value = vnx::to_string(200);
 		field.code = {7};
 	}
 	type_code->build();
@@ -391,6 +409,9 @@ void read(TypeInput& in, ::pilot::base::NetworkStreamBase& value, const TypeCode
 		if(const auto* const _field = type_code->field_map[5]) {
 			vnx::read_value(_buf + _field->offset, value.error_interval_ms, _field->code.data());
 		}
+		if(const auto* const _field = type_code->field_map[6]) {
+			vnx::read_value(_buf + _field->offset, value.shutdown_delay_ms, _field->code.data());
+		}
 	}
 	for(const auto* _field : type_code->ext_fields) {
 		switch(_field->native_index) {
@@ -415,10 +436,11 @@ void write(TypeOutput& out, const ::pilot::base::NetworkStreamBase& value, const
 	else if(code && code[0] == CODE_STRUCT) {
 		type_code = type_code->depends[code[1]];
 	}
-	char* const _buf = out.write(12);
+	char* const _buf = out.write(16);
 	vnx::write_value(_buf + 0, value.read_buffer_size);
 	vnx::write_value(_buf + 4, value.stats_interval_ms);
 	vnx::write_value(_buf + 8, value.error_interval_ms);
+	vnx::write_value(_buf + 12, value.shutdown_delay_ms);
 	vnx::write(out, value.input, type_code, type_code->fields[0].code.data());
 	vnx::write(out, value.output, type_code, type_code->fields[1].code.data());
 	vnx::write(out, value.address, type_code, type_code->fields[2].code.data());

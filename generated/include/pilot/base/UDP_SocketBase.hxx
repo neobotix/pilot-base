@@ -26,6 +26,7 @@ public:
 	int32_t init_interval_ms = 1000;
 	int32_t error_interval_ms = 1000;
 	int32_t stats_interval_ms = 10000;
+	int32_t shutdown_delay_ms = 200;
 	
 	typedef ::vnx::Module Super;
 	

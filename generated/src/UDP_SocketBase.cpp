@@ -35,7 +35,7 @@ namespace base {
 
 
 const vnx::Hash64 UDP_SocketBase::VNX_TYPE_HASH(0xed63df42c27a66ebull);
-const vnx::Hash64 UDP_SocketBase::VNX_CODE_HASH(0x1406bd0e77a6748ull);
+const vnx::Hash64 UDP_SocketBase::VNX_CODE_HASH(0x121a07a779149305ull);
 
 UDP_SocketBase::UDP_SocketBase(const std::string& _vnx_name)
 	:	Module::Module(_vnx_name)
@@ -49,6 +49,7 @@ UDP_SocketBase::UDP_SocketBase(const std::string& _vnx_name)
 	vnx::read_config(vnx_name + ".init_interval_ms", init_interval_ms);
 	vnx::read_config(vnx_name + ".error_interval_ms", error_interval_ms);
 	vnx::read_config(vnx_name + ".stats_interval_ms", stats_interval_ms);
+	vnx::read_config(vnx_name + ".shutdown_delay_ms", shutdown_delay_ms);
 }
 
 vnx::Hash64 UDP_SocketBase::get_type_hash() const {
@@ -75,6 +76,7 @@ void UDP_SocketBase::accept(vnx::Visitor& _visitor) const {
 	_visitor.type_field(_type_code->fields[6], 6); vnx::accept(_visitor, init_interval_ms);
 	_visitor.type_field(_type_code->fields[7], 7); vnx::accept(_visitor, error_interval_ms);
 	_visitor.type_field(_type_code->fields[8], 8); vnx::accept(_visitor, stats_interval_ms);
+	_visitor.type_field(_type_code->fields[9], 9); vnx::accept(_visitor, shutdown_delay_ms);
 	_visitor.type_end(*_type_code);
 }
 
@@ -89,6 +91,7 @@ void UDP_SocketBase::write(std::ostream& _out) const {
 	_out << ", \"init_interval_ms\": "; vnx::write(_out, init_interval_ms);
 	_out << ", \"error_interval_ms\": "; vnx::write(_out, error_interval_ms);
 	_out << ", \"stats_interval_ms\": "; vnx::write(_out, stats_interval_ms);
+	_out << ", \"shutdown_delay_ms\": "; vnx::write(_out, shutdown_delay_ms);
 	_out << "}";
 }
 
@@ -110,6 +113,7 @@ vnx::Object UDP_SocketBase::to_object() const {
 	_object["init_interval_ms"] = init_interval_ms;
 	_object["error_interval_ms"] = error_interval_ms;
 	_object["stats_interval_ms"] = stats_interval_ms;
+	_object["shutdown_delay_ms"] = shutdown_delay_ms;
 	return _object;
 }
 
@@ -131,6 +135,8 @@ void UDP_SocketBase::from_object(const vnx::Object& _object) {
 			_entry.second.to(port);
 		} else if(_entry.first == "read_timeout_ms") {
 			_entry.second.to(read_timeout_ms);
+		} else if(_entry.first == "shutdown_delay_ms") {
+			_entry.second.to(shutdown_delay_ms);
 		} else if(_entry.first == "stats_interval_ms") {
 			_entry.second.to(stats_interval_ms);
 		}
@@ -165,6 +171,9 @@ vnx::Variant UDP_SocketBase::get_field(const std::string& _name) const {
 	if(_name == "stats_interval_ms") {
 		return vnx::Variant(stats_interval_ms);
 	}
+	if(_name == "shutdown_delay_ms") {
+		return vnx::Variant(shutdown_delay_ms);
+	}
 	return vnx::Variant();
 }
 
@@ -187,6 +196,8 @@ void UDP_SocketBase::set_field(const std::string& _name, const vnx::Variant& _va
 		_value.to(error_interval_ms);
 	} else if(_name == "stats_interval_ms") {
 		_value.to(stats_interval_ms);
+	} else if(_name == "shutdown_delay_ms") {
+		_value.to(shutdown_delay_ms);
 	} else {
 		throw std::logic_error("no such field: '" + _name + "'");
 	}
@@ -216,7 +227,7 @@ std::shared_ptr<vnx::TypeCode> UDP_SocketBase::static_create_type_code() {
 	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.base.UDP_Socket";
 	type_code->type_hash = vnx::Hash64(0xed63df42c27a66ebull);
-	type_code->code_hash = vnx::Hash64(0x1406bd0e77a6748ull);
+	type_code->code_hash = vnx::Hash64(0x121a07a779149305ull);
 	type_code->is_native = true;
 	type_code->native_size = sizeof(::pilot::base::UDP_SocketBase);
 	type_code->depends.resize(1);
@@ -231,7 +242,7 @@ std::shared_ptr<vnx::TypeCode> UDP_SocketBase::static_create_type_code() {
 	type_code->methods[6] = ::vnx::ModuleInterface_vnx_restart::static_get_type_code();
 	type_code->methods[7] = ::vnx::ModuleInterface_vnx_stop::static_get_type_code();
 	type_code->methods[8] = ::vnx::ModuleInterface_vnx_self_test::static_get_type_code();
-	type_code->fields.resize(9);
+	type_code->fields.resize(10);
 	{
 		auto& field = type_code->fields[0];
 		field.is_extended = true;
@@ -290,6 +301,13 @@ std::shared_ptr<vnx::TypeCode> UDP_SocketBase::static_create_type_code() {
 		field.data_size = 4;
 		field.name = "stats_interval_ms";
 		field.value = vnx::to_string(10000);
+		field.code = {7};
+	}
+	{
+		auto& field = type_code->fields[9];
+		field.data_size = 4;
+		field.name = "shutdown_delay_ms";
+		field.value = vnx::to_string(200);
 		field.code = {7};
 	}
 	type_code->build();
@@ -430,6 +448,9 @@ void read(TypeInput& in, ::pilot::base::UDP_SocketBase& value, const TypeCode* t
 		if(const auto* const _field = type_code->field_map[8]) {
 			vnx::read_value(_buf + _field->offset, value.stats_interval_ms, _field->code.data());
 		}
+		if(const auto* const _field = type_code->field_map[9]) {
+			vnx::read_value(_buf + _field->offset, value.shutdown_delay_ms, _field->code.data());
+		}
 	}
 	for(const auto* _field : type_code->ext_fields) {
 		switch(_field->native_index) {
@@ -454,13 +475,14 @@ void write(TypeOutput& out, const ::pilot::base::UDP_SocketBase& value, const Ty
 	else if(code && code[0] == CODE_STRUCT) {
 		type_code = type_code->depends[code[1]];
 	}
-	char* const _buf = out.write(24);
+	char* const _buf = out.write(28);
 	vnx::write_value(_buf + 0, value.port);
 	vnx::write_value(_buf + 4, value.max_packet_size);
 	vnx::write_value(_buf + 8, value.read_timeout_ms);
 	vnx::write_value(_buf + 12, value.init_interval_ms);
 	vnx::write_value(_buf + 16, value.error_interval_ms);
 	vnx::write_value(_buf + 20, value.stats_interval_ms);
+	vnx::write_value(_buf + 24, value.shutdown_delay_ms);
 	vnx::write(out, value.input, type_code, type_code->fields[0].code.data());
 	vnx::write(out, value.output, type_code, type_code->fields[1].code.data());
 	vnx::write(out, value.address, type_code, type_code->fields[3].code.data());
