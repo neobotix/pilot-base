@@ -125,6 +125,15 @@ void NetworkStream::handle(std::shared_ptr<const DataPacket> value){
 }
 
 
+bool NetworkStream::vnx_shutdown(){
+	if(shutdown_delay_ms <= 0){
+		return true;
+	}
+	set_timeout_millis(shutdown_delay_ms, std::bind(&NetworkStream::exit, this));
+	return false;
+}
+
+
 void NetworkStream::print_stats(){
 	log(INFO) <<
 		(1000 * num_read) / stats_interval_ms << " msgs/s receive, "

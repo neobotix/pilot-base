@@ -13,6 +13,8 @@ module UDP_Socket{
 	int error_interval_ms = 1000;                      // error retry interval [ms]
 	int stats_interval_ms = 10000;                     // status message interval (0 = disable) [ms]
 
+	int shutdown_delay_ms = 200;                       // how much to delay module shutdown [ms]
+
 	void handle(DataPacket value);
 }
 

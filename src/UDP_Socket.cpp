@@ -75,6 +75,15 @@ void UDP_Socket::handle(std::shared_ptr<const DataPacket> value){
 }
 
 
+bool UDP_Socket::vnx_shutdown(){
+	if(shutdown_delay_ms <= 0){
+		return true;
+	}
+	set_timeout_millis(shutdown_delay_ms, std::bind(&UDP_Socket::exit, this));
+	return false;
+}
+
+
 void UDP_Socket::initialize(){
 	if(is_initialized){
 		return;

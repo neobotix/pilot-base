@@ -21,6 +21,7 @@ public:
 protected:
 	void main() override;
 	void handle(std::shared_ptr<const DataPacket> value) override;
+	bool vnx_shutdown() override;
 
 private:
 	using socket_t = int;
