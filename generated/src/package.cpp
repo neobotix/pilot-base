@@ -21,6 +21,8 @@
 #include <pilot/base/SocketSignal.hxx>
 #include <pilot/base/UDP_SocketBase.hxx>
 #include <pilot/base/can_adapter_e.hxx>
+#include <pilot/base/can_error_class_e.hxx>
+#include <pilot/base/can_error_t.hxx>
 #include <pilot/base/in_address_t.hxx>
 #include <pilot/base/socketcan_options_t.hxx>
 
@@ -163,6 +165,26 @@ void type<::pilot::base::can_adapter_e>::create_dynamic_code(std::vector<uint16_
 	}
 }
 
+void type<::pilot::base::can_error_class_e>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::can_error_class_e());
+}
+
+void type<::pilot::base::can_error_class_e>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::can_error_class_e& value, bool special) {
+	if(!special || value.is_valid()) {
+		code.push_back(CODE_STRING);
+	} else {
+		code.push_back(CODE_UINT32);
+	}
+}
+
+void type<::pilot::base::can_error_t>::create_dynamic_code(std::vector<uint16_t>& code) {
+	create_dynamic_code(code, ::pilot::base::can_error_t());
+}
+
+void type<::pilot::base::can_error_t>::create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::can_error_t& value, bool special) {
+	code.push_back(CODE_OBJECT);
+}
+
 void type<::pilot::base::in_address_t>::create_dynamic_code(std::vector<uint16_t>& code) {
 	create_dynamic_code(code, ::pilot::base::in_address_t());
 }
@@ -208,6 +230,8 @@ static void register_all_types() {
 	vnx::register_type_code(::pilot::base::SocketSignal::static_create_type_code());
 	vnx::register_type_code(::pilot::base::UDP_SocketBase::static_create_type_code());
 	vnx::register_type_code(::pilot::base::can_adapter_e::static_create_type_code());
+	vnx::register_type_code(::pilot::base::can_error_class_e::static_create_type_code());
+	vnx::register_type_code(::pilot::base::can_error_t::static_create_type_code());
 	vnx::register_type_code(::pilot::base::in_address_t::static_create_type_code());
 	vnx::register_type_code(::pilot::base::socketcan_options_t::static_create_type_code());
 }
@@ -238,6 +262,8 @@ const vnx::TypeCode* const vnx_native_type_code_SerialPort_open_port_return = vn
 const vnx::TypeCode* const vnx_native_type_code_SocketSignal = vnx::get_type_code(vnx::Hash64(0x91f51fd310ed96deull));
 const vnx::TypeCode* const vnx_native_type_code_UDP_SocketBase = vnx::get_type_code(vnx::Hash64(0xed63df42c27a66ebull));
 const vnx::TypeCode* const vnx_native_type_code_can_adapter_e = vnx::get_type_code(vnx::Hash64(0x7a7d5bef82a9fdfcull));
+const vnx::TypeCode* const vnx_native_type_code_can_error_class_e = vnx::get_type_code(vnx::Hash64(0x4529147bde76f57bull));
+const vnx::TypeCode* const vnx_native_type_code_can_error_t = vnx::get_type_code(vnx::Hash64(0x2739d295fa73821cull));
 const vnx::TypeCode* const vnx_native_type_code_in_address_t = vnx::get_type_code(vnx::Hash64(0xf0ba186b6082b1d2ull));
 const vnx::TypeCode* const vnx_native_type_code_socketcan_options_t = vnx::get_type_code(vnx::Hash64(0x21d4bbca201847deull));
 

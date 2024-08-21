@@ -33,6 +33,8 @@ class SerialPort_open_port_return;
 class SocketSignal;
 class UDP_SocketBase;
 struct can_adapter_e;
+struct can_error_class_e;
+struct can_error_t;
 struct in_address_t;
 struct socketcan_options_t;
 
@@ -56,6 +58,8 @@ extern const vnx::TypeCode* const vnx_native_type_code_SerialPort_open_port_retu
 extern const vnx::TypeCode* const vnx_native_type_code_SocketSignal; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_UDP_SocketBase; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_can_adapter_e; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_can_error_class_e; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_can_error_t; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_in_address_t; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_socketcan_options_t; ///< \private
 
@@ -85,6 +89,8 @@ void read(TypeInput& in, ::pilot::base::SerialPort_open_port_return& value, cons
 void read(TypeInput& in, ::pilot::base::SocketSignal& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::UDP_SocketBase& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::can_adapter_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::can_error_class_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::can_error_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::in_address_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::socketcan_options_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 
@@ -108,6 +114,8 @@ void write(TypeOutput& out, const ::pilot::base::SerialPort_open_port_return& va
 void write(TypeOutput& out, const ::pilot::base::SocketSignal& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::UDP_SocketBase& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::can_adapter_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::can_error_class_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::can_error_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::in_address_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::socketcan_options_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 
@@ -131,6 +139,8 @@ void read(std::istream& in, ::pilot::base::SerialPort_open_port_return& value); 
 void read(std::istream& in, ::pilot::base::SocketSignal& value); ///< \private
 void read(std::istream& in, ::pilot::base::UDP_SocketBase& value); ///< \private
 void read(std::istream& in, ::pilot::base::can_adapter_e& value); ///< \private
+void read(std::istream& in, ::pilot::base::can_error_class_e& value); ///< \private
+void read(std::istream& in, ::pilot::base::can_error_t& value); ///< \private
 void read(std::istream& in, ::pilot::base::in_address_t& value); ///< \private
 void read(std::istream& in, ::pilot::base::socketcan_options_t& value); ///< \private
 
@@ -154,6 +164,8 @@ void write(std::ostream& out, const ::pilot::base::SerialPort_open_port_return& 
 void write(std::ostream& out, const ::pilot::base::SocketSignal& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::UDP_SocketBase& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::can_adapter_e& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::can_error_class_e& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::can_error_t& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::in_address_t& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::socketcan_options_t& value); ///< \private
 
@@ -177,6 +189,8 @@ void accept(Visitor& visitor, const ::pilot::base::SerialPort_open_port_return& 
 void accept(Visitor& visitor, const ::pilot::base::SocketSignal& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::UDP_SocketBase& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::can_adapter_e& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::can_error_class_e& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::can_error_t& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::in_address_t& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::socketcan_options_t& value); ///< \private
 
@@ -610,6 +624,50 @@ struct type<::pilot::base::can_adapter_e> {
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code);
 	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::can_adapter_e& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::can_error_class_e> {
+	void read(TypeInput& in, ::pilot::base::can_error_class_e& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::can_error_class_e& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::can_error_class_e& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::can_error_class_e& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::can_error_class_e& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::can_error_class_e& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::can_error_t> {
+	void read(TypeInput& in, ::pilot::base::can_error_t& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::can_error_t& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::can_error_t& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::can_error_t& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::can_error_t& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::can_error_t& value, bool special = false);
 };
 
 /// \private

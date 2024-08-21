@@ -3,6 +3,7 @@
 
 #include <pilot/base/package.hxx>
 #include <pilot/base/CAN_Frame.hxx>
+#include <pilot/base/can_error_t.hxx>
 #include <vnx/Value.h>
 
 #include <vnx/vnx.h>
@@ -13,7 +14,7 @@ namespace base {
 
 
 const vnx::Hash64 CAN_Frame::VNX_TYPE_HASH(0x4d70a2725dc4def6ull);
-const vnx::Hash64 CAN_Frame::VNX_CODE_HASH(0x4dae3513ed692018ull);
+const vnx::Hash64 CAN_Frame::VNX_CODE_HASH(0x204dcd4207ff4aull);
 
 vnx::Hash64 CAN_Frame::get_type_hash() const {
 	return VNX_TYPE_HASH;
@@ -51,6 +52,7 @@ void CAN_Frame::accept(vnx::Visitor& _visitor) const {
 	_visitor.type_field(_type_code->fields[2], 2); vnx::accept(_visitor, size);
 	_visitor.type_field(_type_code->fields[3], 3); vnx::accept(_visitor, data);
 	_visitor.type_field(_type_code->fields[4], 4); vnx::accept(_visitor, is_big_endian);
+	_visitor.type_field(_type_code->fields[5], 5); vnx::accept(_visitor, error);
 	_visitor.type_end(*_type_code);
 }
 
@@ -61,6 +63,7 @@ void CAN_Frame::write(std::ostream& _out) const {
 	_out << ", \"size\": "; vnx::write(_out, size);
 	_out << ", \"data\": "; vnx::write(_out, data);
 	_out << ", \"is_big_endian\": "; vnx::write(_out, is_big_endian);
+	_out << ", \"error\": "; vnx::write(_out, error);
 	_out << "}";
 }
 
@@ -78,6 +81,7 @@ vnx::Object CAN_Frame::to_object() const {
 	_object["size"] = size;
 	_object["data"] = data;
 	_object["is_big_endian"] = is_big_endian;
+	_object["error"] = error;
 	return _object;
 }
 
@@ -85,6 +89,8 @@ void CAN_Frame::from_object(const vnx::Object& _object) {
 	for(const auto& _entry : _object.field) {
 		if(_entry.first == "data") {
 			_entry.second.to(data);
+		} else if(_entry.first == "error") {
+			_entry.second.to(error);
 		} else if(_entry.first == "id") {
 			_entry.second.to(id);
 		} else if(_entry.first == "is_big_endian") {
@@ -113,6 +119,9 @@ vnx::Variant CAN_Frame::get_field(const std::string& _name) const {
 	if(_name == "is_big_endian") {
 		return vnx::Variant(is_big_endian);
 	}
+	if(_name == "error") {
+		return vnx::Variant(error);
+	}
 	return vnx::Variant();
 }
 
@@ -127,6 +136,8 @@ void CAN_Frame::set_field(const std::string& _name, const vnx::Variant& _value) 
 		_value.to(data);
 	} else if(_name == "is_big_endian") {
 		_value.to(is_big_endian);
+	} else if(_name == "error") {
+		_value.to(error);
 	} else {
 		throw std::logic_error("no such field: '" + _name + "'");
 	}
@@ -156,12 +167,14 @@ std::shared_ptr<vnx::TypeCode> CAN_Frame::static_create_type_code() {
 	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.base.CAN_Frame";
 	type_code->type_hash = vnx::Hash64(0x4d70a2725dc4def6ull);
-	type_code->code_hash = vnx::Hash64(0x4dae3513ed692018ull);
+	type_code->code_hash = vnx::Hash64(0x204dcd4207ff4aull);
 	type_code->is_native = true;
 	type_code->is_class = true;
 	type_code->native_size = sizeof(::pilot::base::CAN_Frame);
 	type_code->create_value = []() -> std::shared_ptr<vnx::Value> { return std::make_shared<CAN_Frame>(); };
-	type_code->fields.resize(5);
+	type_code->depends.resize(1);
+	type_code->depends[0] = ::pilot::base::can_error_t::static_get_type_code();
+	type_code->fields.resize(6);
 	{
 		auto& field = type_code->fields[0];
 		field.data_size = 8;
@@ -191,6 +204,12 @@ std::shared_ptr<vnx::TypeCode> CAN_Frame::static_create_type_code() {
 		field.data_size = 1;
 		field.name = "is_big_endian";
 		field.code = {31};
+	}
+	{
+		auto& field = type_code->fields[5];
+		field.is_extended = true;
+		field.name = "error";
+		field.code = {33, 19, 0};
 	}
 	type_code->build();
 	return type_code;
@@ -253,6 +272,7 @@ void read(TypeInput& in, ::pilot::base::CAN_Frame& value, const TypeCode* type_c
 	}
 	for(const auto* _field : type_code->ext_fields) {
 		switch(_field->native_index) {
+			case 5: vnx::read(in, value.error, type_code, _field->code.data()); break;
 			default: vnx::skip(in, type_code, _field->code.data());
 		}
 	}
@@ -277,6 +297,7 @@ void write(TypeOutput& out, const ::pilot::base::CAN_Frame& value, const TypeCod
 	vnx::write_value(_buf + 12, value.size);
 	vnx::write_value(_buf + 13, value.data);
 	vnx::write_value(_buf + 21, value.is_big_endian);
+	vnx::write(out, value.error, type_code, type_code->fields[5].code.data());
 }
 
 void read(std::istream& in, ::pilot::base::CAN_Frame& value) {

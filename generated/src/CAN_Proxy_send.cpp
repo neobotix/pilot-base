@@ -15,7 +15,7 @@ namespace base {
 
 
 const vnx::Hash64 CAN_Proxy_send::VNX_TYPE_HASH(0xfac9f3d0e6b114e0ull);
-const vnx::Hash64 CAN_Proxy_send::VNX_CODE_HASH(0xcf0953b7ecfd157full);
+const vnx::Hash64 CAN_Proxy_send::VNX_CODE_HASH(0xdb01836b48243a69ull);
 
 vnx::Hash64 CAN_Proxy_send::get_type_hash() const {
 	return VNX_TYPE_HASH;
@@ -118,7 +118,7 @@ std::shared_ptr<vnx::TypeCode> CAN_Proxy_send::static_create_type_code() {
 	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.base.CAN_Proxy.send";
 	type_code->type_hash = vnx::Hash64(0xfac9f3d0e6b114e0ull);
-	type_code->code_hash = vnx::Hash64(0xcf0953b7ecfd157full);
+	type_code->code_hash = vnx::Hash64(0xdb01836b48243a69ull);
 	type_code->is_native = true;
 	type_code->is_class = true;
 	type_code->is_method = true;

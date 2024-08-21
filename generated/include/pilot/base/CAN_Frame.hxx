@@ -5,6 +5,7 @@
 #define INCLUDE_pilot_base_CAN_Frame_HXX_
 
 #include <pilot/base/package.hxx>
+#include <pilot/base/can_error_t.hxx>
 #include <vnx/Value.h>
 
 
@@ -19,6 +20,7 @@ public:
 	uint8_t size = 0;
 	std::array<uint8_t, 8> data = {};
 	vnx::bool_t is_big_endian = 0;
+	vnx::optional<::pilot::base::can_error_t> error;
 	
 	typedef ::vnx::Value Super;
 	

@@ -20,6 +20,7 @@ public:
 	
 	::vnx::TopicPtr input;
 	::vnx::TopicPtr output;
+	::vnx::TopicPtr output_error;
 	::pilot::base::can_adapter_e adapter = ::pilot::base::can_adapter_e::SOCKETCAN;
 	std::string device;
 	int32_t baud_rate = 0;
