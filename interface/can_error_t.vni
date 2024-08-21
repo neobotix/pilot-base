@@ -1,0 +1,8 @@
+package pilot.base;
+
+struct can_error_t{
+	set<can_error_class_e> error_classes;
+
+	uint num_tx_errors = 0;
+	uint num_rx_errors = 0;
+}

@@ -27,6 +27,20 @@
 namespace pilot {
 namespace base {
 
+
+const static std::map<decltype(CAN_ERR_TX_TIMEOUT), can_error_class_e> error_class_map = {
+	{CAN_ERR_TX_TIMEOUT, can_error_class_e::TX_TIMEOUT},
+	{CAN_ERR_LOSTARB, can_error_class_e::LOST_ARBITRATION},
+	{CAN_ERR_CRTL, can_error_class_e::CONTROLLER},
+	{CAN_ERR_PROT, can_error_class_e::PROTOCOL},
+	{CAN_ERR_TRX, can_error_class_e::TRANSCEIVER},
+	{CAN_ERR_ACK, can_error_class_e::NO_ACK},
+	{CAN_ERR_BUSOFF, can_error_class_e::BUS_OFF},
+	{CAN_ERR_BUSERROR, can_error_class_e::BUS_ERROR},
+	{CAN_ERR_RESTARTED, can_error_class_e::RESTARTED},
+};
+
+
 CAN_Socket::CAN_Socket(const std::string& iface, const socketcan_options_t &socket_options)
 {
 	sock = ::socket(PF_CAN, SOCK_RAW, CAN_RAW);
@@ -129,6 +143,19 @@ bool CAN_Socket::read(CAN_Frame &frame, int timeout_ms)
 	for(int i = 0; i < 8; ++i) {
 		frame.data[i] = data.data[i];
 	}
+
+	if(data.can_id & CAN_ERR_FLAG){
+		can_error_t error;
+		for(const auto &entry : error_class_map){
+			if(data.can_id & entry.first){
+				error.error_classes.insert(entry.second);
+			}
+		}
+		error.num_tx_errors = frame.data[6];
+		error.num_rx_errors = frame.data[7];
+		frame.error = error;
+	}
+
 	return true;
 }
 

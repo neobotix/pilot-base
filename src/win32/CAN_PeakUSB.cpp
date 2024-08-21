@@ -6,6 +6,7 @@
  */
 
 #include <pilot/base/CAN_PeakUSB.h>
+#include <pilot/base/socketcan_options_t.hxx>
 #include <vnx/Time.h>
 
 #include <thread>
@@ -16,7 +17,7 @@ namespace pilot {
 namespace base {
 
 
-CAN_PeakUSB::CAN_PeakUSB(int baud_rate){
+CAN_PeakUSB::CAN_PeakUSB(int baud_rate, const socketcan_options_t &socket_options){
 	m_hInstance = LoadLibrary("PCANBasic");
 
 	if (m_hInstance == NULL){
@@ -54,7 +55,7 @@ CAN_PeakUSB::CAN_PeakUSB(int baud_rate){
 	}
 
 	if(ret != PCAN_ERROR_OK){
-		throw std::runtime_error("CAN initialization error: " + get_error_text(ret));
+		throw std::runtime_error("CAN_Init() failed with: " + get_error_text(ret));
 	}
 
 	m_event_read = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -65,8 +66,16 @@ CAN_PeakUSB::CAN_PeakUSB(int baud_rate){
 	if(ret != PCAN_ERROR_OK){
 		CloseHandle(m_event_read);
 		m_event_read = NULL;
-		throw std::runtime_error("Setting of event handle failed with: " + get_error_text(ret));
+		throw std::runtime_error("CAN_SetValue(PCAN_RECEIVE_EVENT) failed with: " + get_error_text(ret));
 	}
+
+	bool receive_errors = socket_options.receive_error_frames;
+	ret = pfCAN_SetValue(m_pcanHandle, PCAN_ALLOW_ERROR_FRAMES, &receive_errors, sizeof(receive_errors));
+	if(ret != PCAN_ERROR_OK){
+		throw std::runtime_error("CAN_SetValue(PCAN_ALLOW_ERROR_FRAMES) failed with: " + get_error_text(ret));
+	}
+
+	// TODO: CAN_FilterMessages() with socket_options.filter_list ?
 
 	m_initialized = true;
 }
@@ -106,18 +115,33 @@ bool CAN_PeakUSB::read(CAN_Frame &frame, int timeout_ms){
 		throw std::runtime_error("CAN_Read() failed with: " + get_error_text(ret));
 	}
 
+	bool received = false;
 	switch(TPCMsg.MSGTYPE) {
 		case PCAN_MESSAGE_STANDARD:
 		case PCAN_MESSAGE_EXTENDED:
+		case PCAN_MESSAGE_ERRFRAME:
 			frame.time = vnx::get_time_micros();
 			frame.id = TPCMsg.ID;
 			frame.size = TPCMsg.LEN;
 			for(size_t i=0; i<8; i++){
 				frame.data[i] = TPCMsg.DATA[i];
 			}
-			return true;
+			received = true;
 	}
-	return false;
+	if(TPCMsg.MSGTYPE == PCAN_MESSAGE_ERRFRAME){
+		can_error_t error;
+		if(frame.id == 1 || frame.id == 2 || frame.id == 4){
+			error.error_classes.insert(can_error_class_e::PROTOCOL);
+		}
+		if(frame.id == 8){
+			// "Other type of error"
+			error.error_classes.insert(can_error_class_e::PROTOCOL);
+		}
+		error.num_rx_errors = TPCMsg.DATA[2];
+		error.num_tx_errors = TPCMsg.DATA[3];
+		frame.error = error;
+	}
+	return received;
 }
 
 void CAN_PeakUSB::write(const CAN_Frame& frame){

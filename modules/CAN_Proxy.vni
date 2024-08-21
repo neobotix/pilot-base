@@ -5,6 +5,7 @@ module CAN_Proxy {
 	vnx.TopicPtr input;						// pilot.base.CAN_Frame
 	
 	vnx.TopicPtr output;					// pilot.base.CAN_Frame
+	vnx.TopicPtr output_error;				// pilot.base.CAN_Frame
 	
 	can_adapter_e adapter = SOCKETCAN;
 	

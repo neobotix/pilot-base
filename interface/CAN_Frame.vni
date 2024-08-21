@@ -12,6 +12,8 @@ class CAN_Frame {
 	
 	bool is_big_endian;
 	
+	optional<can_error_t> error;
+	
 	bool get_bit(int pos) const;
 	void set_bit(int pos, bool value);
 	

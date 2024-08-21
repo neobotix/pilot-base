@@ -19,7 +19,7 @@ namespace base {
 
 class CAN_PeakUSB : public CAN_Interface {
 public:
-	CAN_PeakUSB(int baud_rate);
+	CAN_PeakUSB(int baud_rate, const socketcan_options_t &socket_options);
 
 	~CAN_PeakUSB();
 

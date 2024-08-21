@@ -38,6 +38,7 @@ private:
 	std::shared_ptr<CAN_Interface> socket;
 	
 	int64_t num_read = 0;
+	size_t num_error = 0;
 	int64_t num_write = 0;
 	int64_t num_write_fail = 0;
 	

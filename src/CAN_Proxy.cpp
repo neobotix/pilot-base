@@ -35,7 +35,7 @@ void CAN_Proxy::main()
 	switch(adapter){
 #ifdef _WIN32
 	case can_adapter_e::PEAKUSB:
-		socket = std::make_shared<CAN_PeakUSB>(baud_rate);
+		socket = std::make_shared<CAN_PeakUSB>(baud_rate, socket_options);
 		break;
 #else
 	case can_adapter_e::SOCKETCAN:
@@ -83,7 +83,11 @@ bool CAN_Proxy::vnx_shutdown()
 
 void CAN_Proxy::print_stats()
 {
-	log(INFO).out << (1000 * num_read) / stats_interval_ms << " msgs/s receive, "
+	log(INFO)
+		<< (1000 * num_read) / stats_interval_ms << " msgs/s receive"
+		<< ", "
+		<< num_error << " errors"
+		<< ", "
 				<< (1000 * num_write) / stats_interval_ms << " msgs/s send, "
 				<< num_write_fail << " failed";
 	num_read = 0;
@@ -95,10 +99,15 @@ void CAN_Proxy::read_loop()
 	while(vnx_do_run())
 	{
 		try {
-			CAN_Frame frame;
-			if(socket->read(frame, read_timeout_ms)){
-				frame.is_big_endian = is_big_endian;
-				publish(frame, output);
+			auto frame = CAN_Frame::create();
+			if(socket->read(*frame, read_timeout_ms)){
+				frame->is_big_endian = is_big_endian;
+				if(frame->error){
+					publish(frame, output_error);
+					num_error++;
+				}else{
+					publish(frame, output);
+				}
 				num_read++;
 			}
 		}

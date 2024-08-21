@@ -1,0 +1,13 @@
+package pilot.base;
+
+enum can_error_class_e{
+	TX_TIMEOUT,
+	LOST_ARBITRATION,
+	CONTROLLER,
+	PROTOCOL,
+	TRANSCEIVER,
+	NO_ACK,
+	BUS_OFF,
+	BUS_ERROR,
+	RESTARTED,
+}
