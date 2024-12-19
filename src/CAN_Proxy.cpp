@@ -107,8 +107,8 @@ void CAN_Proxy::read_loop()
 					num_error++;
 				}else{
 					publish(frame, output);
+					num_read++;
 				}
-				num_read++;
 			}
 		}
 		catch(const std::exception& ex) {
