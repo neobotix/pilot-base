@@ -21,6 +21,22 @@ namespace pilot {
 namespace base {
 
 
+static std::string byte_unit(size_t bytes) {
+	const std::vector<std::string> units = {
+		"B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB",
+	};
+	size_t unit = 0;
+
+	double size = static_cast<double>(bytes);
+	while(size >= 1024 && unit+1 < units.size()){
+		size /= 1024;
+		unit++;
+	}
+
+	return vnx::to_string(size) + " " + units[unit];
+}
+
+
 UDP_Socket::UDP_Socket(const std::string& _vnx_name)
 	:	UDP_SocketBase(_vnx_name),
 		packets_received(0),
@@ -212,12 +228,12 @@ void UDP_Socket::print_stats(){
 		<< ", "
 		<< (1000 * packets_sent_) / stats_interval_ms << " pkt/s"
 		<< ", "
-		<< ((1000 * bytes_sent_) / 1024) / stats_interval_ms << " KiB/s"
+		<< byte_unit(1000 * bytes_sent_ / stats_interval_ms) << "/s"
 		<< " sent"
 		<< ", "
 		<< (1000 * packets_received_) / stats_interval_ms << " pkt/s"
 		<< ", "
-		<< ((1000 * bytes_received_) / 1024) / stats_interval_ms << " KiB/s"
+		<< byte_unit(1000 * bytes_received_ / stats_interval_ms) << "/s"
 		<< " received"
 	;
 }
