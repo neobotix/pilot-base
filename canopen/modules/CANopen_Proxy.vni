@@ -1,0 +1,21 @@
+package pilot.base.canopen;
+
+module CANopen_Proxy{
+	vnx.TopicPtr input_can;
+	vnx.TopicPtr input_pdo;
+
+	vnx.TopicPtr output_can;
+	vnx.TopicPtr output_pdo;
+
+	int sync_interval_ms = 0;                                                      // <= 0 for no sync
+	int heartbeat_interval_ms = 0;                                                 // <= 0 for no heartbeat
+	node_t own_node;
+	vector<node_t> network;
+
+	vector<uchar> upload(uint node_id, ushort index, uchar subindex) const async;
+	void download(uint node_id, ushort index, uchar subindex, vector<uchar> data) async;
+	void download_expedited(uint node_id, ushort index, uchar subindex, uint data, uint num_bytes=4) async;
+
+	void handle(pilot.base.CAN_Frame sample);
+	void handle(PDO sample);
+}

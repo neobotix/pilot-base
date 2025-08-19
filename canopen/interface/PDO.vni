@@ -1,0 +1,7 @@
+package pilot.base.canopen;
+
+class PDO extends pilot.base.DataPacket{
+	uint node_id;
+	uint type;                                       // PDO type (1-4)
+}
+
