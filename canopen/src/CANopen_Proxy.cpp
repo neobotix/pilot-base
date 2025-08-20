@@ -38,6 +38,7 @@ void CANopen_Proxy::main(){
 		is_network_init = false;
 		init_timer = set_timer_millis(1000, std::bind(&CANopen_Proxy::network_reset, this));
 	}
+	set_timer_millis(50, std::bind(&CANopen_Proxy::check_request_timeouts, this));
 	if(sync_interval_ms > 0){
 		set_timer_millis(sync_interval_ms, std::bind(&CANopen_Proxy::sync, this));
 	}
@@ -49,7 +50,7 @@ void CANopen_Proxy::main(){
 }
 
 
-void CANopen_Proxy::upload_async(const uint32_t& node_id, const uint16_t& index, const uint8_t& subindex, const vnx::request_id_t& _request_id) const{
+void CANopen_Proxy::upload_async(const uint32_t& node_id, const uint16_t& index, const uint8_t& subindex, const int32_t &timeout_ms, const vnx::request_id_t& _request_id) const{
 	std::shared_ptr<const CAN_Frame> frame;
 	try{
 		frame = find_node(node_id).upload_request(index, subindex);
@@ -62,12 +63,15 @@ void CANopen_Proxy::upload_async(const uint32_t& node_id, const uint16_t& index,
 	request.node_id = node_id;
 	request.index = index;
 	request.subindex = subindex;
+	if(timeout_ms > 0){
+		request.timeout = vnx::get_wall_time_micros() + timeout_ms*1000;
+	}
 
 	publish(frame, output_can);
 }
 
 
-void CANopen_Proxy::download_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const std::vector<uint8_t> &data, const vnx::request_id_t &_request_id){
+void CANopen_Proxy::download_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const std::vector<uint8_t> &data, const int32_t &timeout_ms, const vnx::request_id_t &_request_id){
 	std::shared_ptr<const CAN_Frame> expedited_frame;
 	std::vector<std::shared_ptr<const CAN_Frame>> segmented_frames;
 	try{
@@ -93,6 +97,9 @@ void CANopen_Proxy::download_async(const uint32_t &node_id, const uint16_t &inde
 	request.node_id = node_id;
 	request.index = index;
 	request.subindex = subindex;
+	if(timeout_ms > 0){
+		request.timeout = vnx::get_wall_time_micros() + timeout_ms*1000;
+	}
 	request.download.segmented_frames = segmented_frames;
 
 	if(expedited_frame){
@@ -104,7 +111,7 @@ void CANopen_Proxy::download_async(const uint32_t &node_id, const uint16_t &inde
 }
 
 
-void CANopen_Proxy::download_expedited_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const uint32_t &data, const uint32_t &num_bytes, const vnx::request_id_t &_request_id){
+void CANopen_Proxy::download_expedited_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const uint32_t &data, const uint32_t &num_bytes, const int32_t &timeout_ms, const vnx::request_id_t &_request_id){
 	std::shared_ptr<const CAN_Frame> frame;
 	try{
 		const auto &node = find_node(node_id);
@@ -119,6 +126,9 @@ void CANopen_Proxy::download_expedited_async(const uint32_t &node_id, const uint
 	request.node_id = node_id;
 	request.index = index;
 	request.subindex = subindex;
+	if(timeout_ms > 0){
+		request.timeout = vnx::get_wall_time_micros() + timeout_ms*1000;
+	}
 	request.download.expedited_request = true;
 
 	publish(frame, output_can);
@@ -264,6 +274,23 @@ const node_t &CANopen_Proxy::find_node(uint32_t node_id) const{
 		}
 	}
 	throw std::logic_error("No node with ID " + std::to_string(node_id));
+}
+
+
+void CANopen_Proxy::check_request_timeouts(){
+	const auto now = vnx::get_wall_time_micros();
+	for(auto iter=sdo_requests.begin(); iter!=sdo_requests.end(); /* no iter */){
+		bool itered = false;
+		const auto &request = iter->second;
+		if(request.timeout > 0 && request.timeout <= now){
+			vnx_async_return_ex_what(request.request_id, "SDO request timeout");
+			iter = sdo_requests.erase(iter);
+			itered = true;
+		}
+		if(!itered){
+			iter++;
+		}
+	}
 }
 
 
