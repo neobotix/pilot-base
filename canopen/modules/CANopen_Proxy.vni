@@ -11,6 +11,8 @@ module CANopen_Proxy{
 	int heartbeat_interval_ms = 0;                                                 // <= 0 for no heartbeat
 	node_t own_node;
 	vector<node_t> network;
+	bool activate_network = true;
+	bool activate_network_operational = true;
 
 	vector<uchar> upload(uint node_id, ushort index, uchar subindex) const async;
 	void download(uint node_id, ushort index, uchar subindex, vector<uchar> data) async;

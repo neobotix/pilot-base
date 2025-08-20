@@ -26,6 +26,7 @@ struct node_t{
 
 	void calculate_can_ids();                                                                              // no effect if !use_predefined_connection_set
 	CAN_Frame *heartbeat(nmt_state_e state) const;
+	nmt_state_e get_nmt_state(CAN_Frame frame) const;
 	emcy_code_e handle_emcy(CAN_Frame frame);
 
 	sdo_scs_e get_sdo_scs(CAN_Frame frame) const;                                                          // type of message sent from server (i.e. device)

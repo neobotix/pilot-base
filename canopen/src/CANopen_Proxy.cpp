@@ -33,6 +33,11 @@ void CANopen_Proxy::main(){
 		node.calculate_can_ids();
 	}
 
+	is_network_init = true;
+	if(activate_network){
+		is_network_init = false;
+		init_timer = set_timer_millis(1000, std::bind(&CANopen_Proxy::network_reset, this));
+	}
 	if(sync_interval_ms > 0){
 		set_timer_millis(sync_interval_ms, std::bind(&CANopen_Proxy::sync, this));
 	}
@@ -202,6 +207,19 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 		}else if(sample->id == node.emcy){
 			const auto code = node.handle_emcy(*sample);
 			// TODO
+		}else if(sample->id == node.nmt){
+			node_states[node.id] = node.get_nmt_state(*sample);
+			if(!is_network_init && node_states.size() == network.size()){
+				log(INFO) << "All nodes alive";
+				if(activate_network_operational){
+					auto frame = node_t::module_control(nmt_command_e::GO_TO_OPERATIONAL, 0);
+					publish(frame, output_can);
+				}
+				is_network_init = true;
+				if(init_timer){
+					init_timer->stop();
+				}
+			}
 		}
 	}
 }
@@ -246,6 +264,14 @@ const node_t &CANopen_Proxy::find_node(uint32_t node_id) const{
 		}
 	}
 	throw std::logic_error("No node with ID " + std::to_string(node_id));
+}
+
+
+void CANopen_Proxy::network_reset(){
+	log(INFO) << "Resetting network ...";
+	node_states.clear();
+	auto frame = node_t::module_control(nmt_command_e::GO_TO_RESET_NODE, 0);
+	publish(frame, output_can);
 }
 
 

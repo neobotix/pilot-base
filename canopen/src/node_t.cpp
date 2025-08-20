@@ -24,6 +24,17 @@ static uint8_t convert_nmt_state(const nmt_state_e &state){
 }
 
 
+static nmt_state_e convert_nmt_state(uint8_t byte){
+	switch(byte){
+	case 0: return nmt_state_e::BOOT_UP;
+	case 4: return nmt_state_e::STOPPED;
+	case 5: return nmt_state_e::OPERATIONAL;
+	case 0x7f: return nmt_state_e::PRE_OPERATIONAL;
+	}
+	throw std::logic_error("Unknown NMT state byte: " + std::to_string(static_cast<int>(byte)));
+}
+
+
 static uint8_t convert_nmt_command(const nmt_command_e &command){
 	switch(command){
 	case nmt_command_e::GO_TO_OPERATIONAL: return 1;
@@ -299,6 +310,14 @@ std::shared_ptr<const CAN_Frame> node_t::heartbeat(const nmt_state_e &state) con
 	frame->size = 1;
 	frame->data[0] = state_byte;
 	return frame;
+}
+
+
+nmt_state_e node_t::get_nmt_state(const CAN_Frame &frame) const{
+	if(frame.id != nmt){
+		throw std::logic_error("CAN frame ID " + std::to_string(frame.id) + " is not node NMT id " + std::to_string(nmt));
+	}
+	return convert_nmt_state(frame.data[0]);
 }
 
 

@@ -48,7 +48,12 @@ private:
 		} download;
 	};
 	mutable std::map<std::tuple<uint32_t, uint16_t, uint8_t>, sdo_request_t> sdo_requests;
+	std::map<uint32_t, nmt_state_e> node_states;
+	bool is_network_init = false;
+	std::shared_ptr<vnx::Timer> init_timer;
+
 	const node_t &find_node(uint32_t node_id) const;
+	void network_reset();
 	void sync() const;
 	void heartbeat() const;
 };
