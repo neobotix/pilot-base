@@ -1,0 +1,8 @@
+package pilot.base.canopen;
+
+struct object_entry_t{
+	ushort index;
+	uchar subindex;
+	int num_bytes;
+}
+

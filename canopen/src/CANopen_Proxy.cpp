@@ -13,6 +13,13 @@ namespace base {
 namespace canopen {
 
 
+static std::string object_name(uint16_t index, uint8_t subindex){
+	std::stringstream ss;
+	ss << "0x" << std::hex << index << "." << static_cast<int>(subindex);
+	return ss.str();
+}
+
+
 CANopen_Proxy::CANopen_Proxy(const std::string& _vnx_name)
 	:	CANopen_ProxyBase(_vnx_name)
 {
@@ -51,87 +58,107 @@ void CANopen_Proxy::main(){
 
 
 void CANopen_Proxy::upload_async(const uint32_t& node_id, const uint16_t& index, const uint8_t& subindex, const int32_t &timeout_ms, const vnx::request_id_t& _request_id) const{
-	std::shared_ptr<const CAN_Frame> frame;
+	std::shared_ptr<sdo_request_t> request;
 	try{
-		frame = find_node(node_id).upload_request(index, subindex);
+		request = upload_internal(node_id, index, subindex, timeout_ms);
 	}catch(const std::exception &err){
 		vnx_async_return_ex_what(_request_id, err.what());
 		return;
 	}
-	auto &request = sdo_requests[std::make_tuple(node_id, index, subindex)];
-	request.request_id = _request_id;
-	request.node_id = node_id;
-	request.index = index;
-	request.subindex = subindex;
-	if(timeout_ms > 0){
-		request.timeout = vnx::get_wall_time_micros() + timeout_ms*1000;
-	}
-
-	publish(frame, output_can);
+	request->callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
+	request->upload.callback = std::bind(&CANopen_Proxy::upload_async_return, this, _request_id, std::placeholders::_1);
+	sdo_requests[std::make_tuple(node_id, index, subindex)] = *request;
+	publish(request->initial_frame, output_can);
 }
 
 
 void CANopen_Proxy::download_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const std::vector<uint8_t> &data, const int32_t &timeout_ms, const vnx::request_id_t &_request_id){
-	std::shared_ptr<const CAN_Frame> expedited_frame;
-	std::vector<std::shared_ptr<const CAN_Frame>> segmented_frames;
+	std::shared_ptr<sdo_request_t> request;
 	try{
-		const auto &node = find_node(node_id);
-		if(data.size() <= 4){
-			// expedited transfer
-			uint32_t int_data = 0;
-			for(size_t i=0; i<data.size(); i++){
-				int_data |= (data[i] << (8*i));
-			}
-			expedited_frame = node.download_expedited(index, subindex, int_data, data.size());
-		}else{
-			// segmented transfer
-			segmented_frames = node.download_segmented(index, subindex, data);
-		}
+		request = download_internal(node_id, index, subindex, data, timeout_ms);
 	}catch(const std::exception &err){
 		vnx_async_return_ex_what(_request_id, err.what());
 		return;
 	}
-
-	auto &request = sdo_requests[std::make_tuple(node_id, index, subindex)];
-	request.request_id = _request_id;
-	request.node_id = node_id;
-	request.index = index;
-	request.subindex = subindex;
-	if(timeout_ms > 0){
-		request.timeout = vnx::get_wall_time_micros() + timeout_ms*1000;
-	}
-	request.download.segmented_frames = segmented_frames;
-
-	if(expedited_frame){
-		publish(expedited_frame, output_can);
-	}else if(!request.download.segmented_frames.empty()){
-		publish(request.download.segmented_frames[0], output_can);
-		request.download.index = 1;
-	}
+	request->callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
+	request->download.callback = std::bind(&CANopen_Proxy::download_async_return, this, _request_id);
+	sdo_requests[std::make_tuple(node_id, index, subindex)] = *request;
+	publish(request->initial_frame, output_can);
 }
 
 
 void CANopen_Proxy::download_expedited_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const uint32_t &data, const uint32_t &num_bytes, const int32_t &timeout_ms, const vnx::request_id_t &_request_id){
-	std::shared_ptr<const CAN_Frame> frame;
+	std::shared_ptr<sdo_request_t> request;
 	try{
-		const auto &node = find_node(node_id);
-		frame = node.download_expedited(index, subindex, data, num_bytes);
+		request = download_expedited_internal(node_id, index, subindex, data, num_bytes, timeout_ms);
 	}catch(const std::exception &err){
 		vnx_async_return_ex_what(_request_id, err.what());
 		return;
 	}
 
-	auto &request = sdo_requests[std::make_tuple(node_id, index, subindex)];
-	request.request_id = _request_id;
-	request.node_id = node_id;
-	request.index = index;
-	request.subindex = subindex;
-	if(timeout_ms > 0){
-		request.timeout = vnx::get_wall_time_micros() + timeout_ms*1000;
-	}
-	request.download.expedited_request = true;
+	request->callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
+	request->download.callback = std::bind(&CANopen_Proxy::download_expedited_async_return, this, _request_id);
+	sdo_requests[std::make_tuple(node_id, index, subindex)] = *request;
+	publish(request->initial_frame, output_can);
+}
 
-	publish(frame, output_can);
+
+void CANopen_Proxy::map_pdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_entry_t> &objects, const bool &sync, const int32_t &timeout_ms, const vnx::request_id_t &_request_id){
+	if(pdo_type < 1 || pdo_type > 4){
+		vnx_async_return_ex_what(_request_id, "Invalid PDO type");
+		return;
+	}
+	uint32_t can_id;
+	try{
+		const auto &node = find_node(node_id);
+		can_id = pdo_type==1 ? node.tx_pdo_1 : pdo_type==2 ? node.tx_pdo_2 : pdo_type==3 ? node.tx_pdo_3 : node.tx_pdo_4;
+	}catch(const std::exception &err){
+		vnx_async_return_ex_what(_request_id, err.what());
+		return;
+	}
+	const uint16_t pdo_comm = 0x1800 + pdo_type - 1;
+	const uint16_t pdo_map = 0x1a00 + pdo_type - 1;
+	auto callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
+
+	// disable PDO: pdo_comm.1  =  0x80000000+can_id
+	auto first_request = download_expedited_internal(node_id, pdo_comm, 1, 0x80000000+can_id, 4, timeout_ms);
+	first_request->callback_error_what = callback_error_what;
+	auto current_request = first_request;
+
+	// destroy PDO mapping: pdo_map.0  =  0
+	current_request->next = download_expedited_internal(node_id, pdo_map, 0, 0, 4, timeout_ms);
+	current_request = current_request->next;
+	current_request->callback_error_what = callback_error_what;
+
+	for(size_t i=0; i<objects.size(); i++){
+		const auto &object = objects[i];
+		const uint32_t value = (object.index << 16) | (object.subindex << 8) | (object.num_bytes*8);
+		// map object to index: pdo_map.i  =  value
+		current_request->next = download_expedited_internal(node_id, pdo_map, i, value, 4, timeout_ms);
+		current_request = current_request->next;
+		current_request->callback_error_what = callback_error_what;
+	}
+
+	// activate mapped objects: pdo_map.0  =  objects.size()
+	current_request->next = download_expedited_internal(node_id, pdo_map, 0, objects.size(), 4, timeout_ms);
+	current_request = current_request->next;
+	current_request->callback_error_what = callback_error_what;
+
+	if(sync){
+		// transmission type SYNC: pdo_comm.2  =  1
+		current_request->next = download_expedited_internal(node_id, pdo_comm, 2, 1, 4, timeout_ms);
+		current_request = current_request->next;
+		current_request->callback_error_what = callback_error_what;
+	}
+
+	// enable PDO: pdo_comm.1  =  0x40000000+can_id
+	current_request->next = download_expedited_internal(node_id, pdo_comm, 1, 0x40000000+can_id, 4, timeout_ms);
+	current_request = current_request->next;
+	current_request->callback_error_what = callback_error_what;
+	current_request->download.callback = std::bind(&CANopen_Proxy::map_pdo_async_return, this, _request_id);
+
+	sdo_requests[std::make_tuple(first_request->node_id, first_request->index, first_request->subindex)] = *first_request;
+	publish(first_request->initial_frame, output_can);
 }
 
 
@@ -163,14 +190,21 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 				const auto scs = node.get_sdo_scs(*sample);
 				if(scs == sdo_scs_e::ABORT){
 					const auto error = node.get_sdo_error(*sample);
-					vnx_async_return_ex_what(request.request_id, "SDO request failed with " + vnx::to_string_value(error));
+					request.callback_error_what("SDO request on object " + object_name(request.index, request.subindex) + " of node " + std::to_string(request.node_id) + " failed with: " + vnx::to_string_value(error));
 					sdo_requests.erase(find);
 				}else if(scs == sdo_scs_e::INIT_UPLOAD_RESPONSE){
 					const auto answer = node.get_uploaded_data(*sample);
 					if(answer.second){
 						// expedited transfer, upload finished
-						upload_async_return(request.request_id, answer.first);
+						if(request.upload.callback){
+							request.upload.callback(answer.first);
+						}
+						auto next = request.next;
 						sdo_requests.erase(find);
+						if(next){
+							sdo_requests[std::make_tuple(next->node_id, next->index, next->subindex)] = *next;
+							publish(next->initial_frame, output_can);
+						}
 					}else{
 						// init of segmented transfer
 						uint32_t size = 0;
@@ -186,8 +220,15 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 					const auto answer = node.get_uploaded_data(*sample);
 					request.upload.data.insert(request.upload.data.end(), answer.first.begin(), answer.first.end());
 					if(answer.second){
-						upload_async_return(request.request_id, request.upload.data);
+						if(request.upload.callback){
+							request.upload.callback(request.upload.data);
+						}
+						auto next = request.next;
 						sdo_requests.erase(find);
+						if(next){
+							sdo_requests[std::make_tuple(next->node_id, next->index, next->subindex)] = *next;
+							publish(next->initial_frame, output_can);
+						}
 					}else{
 						auto frame = request.upload.toggle ? request.upload.frames.first : request.upload.frames.second;
 						request.upload.toggle = !request.upload.toggle;
@@ -196,12 +237,15 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 				}else if(scs == sdo_scs_e::INIT_DOWNLOAD_RESPONSE){
 					if(request.download.segmented_frames.empty()){
 						// acknowledged expedited transfer
-						if(request.download.expedited_request){
-							download_expedited_async_return(request.request_id);
-						}else{
-							download_async_return(request.request_id);
+						if(request.download.callback){
+							request.download.callback();
 						}
+						auto next = request.next;
 						sdo_requests.erase(find);
+						if(next){
+							sdo_requests[std::make_tuple(next->node_id, next->index, next->subindex)] = *next;
+							publish(next->initial_frame, output_can);
+						}
 					}else if(request.download.index < request.download.segmented_frames.size()){
 						publish(request.download.segmented_frames[request.download.index++], output_can);
 					}
@@ -209,8 +253,15 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 					if(request.download.index < request.download.segmented_frames.size()){
 						publish(request.download.segmented_frames[request.download.index++], output_can);
 					}else{
-						download_async_return(request.request_id);
+						if(request.download.callback){
+							request.download.callback();
+						}
+						auto next = request.next;
 						sdo_requests.erase(find);
+						if(next){
+							sdo_requests[std::make_tuple(next->node_id, next->index, next->subindex)] = *next;
+							publish(next->initial_frame, output_can);
+						}
 					}
 				}
 			}
@@ -277,13 +328,72 @@ const node_t &CANopen_Proxy::find_node(uint32_t node_id) const{
 }
 
 
+std::shared_ptr<CANopen_Proxy::sdo_request_t> CANopen_Proxy::upload_internal(uint32_t node_id, uint16_t index, uint8_t subindex, int32_t timeout_ms) const{
+	auto frame = find_node(node_id).upload_request(index, subindex);
+	auto request = std::make_shared<sdo_request_t>();
+	request->node_id = node_id;
+	request->index = index;
+	request->subindex = subindex;
+	if(timeout_ms > 0){
+		request->timeout = vnx::get_wall_time_micros() + timeout_ms*1000;
+	}
+	request->initial_frame = frame;
+	return request;
+}
+
+
+std::shared_ptr<CANopen_Proxy::sdo_request_t> CANopen_Proxy::download_internal(uint32_t node_id, uint16_t index, uint8_t subindex, const std::vector<uint8_t> &data, int32_t timeout_ms) const{
+	std::shared_ptr<const CAN_Frame> expedited_frame;
+	std::vector<std::shared_ptr<const CAN_Frame>> segmented_frames;
+	{
+		const auto &node = find_node(node_id);
+		if(data.size() <= 4){
+			// expedited transfer
+			uint32_t int_data = 0;
+			for(size_t i=0; i<data.size(); i++){
+				int_data |= (data[i] << (8*i));
+			}
+			expedited_frame = node.download_expedited(index, subindex, int_data, data.size());
+		}else{
+			// segmented transfer
+			segmented_frames = node.download_segmented(index, subindex, data);
+		}
+	}
+
+	auto request = std::make_shared<sdo_request_t>();
+	request->node_id = node_id;
+	request->index = index;
+	request->subindex = subindex;
+	if(timeout_ms > 0){
+		request->timeout = vnx::get_wall_time_micros() + timeout_ms*1000;
+	}
+	if(expedited_frame){
+		request->initial_frame = expedited_frame;
+	}else if(!request->download.segmented_frames.empty()){
+		request->initial_frame = request->download.segmented_frames[0];
+		request->download.index = 1;
+	}
+	request->download.segmented_frames = segmented_frames;
+	return request;
+}
+
+
+std::shared_ptr<CANopen_Proxy::sdo_request_t> CANopen_Proxy::download_expedited_internal(uint32_t node_id, uint16_t index, uint8_t subindex, uint32_t data, uint32_t num_bytes, int32_t timeout_ms) const{
+	std::vector<uint8_t> vec_data;
+	for(size_t i=0; i<num_bytes; i++){
+		vec_data.push_back(data >> (8*i));
+	}
+	return download_internal(node_id, index, subindex, vec_data, timeout_ms);
+}
+
+
 void CANopen_Proxy::check_request_timeouts(){
 	const auto now = vnx::get_wall_time_micros();
 	for(auto iter=sdo_requests.begin(); iter!=sdo_requests.end(); /* no iter */){
 		bool itered = false;
 		const auto &request = iter->second;
 		if(request.timeout > 0 && request.timeout <= now){
-			vnx_async_return_ex_what(request.request_id, "SDO request timeout");
+			request.callback_error_what("Timeout for SDO request on object " + object_name(request.index, request.subindex) + " of node " + std::to_string(request.node_id));
 			iter = sdo_requests.erase(iter);
 			itered = true;
 		}

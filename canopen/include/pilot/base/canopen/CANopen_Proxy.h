@@ -26,27 +26,31 @@ protected:
 	void upload_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) const override;
 	void download_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const std::vector<uint8_t> &data, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) override;
 	void download_expedited_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const uint32_t &data, const uint32_t &num_bytes, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) override;
+	void map_pdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_entry_t> &objects, const bool &sync, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) override;
 
 	void handle(std::shared_ptr<const CAN_Frame> sample) override;
 	void handle(std::shared_ptr<const PDO> sample) override;
 
 private:
 	struct sdo_request_t{
-		vnx::request_id_t request_id;
+		std::function<void(const std::string &)> callback_error_what;
 		uint32_t node_id;
 		uint16_t index;
 		uint8_t subindex;
 		int64_t timeout = 0;
+		std::shared_ptr<const CAN_Frame> initial_frame;
 		struct{
+			std::function<void(const std::vector<uint8_t> &)> callback;
 			std::pair<std::shared_ptr<const CAN_Frame>, std::shared_ptr<const CAN_Frame>> frames;
 			bool toggle = true;
 			std::vector<uint8_t> data;
 		} upload;
 		struct{
+			std::function<void()> callback;
 			std::vector<std::shared_ptr<const CAN_Frame>> segmented_frames;
 			size_t index = 0;
-			bool expedited_request = false;
 		} download;
+		std::shared_ptr<sdo_request_t> next;
 	};
 	mutable std::map<std::tuple<uint32_t, uint16_t, uint8_t>, sdo_request_t> sdo_requests;
 	std::map<uint32_t, nmt_state_e> node_states;
@@ -54,6 +58,9 @@ private:
 	std::shared_ptr<vnx::Timer> init_timer;
 
 	const node_t &find_node(uint32_t node_id) const;
+	std::shared_ptr<sdo_request_t> upload_internal(uint32_t node_id, uint16_t index, uint8_t subindex, int32_t timeout_ms) const;
+	std::shared_ptr<sdo_request_t> download_internal(uint32_t node_id, uint16_t index, uint8_t subindex, const std::vector<uint8_t> &data, int32_t timeout_ms) const;
+	std::shared_ptr<sdo_request_t> download_expedited_internal(uint32_t node_id, uint16_t index, uint8_t subindex, uint32_t data, uint32_t num_bytes, int32_t timeout_ms) const;
 	void check_request_timeouts();
 	void network_reset();
 	void sync() const;
