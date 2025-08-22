@@ -55,6 +55,7 @@ private:
 	};
 	mutable std::map<std::tuple<uint32_t, uint16_t, uint8_t>, sdo_request_t> sdo_requests;
 	std::map<uint32_t, nmt_state_e> node_states;
+	std::map<uint32_t, std::pair<uint16_t, uint8_t>> active_sdo;
 	bool is_network_init = false;
 	std::shared_ptr<vnx::Timer> init_timer;
 

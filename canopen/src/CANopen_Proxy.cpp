@@ -198,12 +198,22 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 			}
 			publish(out, output_pdo);
 		}else if(sample->id == node.tx_sdo){
-			const uint16_t index = (sample->data[2] << 8) | sample->data[1];
-			const uint8_t subindex = sample->data[3];
+			const auto scs = node.get_sdo_scs(*sample);
+			uint16_t index = 0;
+			uint8_t subindex = 0;
+			if(scs == sdo_scs_e::ABORT || scs == sdo_scs_e::INIT_UPLOAD_RESPONSE || scs == sdo_scs_e::INIT_DOWNLOAD_RESPONSE){
+				index = (sample->data[2] << 8) | sample->data[1];
+				subindex = sample->data[3];
+			}else if(scs == sdo_scs_e::SEGMENT_UPLOAD_RESPONSE || scs == sdo_scs_e::SEGMENT_DOWNLOAD_RESPONSE){
+				const auto find = active_sdo.find(node.id);
+				if(find != active_sdo.end()){
+					index = find->second.first;
+					subindex = find->second.second;
+				}
+			}
 			const auto find = sdo_requests.find(std::make_tuple(node.id, index, subindex));
 			if(find != sdo_requests.end()){
 				auto &request = find->second;
-				const auto scs = node.get_sdo_scs(*sample);
 				if(scs == sdo_scs_e::ABORT){
 					const auto error = node.get_sdo_error(*sample);
 					request.callback_error_what("SDO request on object " + object_name(request.index, request.subindex) + " of node " + std::to_string(request.node_id) + " failed with: " + vnx::to_string_value(error));
@@ -223,10 +233,7 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 						}
 					}else{
 						// init of segmented transfer
-						uint32_t size = 0;
-						for(size_t i=0; i<answer.first.size(); i++){
-							size |= (answer.first[i] << (8*i));
-						}
+						active_sdo[node.id] = {index, subindex};
 						request.upload.frames = node.upload_segment_request(index, subindex);
 						auto frame = request.upload.toggle ? request.upload.frames.first : request.upload.frames.second;
 						request.upload.toggle = !request.upload.toggle;
@@ -253,6 +260,7 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 				}else if(scs == sdo_scs_e::INIT_DOWNLOAD_RESPONSE){
 					if(request.download.index < request.download.frames.size()){
 						// segmented download initiated
+						active_sdo[node.id] = {index, subindex};
 						publish(request.download.frames[request.download.index++], output_can);
 					}else{
 						// expedited download acknowledged
@@ -266,6 +274,7 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 							publish(next->initial_frame, output_can);
 						}
 					}
+
 				}else if(scs == sdo_scs_e::SEGMENT_DOWNLOAD_RESPONSE){
 					if(request.download.index < request.download.frames.size()){
 						// continue segmented download
