@@ -103,7 +103,7 @@ void CANopen_Proxy::download_expedited_async(const uint32_t &node_id, const uint
 }
 
 
-void CANopen_Proxy::map_pdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_entry_t> &objects, const bool &sync, const int32_t &timeout_ms, const vnx::request_id_t &_request_id){
+void CANopen_Proxy::map_pdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_entry_t> &objects, const bool &rtr, const int32_t &timeout_ms, const vnx::request_id_t &_request_id){
 	if(pdo_type < 1 || pdo_type > 4){
 		vnx_async_return_ex_what(_request_id, "Invalid PDO type");
 		return;
@@ -118,10 +118,11 @@ void CANopen_Proxy::map_pdo_async(const uint32_t &node_id, const uint32_t &pdo_t
 	}
 	const uint16_t pdo_comm = 0x1800 + pdo_type - 1;
 	const uint16_t pdo_map = 0x1a00 + pdo_type - 1;
+	const uint32_t cob_entry = (rtr << 30) | ((can_id > 2047 ? 1 : 0) << 29) | can_id;
 	auto callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
 
-	// disable PDO: pdo_comm.1  =  0x80000000+can_id
-	auto first_request = download_expedited_internal(node_id, pdo_comm, 1, 0x80000000+can_id, 4, timeout_ms);
+	// disable PDO: pdo_comm.1  |=  (1 << 31)
+	auto first_request = download_expedited_internal(node_id, pdo_comm, 1, (1 << 31) | cob_entry, 4, timeout_ms);
 	first_request->callback_error_what = callback_error_what;
 	auto current_request = first_request;
 
@@ -144,21 +145,36 @@ void CANopen_Proxy::map_pdo_async(const uint32_t &node_id, const uint32_t &pdo_t
 	current_request = current_request->next;
 	current_request->callback_error_what = callback_error_what;
 
-	if(sync){
-		// transmission type SYNC: pdo_comm.2  =  1
-		current_request->next = download_expedited_internal(node_id, pdo_comm, 2, 1, 4, timeout_ms);
-		current_request = current_request->next;
-		current_request->callback_error_what = callback_error_what;
-	}
-
-	// enable PDO: pdo_comm.1  =  0x40000000+can_id
-	current_request->next = download_expedited_internal(node_id, pdo_comm, 1, 0x40000000+can_id, 4, timeout_ms);
+	// enable PDO: pdo_comm.1  &=  ~(1 << 31)
+	current_request->next = download_expedited_internal(node_id, pdo_comm, 1, cob_entry, 4, timeout_ms);
 	current_request = current_request->next;
 	current_request->callback_error_what = callback_error_what;
 	current_request->download.callback = std::bind(&CANopen_Proxy::map_pdo_async_return, this, _request_id);
 
 	sdo_requests[std::make_tuple(first_request->node_id, first_request->index, first_request->subindex)] = *first_request;
 	publish(first_request->initial_frame, output_can);
+}
+
+
+void CANopen_Proxy::pdo_sync_async(const uint32_t &node_id, const uint32_t &pdo_type, const uint8_t &sync_divider, const int32_t &timeout_ms, const vnx::request_id_t &_request_id){
+	if(pdo_type < 1 || pdo_type > 4){
+		vnx_async_return_ex_what(_request_id, "Invalid PDO type");
+		return;
+	}
+	const uint16_t index = 0x1800 + pdo_type - 1;
+	const uint8_t subindex = 2;
+	std::shared_ptr<sdo_request_t> request;
+	try{
+		// transmission type SYNC: pdo_comm.2  =  sync_divider
+		request = download_expedited_internal(node_id, index, subindex, sync_divider, 4, timeout_ms);
+	}catch(const std::exception &err){
+		vnx_async_return_ex_what(_request_id, err.what());
+		return;
+	}
+	request->callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
+	request->download.callback = std::bind(&CANopen_Proxy::pdo_sync_async_return, this, _request_id);
+	sdo_requests[std::make_tuple(node_id, index, subindex)] = *request;
+	publish(request->initial_frame, output_can);
 }
 
 
@@ -267,7 +283,9 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 			}
 		}else if(sample->id == node.emcy){
 			const auto code = node.handle_emcy(*sample);
-			// TODO
+			if(code != emcy_code_e::NO_ERROR){
+				log(WARN) << "Node " << node.id << " EMCY: " << code;
+			}
 		}else if(sample->id == node.nmt){
 			node_states[node.id] = node.get_nmt_state(*sample);
 			if(!is_network_init && node_states.size() == network.size()){
