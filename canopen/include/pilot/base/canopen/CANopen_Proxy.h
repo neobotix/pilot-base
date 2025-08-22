@@ -48,7 +48,7 @@ private:
 		} upload;
 		struct{
 			std::function<void()> callback;
-			std::vector<std::shared_ptr<const CAN_Frame>> segmented_frames;
+			std::vector<std::shared_ptr<const CAN_Frame>> frames;
 			size_t index = 0;
 		} download;
 		std::shared_ptr<sdo_request_t> next;

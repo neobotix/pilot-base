@@ -251,8 +251,11 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 						publish(frame, output_can);
 					}
 				}else if(scs == sdo_scs_e::INIT_DOWNLOAD_RESPONSE){
-					if(request.download.segmented_frames.empty()){
-						// acknowledged expedited transfer
+					if(request.download.index < request.download.frames.size()){
+						// segmented download initiated
+						publish(request.download.frames[request.download.index++], output_can);
+					}else{
+						// expedited download acknowledged
 						if(request.download.callback){
 							request.download.callback();
 						}
@@ -262,13 +265,13 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 							sdo_requests[std::make_tuple(next->node_id, next->index, next->subindex)] = *next;
 							publish(next->initial_frame, output_can);
 						}
-					}else if(request.download.index < request.download.segmented_frames.size()){
-						publish(request.download.segmented_frames[request.download.index++], output_can);
 					}
 				}else if(scs == sdo_scs_e::SEGMENT_DOWNLOAD_RESPONSE){
-					if(request.download.index < request.download.segmented_frames.size()){
-						publish(request.download.segmented_frames[request.download.index++], output_can);
+					if(request.download.index < request.download.frames.size()){
+						// continue segmented download
+						publish(request.download.frames[request.download.index++], output_can);
 					}else{
+						// segmented download finished
 						if(request.download.callback){
 							request.download.callback();
 						}
@@ -386,12 +389,12 @@ std::shared_ptr<CANopen_Proxy::sdo_request_t> CANopen_Proxy::download_internal(u
 		request->timeout = vnx::get_wall_time_micros() + timeout_ms*1000;
 	}
 	if(expedited_frame){
-		request->initial_frame = expedited_frame;
-	}else if(!request->download.segmented_frames.empty()){
-		request->initial_frame = request->download.segmented_frames[0];
-		request->download.index = 1;
+		request->download.frames.push_back(expedited_frame);
+	}else{
+		request->download.frames = segmented_frames;
 	}
-	request->download.segmented_frames = segmented_frames;
+	request->initial_frame = request->download.frames.at(0);
+	request->download.index = 1;
 	return request;
 }
 
