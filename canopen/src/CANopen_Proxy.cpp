@@ -40,11 +40,6 @@ void CANopen_Proxy::main(){
 		node.calculate_can_ids();
 	}
 
-	is_network_init = true;
-	if(activate_network){
-		is_network_init = false;
-		init_timer = set_timer_millis(1000, std::bind(&CANopen_Proxy::network_reset, this));
-	}
 	set_timer_millis(50, std::bind(&CANopen_Proxy::check_request_timeouts, this));
 	if(sync_interval_ms > 0){
 		set_timer_millis(sync_interval_ms, std::bind(&CANopen_Proxy::sync, this));
@@ -52,8 +47,31 @@ void CANopen_Proxy::main(){
 	if(heartbeat_interval_ms > 0){
 		set_timer_millis(heartbeat_interval_ms, std::bind(&CANopen_Proxy::heartbeat, this));
 	}
+	is_network_init = true;
+	if(activate_network){
+		reset_network();
+	}else if(activate_network_operational){
+		set_operational();
+	}
 
 	Super::main();
+
+	if(shutdown_network){
+		auto frame = node_t::module_control(nmt_command_e::GO_TO_STOPPED, 0);
+		publish(frame, output_can);
+	}
+}
+
+
+void CANopen_Proxy::reset_network(){
+	reset_network_internal();
+	if(activate_network){
+		if(init_timer){
+			init_timer->reset();
+		}else{
+			init_timer = set_timer_millis(1000, std::bind(&CANopen_Proxy::reset_network_internal, this));
+		}
+	}
 }
 
 
@@ -303,8 +321,7 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 			if(!is_network_init && node_states.size() == network.size()){
 				log(INFO) << "All nodes alive";
 				if(activate_network_operational){
-					auto frame = node_t::module_control(nmt_command_e::GO_TO_OPERATIONAL, 0);
-					publish(frame, output_can);
+					set_operational();
 				}
 				is_network_init = true;
 				if(init_timer){
@@ -434,10 +451,17 @@ void CANopen_Proxy::check_request_timeouts(){
 }
 
 
-void CANopen_Proxy::network_reset(){
+void CANopen_Proxy::reset_network_internal(){
 	log(INFO) << "Resetting network ...";
+	is_network_init = false;
 	node_states.clear();
 	auto frame = node_t::module_control(nmt_command_e::GO_TO_RESET_NODE, 0);
+	publish(frame, output_can);
+}
+
+
+void CANopen_Proxy::set_operational(){
+	auto frame = node_t::module_control(nmt_command_e::GO_TO_OPERATIONAL, 0);
 	publish(frame, output_can);
 }
 

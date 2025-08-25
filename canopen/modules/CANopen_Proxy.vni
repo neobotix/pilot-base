@@ -13,7 +13,9 @@ module CANopen_Proxy{
 	vector<node_t> network;
 	bool activate_network = true;
 	bool activate_network_operational = true;
+	bool shutdown_network = true;
 
+	void reset_network();
 	vector<uchar> upload(uint node_id, ushort index, uchar subindex, int timeout_ms=0) const async;
 	void download(uint node_id, ushort index, uchar subindex, vector<uchar> data, int timeout_ms=0) async;
 	void download_expedited(uint node_id, ushort index, uchar subindex, uint data, uint num_bytes=4, int timeout_ms=0) async;

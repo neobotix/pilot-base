@@ -23,6 +23,7 @@ protected:
 	void init() override;
 	void main() override;
 
+	void reset_network() override;
 	void upload_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) const override;
 	void download_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const std::vector<uint8_t> &data, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) override;
 	void download_expedited_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const uint32_t &data, const uint32_t &num_bytes, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) override;
@@ -64,7 +65,8 @@ private:
 	std::shared_ptr<sdo_request_t> download_internal(uint32_t node_id, uint16_t index, uint8_t subindex, const std::vector<uint8_t> &data, int32_t timeout_ms) const;
 	std::shared_ptr<sdo_request_t> download_expedited_internal(uint32_t node_id, uint16_t index, uint8_t subindex, uint32_t data, uint32_t num_bytes, int32_t timeout_ms) const;
 	void check_request_timeouts();
-	void network_reset();
+	void reset_network_internal();
+	void set_operational();
 	void sync() const;
 	void heartbeat() const;
 };
