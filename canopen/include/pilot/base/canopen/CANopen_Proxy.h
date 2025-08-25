@@ -22,6 +22,7 @@ public:
 protected:
 	void init() override;
 	void main() override;
+	bool vnx_shutdown() override;
 
 	void reset_network() override;
 	void upload_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) const override;

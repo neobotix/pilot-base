@@ -63,6 +63,15 @@ void CANopen_Proxy::main(){
 }
 
 
+bool CANopen_Proxy::vnx_shutdown(){
+	if(shutdown_delay_ms <= 0){
+		return true;
+	}
+	set_timeout_millis(shutdown_delay_ms, std::bind(&CANopen_Proxy::exit, this));
+	return false;
+}
+
+
 void CANopen_Proxy::reset_network(){
 	reset_network_internal();
 	if(activate_network){
