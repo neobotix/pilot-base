@@ -245,31 +245,11 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 					const auto error = node.get_sdo_error(*sample);
 					request.callback_error_what("SDO request on object " + object_name(request.index, request.subindex) + " of node " + std::to_string(request.node_id) + " failed with: " + vnx::to_string_value(error));
 					sdo_requests.erase(find);
-				}else if(scs == sdo_scs_e::INIT_UPLOAD_RESPONSE){
-					const auto answer = node.get_uploaded_data(*sample);
-					if(answer.second){
-						// expedited transfer, upload finished
-						if(request.upload.callback){
-							request.upload.callback(answer.first);
-						}
-						auto next = request.next;
-						sdo_requests.erase(find);
-						if(next){
-							sdo_requests[std::make_tuple(next->node_id, next->index, next->subindex)] = *next;
-							publish(next->initial_frame, output_can);
-						}
-					}else{
-						// init of segmented transfer
-						active_sdo[node.id] = {index, subindex};
-						request.upload.frames = node.upload_segment_request(index, subindex);
-						auto frame = request.upload.toggle ? request.upload.frames.first : request.upload.frames.second;
-						request.upload.toggle = !request.upload.toggle;
-						publish(frame, output_can);
-					}
-				}else if(scs == sdo_scs_e::SEGMENT_UPLOAD_RESPONSE){
+				}else if(scs == sdo_scs_e::INIT_UPLOAD_RESPONSE || scs == sdo_scs_e::SEGMENT_UPLOAD_RESPONSE){
 					const auto answer = node.get_uploaded_data(*sample);
 					request.upload.data.insert(request.upload.data.end(), answer.first.begin(), answer.first.end());
 					if(answer.second){
+						// upload finished
 						if(request.upload.callback){
 							request.upload.callback(request.upload.data);
 						}
@@ -280,34 +260,22 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 							publish(next->initial_frame, output_can);
 						}
 					}else{
+						// segmented upload initiated or continued
+						active_sdo[node.id] = {index, subindex};
+						if(!request.upload.frames.first || !request.upload.frames.second){
+							request.upload.frames = node.upload_segment_request(index, subindex);
+						}
 						auto frame = request.upload.toggle ? request.upload.frames.first : request.upload.frames.second;
 						request.upload.toggle = !request.upload.toggle;
 						publish(frame, output_can);
 					}
-				}else if(scs == sdo_scs_e::INIT_DOWNLOAD_RESPONSE){
+				}else if(scs == sdo_scs_e::INIT_DOWNLOAD_RESPONSE || scs == sdo_scs_e::SEGMENT_DOWNLOAD_RESPONSE){
 					if(request.download.index < request.download.frames.size()){
-						// segmented download initiated
+						// segmented download initiated or continued
 						active_sdo[node.id] = {index, subindex};
 						publish(request.download.frames[request.download.index++], output_can);
 					}else{
-						// expedited download acknowledged
-						if(request.download.callback){
-							request.download.callback();
-						}
-						auto next = request.next;
-						sdo_requests.erase(find);
-						if(next){
-							sdo_requests[std::make_tuple(next->node_id, next->index, next->subindex)] = *next;
-							publish(next->initial_frame, output_can);
-						}
-					}
-
-				}else if(scs == sdo_scs_e::SEGMENT_DOWNLOAD_RESPONSE){
-					if(request.download.index < request.download.frames.size()){
-						// continue segmented download
-						publish(request.download.frames[request.download.index++], output_can);
-					}else{
-						// segmented download finished
+						// download finished
 						if(request.download.callback){
 							request.download.callback();
 						}
