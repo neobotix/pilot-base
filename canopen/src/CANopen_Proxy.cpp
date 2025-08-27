@@ -47,11 +47,17 @@ void CANopen_Proxy::main(){
 	if(heartbeat_interval_ms > 0){
 		set_timer_millis(heartbeat_interval_ms, std::bind(&CANopen_Proxy::heartbeat, this));
 	}
-	is_network_init = true;
+
 	if(activate_network){
 		reset_network();
-	}else if(activate_network_operational){
-		set_operational();
+	}else{
+		is_network_init = true;
+		if(activate_network_operational){
+			set_operational();
+		}
+		if(query_information){
+			request_names();
+		}
 	}
 
 	Super::main();
@@ -232,10 +238,10 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 				index = (sample->data[2] << 8) | sample->data[1];
 				subindex = sample->data[3];
 			}else if(scs == sdo_scs_e::SEGMENT_UPLOAD_RESPONSE || scs == sdo_scs_e::SEGMENT_DOWNLOAD_RESPONSE){
-				const auto find = active_sdo.find(node.id);
-				if(find != active_sdo.end()){
-					index = find->second.first;
-					subindex = find->second.second;
+				const auto find = node_states.find(node.id);
+				if(find != node_states.end()){
+					index = find->second.active_sdo.first;
+					subindex = find->second.active_sdo.second;
 				}
 			}
 			const auto find = sdo_requests.find(std::make_tuple(node.id, index, subindex));
@@ -243,7 +249,10 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 				auto &request = find->second;
 				if(scs == sdo_scs_e::ABORT){
 					const auto error = node.get_sdo_error(*sample);
-					request.callback_error_what("SDO request on object " + object_name(request.index, request.subindex) + " of node " + std::to_string(request.node_id) + " failed with: " + vnx::to_string_value(error));
+					const std::string message = "SDO request on object " + object_name(request.index, request.subindex) + " of node " + std::to_string(request.node_id) + " failed with: " + vnx::to_string_value(error);
+					if(request.callback_error_what){
+						request.callback_error_what(message);
+					}
 					sdo_requests.erase(find);
 				}else if(scs == sdo_scs_e::INIT_UPLOAD_RESPONSE || scs == sdo_scs_e::SEGMENT_UPLOAD_RESPONSE){
 					const auto answer = node.get_uploaded_data(*sample);
@@ -252,6 +261,10 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 						// upload finished
 						if(request.upload.callback){
 							request.upload.callback(request.upload.data);
+							if(index == 0x1008 && subindex == 0){
+								const std::string device_name(reinterpret_cast<const char *>(request.upload.data.data()), request.upload.data.size());
+								node_states[node.id].name = device_name;
+							}
 						}
 						auto next = request.next;
 						sdo_requests.erase(find);
@@ -261,7 +274,7 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 						}
 					}else{
 						// segmented upload initiated or continued
-						active_sdo[node.id] = {index, subindex};
+						node_states[node.id].active_sdo = {index, subindex};
 						if(!request.upload.frames.first || !request.upload.frames.second){
 							request.upload.frames = node.upload_segment_request(index, subindex);
 						}
@@ -272,7 +285,7 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 				}else if(scs == sdo_scs_e::INIT_DOWNLOAD_RESPONSE || scs == sdo_scs_e::SEGMENT_DOWNLOAD_RESPONSE){
 					if(request.download.index < request.download.frames.size()){
 						// segmented download initiated or continued
-						active_sdo[node.id] = {index, subindex};
+						node_states[node.id].active_sdo = {index, subindex};
 						publish(request.download.frames[request.download.index++], output_can);
 					}else{
 						// download finished
@@ -294,15 +307,27 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 				log(WARN) << "Node " << node.id << " EMCY: " << code;
 			}
 		}else if(sample->id == node.nmt){
-			node_states[node.id] = node.get_nmt_state(*sample);
+			node_states[node.id].state = node.get_nmt_state(*sample);
 			if(!is_network_init && node_states.size() == network.size()){
-				log(INFO) << "All nodes alive";
-				if(activate_network_operational){
-					set_operational();
+				bool alive = true;
+				for(const auto &entry : node_states){
+					if(!entry.second.state){
+						alive = false;
+						break;
+					}
 				}
-				is_network_init = true;
-				if(init_timer){
-					init_timer->stop();
+				if(alive){
+					log(INFO) << "All nodes alive";
+					is_network_init = true;
+					if(activate_network_operational){
+						set_operational();
+					}
+					if(query_information){
+						request_names();
+					}
+					if(init_timer){
+						init_timer->stop();
+					}
 				}
 			}
 		}
@@ -417,7 +442,10 @@ void CANopen_Proxy::check_request_timeouts(){
 		bool itered = false;
 		const auto &request = iter->second;
 		if(request.timeout > 0 && request.timeout <= now){
-			request.callback_error_what("Timeout for SDO request on object " + object_name(request.index, request.subindex) + " of node " + std::to_string(request.node_id));
+			const std::string message = "Timeout for SDO request on object " + object_name(request.index, request.subindex) + " of node " + std::to_string(request.node_id);
+			if(request.callback_error_what){
+				request.callback_error_what(message);
+			}
 			iter = sdo_requests.erase(iter);
 			itered = true;
 		}
@@ -440,6 +468,21 @@ void CANopen_Proxy::reset_network_internal(){
 void CANopen_Proxy::set_operational(){
 	auto frame = node_t::module_control(nmt_command_e::GO_TO_OPERATIONAL, 0);
 	publish(frame, output_can);
+}
+
+
+void CANopen_Proxy::request_names(){
+	const uint16_t index = 0x1008;
+	const uint8_t subindex = 0;
+	for(const auto &node : network){
+		std::shared_ptr<sdo_request_t> request;
+		try{
+			request = upload_internal(node.id, index, subindex, 0);
+		}catch(const std::exception &err){
+		}
+		sdo_requests[std::make_tuple(node.id, index, subindex)] = *request;
+		publish(request->initial_frame, output_can);
+	}
 }
 
 

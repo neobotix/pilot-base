@@ -14,6 +14,7 @@ module CANopen_Proxy{
 	vector<node_t> network;
 	bool activate_network = true;
 	bool activate_network_operational = true;
+	bool query_information = false;
 	bool shutdown_network = true;
 
 	void reset_network();
