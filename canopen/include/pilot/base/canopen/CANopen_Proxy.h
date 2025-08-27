@@ -69,6 +69,7 @@ private:
 	std::shared_ptr<sdo_request_t> upload_internal(uint32_t node_id, uint16_t index, uint8_t subindex, int32_t timeout_ms) const;
 	std::shared_ptr<sdo_request_t> download_internal(uint32_t node_id, uint16_t index, uint8_t subindex, const std::vector<uint8_t> &data, int32_t timeout_ms) const;
 	std::shared_ptr<sdo_request_t> download_expedited_internal(uint32_t node_id, uint16_t index, uint8_t subindex, uint32_t data, uint32_t num_bytes, int32_t timeout_ms) const;
+	void trigger_request(const sdo_request_t &request) const;
 	void check_request_timeouts();
 	void reset_network_internal();
 	void set_operational();

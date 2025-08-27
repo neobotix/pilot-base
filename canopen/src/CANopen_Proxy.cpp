@@ -100,8 +100,7 @@ void CANopen_Proxy::upload_async(const uint32_t& node_id, const uint16_t& index,
 	}
 	request->callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
 	request->upload.callback = std::bind(&CANopen_Proxy::upload_async_return, this, _request_id, std::placeholders::_1);
-	sdo_requests[std::make_tuple(node_id, index, subindex)] = *request;
-	publish(request->initial_frame, output_can);
+	trigger_request(*request);
 }
 
 
@@ -115,8 +114,7 @@ void CANopen_Proxy::download_async(const uint32_t &node_id, const uint16_t &inde
 	}
 	request->callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
 	request->download.callback = std::bind(&CANopen_Proxy::download_async_return, this, _request_id);
-	sdo_requests[std::make_tuple(node_id, index, subindex)] = *request;
-	publish(request->initial_frame, output_can);
+	trigger_request(*request);
 }
 
 
@@ -131,8 +129,7 @@ void CANopen_Proxy::download_expedited_async(const uint32_t &node_id, const uint
 
 	request->callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
 	request->download.callback = std::bind(&CANopen_Proxy::download_expedited_async_return, this, _request_id);
-	sdo_requests[std::make_tuple(node_id, index, subindex)] = *request;
-	publish(request->initial_frame, output_can);
+	trigger_request(*request);
 }
 
 
@@ -184,8 +181,7 @@ void CANopen_Proxy::map_pdo_async(const uint32_t &node_id, const uint32_t &pdo_t
 	current_request->callback_error_what = callback_error_what;
 	current_request->download.callback = std::bind(&CANopen_Proxy::map_pdo_async_return, this, _request_id);
 
-	sdo_requests[std::make_tuple(first_request->node_id, first_request->index, first_request->subindex)] = *first_request;
-	publish(first_request->initial_frame, output_can);
+	trigger_request(*first_request);
 }
 
 
@@ -206,8 +202,7 @@ void CANopen_Proxy::pdo_sync_async(const uint32_t &node_id, const uint32_t &pdo_
 	}
 	request->callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
 	request->download.callback = std::bind(&CANopen_Proxy::pdo_sync_async_return, this, _request_id);
-	sdo_requests[std::make_tuple(node_id, index, subindex)] = *request;
-	publish(request->initial_frame, output_can);
+	trigger_request(*request);
 }
 
 
@@ -269,8 +264,7 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 						auto next = request.next;
 						sdo_requests.erase(find);
 						if(next){
-							sdo_requests[std::make_tuple(next->node_id, next->index, next->subindex)] = *next;
-							publish(next->initial_frame, output_can);
+							trigger_request(*next);
 						}
 					}else{
 						// segmented upload initiated or continued
@@ -295,8 +289,7 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 						auto next = request.next;
 						sdo_requests.erase(find);
 						if(next){
-							sdo_requests[std::make_tuple(next->node_id, next->index, next->subindex)] = *next;
-							publish(next->initial_frame, output_can);
+							trigger_request(*next);
 						}
 					}
 				}
@@ -436,10 +429,15 @@ std::shared_ptr<CANopen_Proxy::sdo_request_t> CANopen_Proxy::download_expedited_
 }
 
 
+void CANopen_Proxy::trigger_request(const sdo_request_t &request) const{
+	sdo_requests[std::make_tuple(request.node_id, request.index, request.subindex)] = request;
+	publish(request.initial_frame, output_can);
+}
+
+
 void CANopen_Proxy::check_request_timeouts(){
 	const auto now = vnx::get_wall_time_micros();
 	for(auto iter=sdo_requests.begin(); iter!=sdo_requests.end(); /* no iter */){
-		bool itered = false;
 		const auto &request = iter->second;
 		if(request.timeout > 0 && request.timeout <= now){
 			const std::string message = "Timeout for SDO request on object " + object_name(request.index, request.subindex) + " of node " + std::to_string(request.node_id);
@@ -447,9 +445,7 @@ void CANopen_Proxy::check_request_timeouts(){
 				request.callback_error_what(message);
 			}
 			iter = sdo_requests.erase(iter);
-			itered = true;
-		}
-		if(!itered){
+		}else{
 			iter++;
 		}
 	}
@@ -480,8 +476,7 @@ void CANopen_Proxy::request_names(){
 			request = upload_internal(node.id, index, subindex, 0);
 		}catch(const std::exception &err){
 		}
-		sdo_requests[std::make_tuple(node.id, index, subindex)] = *request;
-		publish(request->initial_frame, output_can);
+		trigger_request(*request);
 	}
 }
 
