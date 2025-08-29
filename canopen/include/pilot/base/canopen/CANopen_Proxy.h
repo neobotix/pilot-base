@@ -58,7 +58,8 @@ private:
 	struct node_state_t{
 		std::string name;
 		nmt_state_e state;
-		std::pair<uint16_t, uint8_t> active_sdo;
+		std::pair<uint16_t, uint8_t> active_upload;
+		std::pair<uint16_t, uint8_t> active_download;
 	};
 	mutable std::map<std::tuple<uint32_t, uint16_t, uint8_t>, sdo_request_t> sdo_requests;
 	std::map<uint32_t, node_state_t> node_states;

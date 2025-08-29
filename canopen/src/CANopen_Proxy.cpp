@@ -235,8 +235,13 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 			}else if(scs == sdo_scs_e::SEGMENT_UPLOAD_RESPONSE || scs == sdo_scs_e::SEGMENT_DOWNLOAD_RESPONSE){
 				const auto find = node_states.find(node.id);
 				if(find != node_states.end()){
-					index = find->second.active_sdo.first;
-					subindex = find->second.active_sdo.second;
+					if(scs == sdo_scs_e::SEGMENT_UPLOAD_RESPONSE){
+						index = find->second.active_upload.first;
+						subindex = find->second.active_upload.second;
+					}else if(scs == sdo_scs_e::SEGMENT_DOWNLOAD_RESPONSE){
+						index = find->second.active_download.first;
+						subindex = find->second.active_download.second;
+					}
 				}
 			}
 			const auto find = sdo_requests.find(std::make_tuple(node.id, index, subindex));
@@ -268,7 +273,7 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 						}
 					}else{
 						// segmented upload initiated or continued
-						node_states[node.id].active_sdo = {index, subindex};
+						node_states[node.id].active_upload = {index, subindex};
 						if(!request.upload.frames.first || !request.upload.frames.second){
 							request.upload.frames = node.upload_segment_request(index, subindex);
 						}
@@ -279,7 +284,7 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 				}else if(scs == sdo_scs_e::INIT_DOWNLOAD_RESPONSE || scs == sdo_scs_e::SEGMENT_DOWNLOAD_RESPONSE){
 					if(request.download.index < request.download.frames.size()){
 						// segmented download initiated or continued
-						node_states[node.id].active_sdo = {index, subindex};
+						node_states[node.id].active_download = {index, subindex};
 						publish(request.download.frames[request.download.index++], output_can);
 					}else{
 						// download finished
