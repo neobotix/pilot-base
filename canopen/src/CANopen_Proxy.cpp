@@ -430,7 +430,17 @@ std::shared_ptr<CANopen_Proxy::sdo_request_t> CANopen_Proxy::download_expedited_
 
 
 void CANopen_Proxy::trigger_request(const sdo_request_t &request) const{
-	sdo_requests[std::make_tuple(request.node_id, request.index, request.subindex)] = request;
+	const auto key = std::make_tuple(request.node_id, request.index, request.subindex);
+	const size_t size_before = sdo_requests.size();
+	auto &entry = sdo_requests[key];
+	if(sdo_requests.size() == size_before){
+		// request already exists, cancel
+		const std::string message = "SDO request on object " + object_name(entry.index, entry.subindex) + " of node " + std::to_string(entry.node_id) + " superseded";
+		if(entry.callback_error_what){
+			entry.callback_error_what(message);
+		}
+	}
+	entry = request;
 	publish(request.initial_frame, output_can);
 }
 
