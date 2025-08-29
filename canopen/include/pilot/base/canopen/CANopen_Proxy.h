@@ -28,7 +28,7 @@ protected:
 	void upload_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) const override;
 	void download_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const std::vector<uint8_t> &data, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) override;
 	void download_expedited_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const uint32_t &data, const uint32_t &num_bytes, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) override;
-	void map_pdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_entry_t> &objects, const bool &rtr, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) override;
+	void map_pdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_address_t> &objects, const bool &rtr, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) override;
 	void pdo_sync_async(const uint32_t &node_id, const uint32_t &pdo_type, const uint8_t &sync_divider, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) override;
 
 	void handle(std::shared_ptr<const CAN_Frame> sample) override;

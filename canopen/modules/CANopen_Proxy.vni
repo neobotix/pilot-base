@@ -21,7 +21,7 @@ module CANopen_Proxy{
 	vector<uchar> upload(uint node_id, ushort index, uchar subindex, int timeout_ms=0) const async;
 	void download(uint node_id, ushort index, uchar subindex, vector<uchar> data, int timeout_ms=0) async;
 	void download_expedited(uint node_id, ushort index, uchar subindex, uint data, uint num_bytes=4, int timeout_ms=0) async;
-	void map_pdo(uint node_id, uint pdo_type, vector<object_entry_t> objects, bool rtr, int timeout_ms=0) async;
+	void map_pdo(uint node_id, uint pdo_type, vector<object_address_t> objects, bool rtr, int timeout_ms=0) async;
 	void pdo_sync(uint node_id, uint pdo_type, uchar sync_divider=1, int timeout_ms=0) async;
 
 	void handle(pilot.base.CAN_Frame sample);

@@ -133,7 +133,7 @@ void CANopen_Proxy::download_expedited_async(const uint32_t &node_id, const uint
 }
 
 
-void CANopen_Proxy::map_pdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_entry_t> &objects, const bool &rtr, const int32_t &timeout_ms, const vnx::request_id_t &_request_id){
+void CANopen_Proxy::map_pdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_address_t> &objects, const bool &rtr, const int32_t &timeout_ms, const vnx::request_id_t &_request_id){
 	if(pdo_type < 1 || pdo_type > 4){
 		vnx_async_return_ex_what(_request_id, "Invalid PDO type");
 		return;
