@@ -133,7 +133,29 @@ void CANopen_Proxy::download_expedited_async(const uint32_t &node_id, const uint
 }
 
 
-void CANopen_Proxy::map_pdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_address_t> &objects, const bool &rtr, const int32_t &timeout_ms, const vnx::request_id_t &_request_id){
+void CANopen_Proxy::map_rpdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_address_t> &objects, const bool &rtr, const int32_t &timeout_ms, const vnx::request_id_t &_request_id){
+	if(pdo_type < 1 || pdo_type > 4){
+		vnx_async_return_ex_what(_request_id, "Invalid PDO type");
+		return;
+	}
+	uint32_t can_id;
+	try{
+		const auto &node = find_node(node_id);
+		can_id = pdo_type==1 ? node.rx_pdo_1 : pdo_type==2 ? node.rx_pdo_2 : pdo_type==3 ? node.rx_pdo_3 : node.rx_pdo_4;
+	}catch(const std::exception &err){
+		vnx_async_return_ex_what(_request_id, err.what());
+		return;
+	}
+	const uint16_t pdo_comm = 0x1400 + pdo_type - 1;
+	const uint16_t pdo_map = 0x1600 + pdo_type - 1;
+	const uint32_t cob_entry = (rtr << 30) | ((can_id > 2047 ? 1 : 0) << 29) | can_id;
+	const auto callback = std::bind(&CANopen_Proxy::map_rpdo_async_return, this, _request_id);
+	const auto callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
+	map_pdo_internal(node_id, pdo_comm, pdo_map, cob_entry, objects, timeout_ms, callback, callback_error_what);
+}
+
+
+void CANopen_Proxy::map_tpdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_address_t> &objects, const bool &rtr, const int32_t &timeout_ms, const vnx::request_id_t &_request_id){
 	if(pdo_type < 1 || pdo_type > 4){
 		vnx_async_return_ex_what(_request_id, "Invalid PDO type");
 		return;
@@ -149,39 +171,9 @@ void CANopen_Proxy::map_pdo_async(const uint32_t &node_id, const uint32_t &pdo_t
 	const uint16_t pdo_comm = 0x1800 + pdo_type - 1;
 	const uint16_t pdo_map = 0x1a00 + pdo_type - 1;
 	const uint32_t cob_entry = (rtr << 30) | ((can_id > 2047 ? 1 : 0) << 29) | can_id;
-	auto callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
-
-	// disable PDO: pdo_comm.1  |=  (1 << 31)
-	auto first_request = download_expedited_internal(node_id, pdo_comm, 1, (1 << 31) | cob_entry, 4, timeout_ms);
-	first_request->callback_error_what = callback_error_what;
-	auto current_request = first_request;
-
-	// destroy PDO mapping: pdo_map.0  =  0
-	current_request->next = download_expedited_internal(node_id, pdo_map, 0, 0, 4, timeout_ms);
-	current_request = current_request->next;
-	current_request->callback_error_what = callback_error_what;
-
-	for(size_t i=0; i<objects.size(); i++){
-		const auto &object = objects[i];
-		const uint32_t value = (object.index << 16) | (object.subindex << 8) | (object.num_bytes*8);
-		// map object to index: pdo_map.i  =  value
-		current_request->next = download_expedited_internal(node_id, pdo_map, i, value, 4, timeout_ms);
-		current_request = current_request->next;
-		current_request->callback_error_what = callback_error_what;
-	}
-
-	// activate mapped objects: pdo_map.0  =  objects.size()
-	current_request->next = download_expedited_internal(node_id, pdo_map, 0, objects.size(), 4, timeout_ms);
-	current_request = current_request->next;
-	current_request->callback_error_what = callback_error_what;
-
-	// enable PDO: pdo_comm.1  &=  ~(1 << 31)
-	current_request->next = download_expedited_internal(node_id, pdo_comm, 1, cob_entry, 4, timeout_ms);
-	current_request = current_request->next;
-	current_request->callback_error_what = callback_error_what;
-	current_request->download.callback = std::bind(&CANopen_Proxy::map_pdo_async_return, this, _request_id);
-
-	trigger_request(*first_request);
+	const auto callback = std::bind(&CANopen_Proxy::map_tpdo_async_return, this, _request_id);
+	const auto callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
+	map_pdo_internal(node_id, pdo_comm, pdo_map, cob_entry, objects, timeout_ms, callback, callback_error_what);
 }
 
 
@@ -431,6 +423,41 @@ std::shared_ptr<CANopen_Proxy::sdo_request_t> CANopen_Proxy::download_expedited_
 		vec_data.push_back(data >> (8*i));
 	}
 	return download_internal(node_id, index, subindex, vec_data, timeout_ms);
+}
+
+
+void CANopen_Proxy::map_pdo_internal(uint32_t node_id, uint16_t pdo_comm, uint16_t pdo_map, uint32_t cob_entry, const std::vector<object_address_t> &objects, int32_t timeout_ms, const std::function<void()> &callback, const std::function<void(const std::string &)> &callback_error_what) const{
+	// disable PDO: pdo_comm.1  |=  (1 << 31)
+	auto first_request = download_expedited_internal(node_id, pdo_comm, 1, (1 << 31) | cob_entry, 4, timeout_ms);
+	first_request->callback_error_what = callback_error_what;
+	auto current_request = first_request;
+
+	// destroy PDO mapping: pdo_map.0  =  0
+	current_request->next = download_expedited_internal(node_id, pdo_map, 0, 0, 4, timeout_ms);
+	current_request = current_request->next;
+	current_request->callback_error_what = callback_error_what;
+
+	for(size_t i=0; i<objects.size(); i++){
+		const auto &object = objects[i];
+		const uint32_t value = (object.index << 16) | (object.subindex << 8) | object.num_bits;
+		// map object to index: pdo_map.i  =  value
+		current_request->next = download_expedited_internal(node_id, pdo_map, i, value, 4, timeout_ms);
+		current_request = current_request->next;
+		current_request->callback_error_what = callback_error_what;
+	}
+
+	// activate mapped objects: pdo_map.0  =  objects.size()
+	current_request->next = download_expedited_internal(node_id, pdo_map, 0, objects.size(), 4, timeout_ms);
+	current_request = current_request->next;
+	current_request->callback_error_what = callback_error_what;
+
+	// enable PDO: pdo_comm.1  &=  ~(1 << 31)
+	current_request->next = download_expedited_internal(node_id, pdo_comm, 1, cob_entry, 4, timeout_ms);
+	current_request = current_request->next;
+	current_request->callback_error_what = callback_error_what;
+	current_request->download.callback = callback;
+
+	trigger_request(*first_request);
 }
 
 
