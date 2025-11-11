@@ -13,6 +13,12 @@ module UDP_Socket{
 	int error_interval_ms = 1000;                      // error retry interval [ms]
 	int stats_interval_ms = 10000;                     // status message interval (0 = disable) [ms]
 
+	uchar rtp_payload_type = 128;                      // 0-127 to enable RTP sending with this payload type
+	uint rtp_ssrc = 0;
+	vector<uint> rtp_csrc;
+	optional<uint> rtp_extension;
+	uint rtp_time_resolution = 1000000;                // [Hz]
+
 	int shutdown_delay_ms = 200;                       // how much to delay module shutdown [ms]
 
 	void handle(DataPacket value);

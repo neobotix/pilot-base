@@ -38,6 +38,8 @@ private:
 	std::atomic<size_t> packets_sent;
 	std::atomic<size_t> bytes_sent;
 
+	uint16_t rtp_sequence_number = 0;
+
 	void initialize();
 	void cleanup();
 	ssize_t receive(socket_t socket, void *data, size_t length, int timeout_ms) const;

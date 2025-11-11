@@ -46,6 +46,7 @@ UDP_Socket::UDP_Socket(const std::string& _vnx_name)
 		bytes_sent(0)
 {
 	socket = static_cast<socket_t>(INVALID_SOCKET);
+	rtp_sequence_number = vnx::Hash64::rand();
 }
 
 
@@ -71,10 +72,61 @@ void UDP_Socket::handle(std::shared_ptr<const DataPacket> value){
 		return;
 	}
 
+	std::shared_ptr<const DataPacket> out = value;
+
+	if(rtp_payload_type <= 127){
+		const uint8_t rtp_version = 2;
+		const bool padding = false;
+		const bool has_extension = static_cast<bool>(rtp_extension);
+		const uint8_t csrc_count = rtp_csrc.size();
+		const bool marker = false;
+		const uint32_t timestamp = value->time * (rtp_time_resolution / 1e6);
+
+		const size_t header_size = 12 + csrc_count*4 + (has_extension ? 4 : 0);
+		std::vector<uint8_t> payload;
+		payload.resize(value->payload.size() + header_size);
+		payload[0] = (rtp_version << 6) | (padding << 5) | (has_extension << 4) | csrc_count;
+		payload[1] = (marker << 7) | rtp_payload_type;
+		payload[2] = (rtp_sequence_number >> 8);
+		payload[3] = rtp_sequence_number;
+		payload[4] = (timestamp >> 24);
+		payload[5] = (timestamp >> 16);
+		payload[6] = (timestamp >> 8);
+		payload[7] = timestamp;
+		payload[8] = (rtp_ssrc >> 24);
+		payload[9] = (rtp_ssrc >> 16);
+		payload[10] = (rtp_ssrc >> 8);
+		payload[11] = rtp_ssrc;
+		for(size_t i=0; i<csrc_count; i++){
+			const size_t pos = 12 + i*4;
+			const auto &csrc = rtp_csrc[i];
+			payload[pos+0] = (csrc >> 24);
+			payload[pos+1] = (csrc >> 16);
+			payload[pos+2] = (csrc >> 8);
+			payload[pos+3] = csrc;
+		}
+		if(rtp_extension){
+			const uint32_t extension = *rtp_extension;
+			const size_t pos = 12 + csrc_count*4;
+			payload[pos+0] = (extension >> 24);
+			payload[pos+1] = (extension >> 16);
+			payload[pos+2] = (extension >> 8);
+			payload[pos+3] = extension;
+		}
+		std::copy(value->payload.begin(), value->payload.end(), payload.begin()+header_size);
+
+		rtp_sequence_number++;
+
+		auto tmp = DataPacket::create();
+		tmp->time = value->time;
+		tmp->payload = std::move(payload);
+		out = tmp;
+	}
+
 	size_t sent = 0;
-	while(sent < value->payload.size()){
-		const auto buf = value->payload.data() + sent;
-		const size_t len = value->payload.size() - sent;
+	while(sent < out->payload.size()){
+		const auto buf = out->payload.data() + sent;
+		const size_t len = out->payload.size() - sent;
 #ifdef _WIN32
 		const auto result = send(socket, reinterpret_cast<const char*>(buf), len, 0);
 #else
