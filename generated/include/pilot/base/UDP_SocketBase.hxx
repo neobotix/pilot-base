@@ -26,6 +26,11 @@ public:
 	int32_t init_interval_ms = 1000;
 	int32_t error_interval_ms = 1000;
 	int32_t stats_interval_ms = 10000;
+	uint8_t rtp_payload_type = 128;
+	uint32_t rtp_ssrc = 0;
+	std::vector<uint32_t> rtp_csrc;
+	vnx::optional<uint32_t> rtp_extension;
+	uint32_t rtp_time_resolution = 1000000;
 	int32_t shutdown_delay_ms = 200;
 	
 	typedef ::vnx::Module Super;
