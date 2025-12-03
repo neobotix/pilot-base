@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 project(pilot-base)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fPIC -pthread")
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 add_compile_options(-DNOGDI)
 
 file(GLOB GENERATED_SOURCE_FILES generated/src/*.cpp)
@@ -26,6 +28,10 @@ add_library(pilot_base SHARED
 	src/CAN_Proxy.cpp
 	src/UDP_Socket.cpp
 	src/NetworkStream.cpp
+)
+
+target_compile_options(pilot_base PUBLIC
+	-pthread
 )
 
 target_include_directories(pilot_base PUBLIC include generated/include)
