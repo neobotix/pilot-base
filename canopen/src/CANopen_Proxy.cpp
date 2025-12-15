@@ -202,6 +202,7 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 	if(sample->id == own_node.rx_sdo){
 		// TODO: answer?
 	}
+	bool check_network_init = false;
 	for(auto &node : network){
 		const bool is_pdo_1 = (sample->id == node.tx_pdo_1);
 		const bool is_pdo_2 = (sample->id == node.tx_pdo_2);
@@ -253,10 +254,10 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 						// upload finished
 						if(request.upload.callback){
 							request.upload.callback(request.upload.data);
-							if(index == 0x1008 && subindex == 0){
-								const std::string device_name(reinterpret_cast<const char *>(request.upload.data.data()), request.upload.data.size());
-								node_states[node.id].name = device_name;
-							}
+						}
+						if(index == 0x1008 && subindex == 0){
+							const std::string device_name(reinterpret_cast<const char *>(request.upload.data.data()), request.upload.data.size());
+							node_states[node.id].name = device_name;
 						}
 						auto next = request.next;
 						sdo_requests.erase(find);
@@ -298,27 +299,35 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 			}
 		}else if(sample->id == node.nmt){
 			node_states[node.id].state = node.get_nmt_state(*sample);
-			if(!is_network_init && node_states.size() == network.size()){
-				bool alive = true;
-				for(const auto &entry : node_states){
-					if(!entry.second.state){
-						alive = false;
-						break;
-					}
-				}
-				if(alive){
-					log(INFO) << "All nodes alive";
-					is_network_init = true;
-					if(activate_network_operational){
-						set_operational();
-					}
-					if(query_information){
-						request_names();
-					}
-					if(init_timer){
-						init_timer->stop();
-					}
-				}
+			if(!is_network_init){
+				check_network_init = true;
+			}
+		}
+	}
+
+	if(check_network_init){
+		bool alive = true;
+		for(const auto &node : network){
+			if(node.is_virtual){
+				continue;
+			}
+			const auto find = node_states.find(node.id);
+			if(find == node_states.end() || !find->second.state){
+				alive = false;
+				break;
+			}
+		}
+		if(alive){
+			log(INFO) << "All nodes alive";
+			is_network_init = true;
+			if(activate_network_operational){
+				set_operational();
+			}
+			if(query_information){
+				request_names();
+			}
+			if(init_timer){
+				init_timer->stop();
 			}
 		}
 	}
@@ -513,6 +522,9 @@ void CANopen_Proxy::request_names(){
 	const uint16_t index = 0x1008;
 	const uint8_t subindex = 0;
 	for(const auto &node : network){
+		if(node.is_virtual){
+			continue;
+		}
 		std::shared_ptr<sdo_request_t> request;
 		try{
 			request = upload_internal(node.id, index, subindex, 0);

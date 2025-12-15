@@ -5,6 +5,7 @@ import pilot.base.CAN_Frame;
 struct node_t{
 	uint id;
 	bool use_predefined_connection_set = true;                                                             // calculate CAN IDs based on node_id
+	bool is_virtual = false;                                                                               // node is not physically present (e.g. group id)
 
 	uint emcy;
 	uint tx_pdo_1;
