@@ -38,7 +38,7 @@ namespace base {
 
 
 const vnx::Hash64 CAN_ProxyBase::VNX_TYPE_HASH(0x17c6e6ba3900a740ull);
-const vnx::Hash64 CAN_ProxyBase::VNX_CODE_HASH(0xb53e75c7d299d2ceull);
+const vnx::Hash64 CAN_ProxyBase::VNX_CODE_HASH(0x4e6ae724a05353f7ull);
 
 CAN_ProxyBase::CAN_ProxyBase(const std::string& _vnx_name)
 	:	Module::Module(_vnx_name)
@@ -241,7 +241,7 @@ std::shared_ptr<vnx::TypeCode> CAN_ProxyBase::static_create_type_code() {
 	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.base.CAN_Proxy";
 	type_code->type_hash = vnx::Hash64(0x17c6e6ba3900a740ull);
-	type_code->code_hash = vnx::Hash64(0xb53e75c7d299d2ceull);
+	type_code->code_hash = vnx::Hash64(0x4e6ae724a05353f7ull);
 	type_code->is_native = true;
 	type_code->native_size = sizeof(::pilot::base::CAN_ProxyBase);
 	type_code->depends.resize(2);

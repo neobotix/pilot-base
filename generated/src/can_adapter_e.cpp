@@ -12,7 +12,7 @@ namespace base {
 
 
 const vnx::Hash64 can_adapter_e::VNX_TYPE_HASH(0x7a7d5bef82a9fdfcull);
-const vnx::Hash64 can_adapter_e::VNX_CODE_HASH(0xb3cd63f3528d04a2ull);
+const vnx::Hash64 can_adapter_e::VNX_CODE_HASH(0xcad2a3559607b2cfull);
 
 vnx::Hash64 can_adapter_e::get_type_hash() const {
 	return VNX_TYPE_HASH;
@@ -44,6 +44,7 @@ void can_adapter_e::write(vnx::TypeOutput& _out, const vnx::TypeCode* _type_code
 
 vnx::bool_t can_adapter_e::is_valid() const {
 	switch(value) {
+		case KVASER: return true;
 		case PEAKUSB: return true;
 		case SOCKETCAN: return true;
 	}
@@ -52,6 +53,7 @@ vnx::bool_t can_adapter_e::is_valid() const {
 
 std::string can_adapter_e::to_string() const {
 	switch(value) {
+		case KVASER: return "\"KVASER\"";
 		case PEAKUSB: return "\"PEAKUSB\"";
 		case SOCKETCAN: return "\"SOCKETCAN\"";
 	}
@@ -60,6 +62,7 @@ std::string can_adapter_e::to_string() const {
 
 std::string can_adapter_e::to_string_value() const {
 	switch(value) {
+		case KVASER: return "KVASER";
 		case PEAKUSB: return "PEAKUSB";
 		case SOCKETCAN: return "SOCKETCAN";
 	}
@@ -68,6 +71,7 @@ std::string can_adapter_e::to_string_value() const {
 
 std::string can_adapter_e::to_string_value_full() const {
 	switch(value) {
+		case KVASER: return "pilot.base.can_adapter_e.KVASER";
 		case PEAKUSB: return "pilot.base.can_adapter_e.PEAKUSB";
 		case SOCKETCAN: return "pilot.base.can_adapter_e.SOCKETCAN";
 	}
@@ -84,7 +88,8 @@ void can_adapter_e::from_string_value(const std::string& _name) {
 	vnx::Variant var;
 	vnx::from_string_value(_name, var);
 	if(var.is_string()) {
-		if(_name == "PEAKUSB") value = PEAKUSB;
+		if(_name == "KVASER") value = KVASER;
+		else if(_name == "PEAKUSB") value = PEAKUSB;
 		else if(_name == "SOCKETCAN") value = SOCKETCAN;
 		else value = enum_t(vnx::hash64(_name));
 	} else {
@@ -95,6 +100,7 @@ void can_adapter_e::from_string_value(const std::string& _name) {
 void can_adapter_e::accept(vnx::Visitor& _visitor) const {
 	std::string _name;
 	switch(value) {
+		case KVASER: _name = "KVASER"; break;
 		case PEAKUSB: _name = "PEAKUSB"; break;
 		case SOCKETCAN: _name = "SOCKETCAN"; break;
 	}
@@ -103,6 +109,7 @@ void can_adapter_e::accept(vnx::Visitor& _visitor) const {
 
 void can_adapter_e::write(std::ostream& _out) const {
 	switch(value) {
+		case KVASER: _out << "\"KVASER\""; break;
 		case PEAKUSB: _out << "\"PEAKUSB\""; break;
 		case SOCKETCAN: _out << "\"SOCKETCAN\""; break;
 		default: _out << value;
@@ -167,7 +174,7 @@ std::shared_ptr<vnx::TypeCode> can_adapter_e::static_create_type_code() {
 	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.base.can_adapter_e";
 	type_code->type_hash = vnx::Hash64(0x7a7d5bef82a9fdfcull);
-	type_code->code_hash = vnx::Hash64(0xb3cd63f3528d04a2ull);
+	type_code->code_hash = vnx::Hash64(0xcad2a3559607b2cfull);
 	type_code->is_native = true;
 	type_code->is_enum = true;
 	type_code->native_size = sizeof(::pilot::base::can_adapter_e);
@@ -179,6 +186,7 @@ std::shared_ptr<vnx::TypeCode> can_adapter_e::static_create_type_code() {
 		field.name = "value";
 		field.code = {3};
 	}
+	type_code->enum_map[1963042220] = "KVASER";
 	type_code->enum_map[373846577] = "PEAKUSB";
 	type_code->enum_map[1771438529] = "SOCKETCAN";
 	type_code->build();
