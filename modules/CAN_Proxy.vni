@@ -10,7 +10,7 @@ module CAN_Proxy {
 	can_adapter_e adapter = SOCKETCAN;
 	
 	string device;							// (if needed) for example "can0"
-	
+	int channel;                                                    // (if needed) usually 0
 	int baud_rate;							// (if needed) baud rate [baud/s]
 	
 	bool is_big_endian;						// if data received is big endian
