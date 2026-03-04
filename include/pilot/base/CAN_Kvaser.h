@@ -21,11 +21,11 @@ namespace base {
 class CAN_Kvaser : public CAN_Interface {
 public:
 	CAN_Kvaser(int channel, int bitrate, const socketcan_options_t &options);
-	virtual ~CAN_Kvaser();
+	~CAN_Kvaser();
 
 	void close() override;
 	bool read(CAN_Frame &frame, int timeout_ms) override;
-	void write(const CAN_Frame& frame) override;
+	void write(const CAN_Frame &frame) override;
 
 private:
 	using f_canInitializeLibrary = decltype(canInitializeLibrary);
@@ -51,6 +51,7 @@ private:
 	f_canWrite *p_canWrite;
 	f_canReadErrorCounters *p_canReadErrorCounters;
 	f_canGetErrorText *p_canGetErrorText;
+
 	canHandle handle;
 
 	std::string get_error_text(canStatus status) const;

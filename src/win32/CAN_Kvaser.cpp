@@ -124,7 +124,7 @@ bool CAN_Kvaser::read(CAN_Frame &frame, int timeout_ms) {
 	}else if(result != canERR_NOMSG){
 		throw std::runtime_error("canReadWait() failed with: " + get_error_text(result));
 	}
-	if(flag & canMSG_ERROR_FRAME){
+	if(received && (flag & canMSG_ERROR_FRAME)){
 		can_error_t error;
 		// error.error_classes  ->  no correspondence
 		unsigned int rx_errors;
@@ -140,7 +140,7 @@ bool CAN_Kvaser::read(CAN_Frame &frame, int timeout_ms) {
 }
 
 
-void CAN_Kvaser::write(const CAN_Frame& frame) {
+void CAN_Kvaser::write(const CAN_Frame &frame) {
 	long flags = 0;
 	if(frame.id > 2047){
 		flags |= canMSG_EXT;
