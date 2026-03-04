@@ -12,6 +12,7 @@ if(WIN32)
 	list(APPEND PLATFORM_SOURCE_FILES
 		src/win32/SerialPort.cpp
 		src/win32/CAN_PeakUSB.cpp
+		src/win32/CAN_Kvaser.cpp
 	)
 else()
 	list(APPEND PLATFORM_SOURCE_FILES
