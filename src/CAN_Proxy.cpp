@@ -38,9 +38,16 @@ void CAN_Proxy::main()
 	case can_adapter_e::PEAKUSB:
 		socket = std::make_shared<CAN_PeakUSB>(baud_rate, socket_options);
 		break;
-	case can_adapter_e::KVASER:
-		socket = std::make_shared<CAN_Kvaser>(baud_rate, socket_options);
+	case can_adapter_e::KVASER: {
+		int channel = 0;
+		if(!device.empty()) {
+			try {
+				channel = std::stoi(device);
+			} catch(...) {}
+		}
+		socket = std::make_shared<CAN_Kvaser>(channel, baud_rate, socket_options);
 		break;
+	}
 #else
 	case can_adapter_e::SOCKETCAN:
 		socket = std::make_shared<CAN_Socket>(device, socket_options);

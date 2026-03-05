@@ -10,110 +10,142 @@
 
 #include <thread>
 #include <chrono>
+#include <stdexcept>
+#include <string>
 
 
 namespace pilot {
 namespace base {
 
 
-CAN_Kvaser::CAN_Kvaser(int baud_rate, const socketcan_options_t &socket_options){
-	m_hInstance = LoadLibrary("canlib32");
+template<typename T>
+T* CAN_Kvaser::resolve(HINSTANCE dll, const char* name){
+	auto ptr = GetProcAddress(dll, name);
+	if(!ptr){
+		throw std::runtime_error(std::string("Failed to resolve '") + name + "' from canlib32.dll");
+	}
+	return reinterpret_cast<T*>(ptr);
+}
 
-	if(m_hInstance == NULL){
+
+CAN_Kvaser::CAN_Kvaser(int channel, int baud_rate, const socketcan_options_t &socket_options){
+	HINSTANCE dll = LoadLibrary("canlib32");
+
+	if(dll == NULL){
 		throw std::runtime_error("Dynamic library 'canlib32.dll' can't be loaded");
 	}
 
-	pfcanInitializeLibrary = (fcanInitializeLibrary*)GetProcAddress(m_hInstance, "canInitializeLibrary");
-	pfcanOpenChannel = (fcanOpenChannel*)GetProcAddress(m_hInstance, "canOpenChannel");
-	pfcanSetBusParams = (fcanSetBusParams*)GetProcAddress(m_hInstance, "canSetBusParams");
-	pfcanBusOn = (fcanBusOn*)GetProcAddress(m_hInstance, "canBusOn");
-	pfcanBusOff = (fcanBusOff*)GetProcAddress(m_hInstance, "canBusOff");
-	pfcanClose = (fcanClose*)GetProcAddress(m_hInstance, "canClose");
-	pfcanWrite = (fcanWrite*)GetProcAddress(m_hInstance, "canWrite");
-	pfcanReadWait = (fcanReadWait*)GetProcAddress(m_hInstance, "canReadWait");
-	pfcanGetErrorText = (fcanGetErrorText*)GetProcAddress(m_hInstance, "canGetErrorText");
-	pfcanReadErrorCounters = (fcanReadErrorCounters*)GetProcAddress(m_hInstance, "canReadErrorCounters");
+	auto pfcanInitializeLibrary = resolve<fcanInitializeLibrary>(dll, "canInitializeLibrary");
+	auto pfcanOpenChannel = resolve<fcanOpenChannel>(dll, "canOpenChannel");
+	auto pfcanSetBusParams = resolve<fcanSetBusParams>(dll, "canSetBusParams");
+	auto pfcanBusOn = resolve<fcanBusOn>(dll, "canBusOn");
+	pfcanBusOff = resolve<fcanBusOff>(dll, "canBusOff");
+	pfcanClose = resolve<fcanClose>(dll, "canClose");
+	pfcanWrite = resolve<fcanWrite>(dll, "canWrite");
+	pfcanReadWait = resolve<fcanReadWait>(dll, "canReadWait");
+	pfcanGetErrorText = resolve<fcanGetErrorText>(dll, "canGetErrorText");
+	pfcanReadErrorCounters = resolve<fcanReadErrorCounters>(dll, "canReadErrorCounters");
+	pfcanIoCtl = resolve<fcanIoCtl>(dll, "canIoCtl");
 
 	pfcanInitializeLibrary();
 
-	m_handle = pfcanOpenChannel(0, canOPEN_ACCEPT_VIRTUAL);
+	m_handle = pfcanOpenChannel(channel, canOPEN_ACCEPT_VIRTUAL);
 	if(m_handle < 0){
-		throw std::runtime_error("canOpenChannel() failed with: " + get_error_text(canStatus(m_handle)));
+		throw std::runtime_error("canOpenChannel() failed with: " + get_error_text(static_cast<canStatus>(m_handle)));
 	}
 
-	canStatus ret = canOK;
-
+	long freq = 0;
 	switch(baud_rate){
 	case 1000000:
-		ret = pfcanSetBusParams(m_handle, canBITRATE_1M, 0, 0, 0, 0, 0);
+		freq = canBITRATE_1M;
 		break;
-
 	case 500000:
-		ret = pfcanSetBusParams(m_handle, canBITRATE_500K, 0, 0, 0, 0, 0);
+		freq = canBITRATE_500K;
 		break;
-
 	case 250000:
-		ret = pfcanSetBusParams(m_handle, canBITRATE_250K, 0, 0, 0, 0, 0);
+		freq = canBITRATE_250K;
 		break;
-
+	case 125000:
+		freq = canBITRATE_125K;
+		break;
+	case 100000:
+		freq = canBITRATE_100K;
+		break;
+	case 83000:
+		freq = canBITRATE_83K;
+		break;
+	case 62000:
+		freq = canBITRATE_62K;
+		break;
+	case 50000:
+		freq = canBITRATE_50K;
+		break;
+	case 10000:
+		freq = canBITRATE_10K;
+		break;
 	default:
 		throw std::runtime_error("Baud rate not supported");
 	}
 
+	canStatus ret = pfcanSetBusParams(m_handle, freq, 0, 0, 0, 0, 0);
 	if(ret != canOK){
 		throw std::runtime_error("canSetBusParams() failed with: " + get_error_text(ret));
+	}
+
+	unsigned char error_reporting = socket_options.receive_error_frames ? 1 : 0;
+	ret = pfcanIoCtl(m_handle, canIOCTL_SET_ERROR_FRAMES_REPORTING, &error_reporting, sizeof(error_reporting));
+	if(ret != canOK){
+		throw std::runtime_error("canIoCtl(canIOCTL_SET_ERROR_FRAMES_REPORTING) failed with: " + get_error_text(ret));
+	}
+
+	unsigned char local_txecho = socket_options.loopback ? 1 : 0;
+	ret = pfcanIoCtl(m_handle, canIOCTL_SET_LOCAL_TXECHO, &local_txecho, sizeof(local_txecho));
+	if(ret != canOK){
+		throw std::runtime_error("canIoCtl(canIOCTL_SET_LOCAL_TXECHO) failed with: " + get_error_text(ret));
 	}
 
 	ret = pfcanBusOn(m_handle);
 	if(ret != canOK){
 		throw std::runtime_error("canBusOn() failed with: " + get_error_text(ret));
 	}
-
-	m_initialized = true;
 }
 
 
 CAN_Kvaser::~CAN_Kvaser(){
-	if(m_initialized) close();
+	close();
 }
 
 
 void CAN_Kvaser::close(){
-	if(m_initialized){
+	if(m_handle != canINVALID_HANDLE){
 		pfcanBusOff(m_handle);
 		pfcanClose(m_handle);
+		m_handle = canINVALID_HANDLE;
 	}
-	m_initialized = false;
 }
 
 bool CAN_Kvaser::read(CAN_Frame &frame, int timeout_ms){
-	if(!m_initialized){
-		std::this_thread::sleep_for(std::chrono::milliseconds(timeout_ms));
-		return false;
-	}
-
 	long id = 0;
 	unsigned char msg[8] = {};
 	unsigned int dlc = 0;
 	unsigned int flag = 0;
 	unsigned long timestamp = 0;
 
-	const canStatus ret = pfcanReadWait(m_handle, &id, msg, &dlc, &flag, &timestamp, (unsigned long)timeout_ms);
+	const canStatus ret = pfcanReadWait(m_handle, &id, msg, &dlc, &flag, &timestamp, static_cast<unsigned long>(timeout_ms));
 	if(ret == canERR_NOMSG || ret == canERR_TIMEOUT){
 		return false;
 	}else if(ret != canOK){
 		throw std::runtime_error("canReadWait() failed with: " + get_error_text(ret));
 	}
 
-	bool received = false;
-	if(flag & canMSG_ERROR_FRAME){
-		frame.time = vnx::get_time_micros();
-		frame.id = id;
-		frame.size = dlc;
-		for(size_t i = 0; i < 8; i++){
-			frame.data[i] = msg[i];
-		}
+	frame.time = vnx::get_time_micros();
+	frame.id = id;
+	frame.size = dlc;
+	for(size_t i = 0; i < 8; i++){
+		frame.data[i] = msg[i];
+	}
 
+	if(flag & canMSG_ERROR_FRAME){
 		can_error_t error;
 		error.error_classes.insert(can_error_class_e::PROTOCOL);
 
@@ -125,23 +157,12 @@ bool CAN_Kvaser::read(CAN_Frame &frame, int timeout_ms){
 			error.num_rx_errors = rxErr;
 		}
 		frame.error = error;
-		received = true;
-	}else if((flag & canMSG_STD) || (flag & canMSG_EXT)){
-		frame.time = vnx::get_time_micros();
-		frame.id = id;
-		frame.size = dlc;
-		for(size_t i = 0; i < 8; i++){
-			frame.data[i] = msg[i];
-		}
-		received = true;
 	}
 
-	return received;
+	return true;
 }
 
 void CAN_Kvaser::write(const CAN_Frame& frame){
-	if(!m_initialized) return;
-
 	unsigned char msg[8];
 	for(size_t i = 0; i < 8; i++){
 		msg[i] = frame.data[i];

@@ -20,7 +20,7 @@ namespace base {
 
 class CAN_Kvaser : public CAN_Interface {
 public:
-	CAN_Kvaser(int baud_rate, const socketcan_options_t &socket_options);
+	CAN_Kvaser(int channel, int baud_rate, const socketcan_options_t &socket_options);
 
 	~CAN_Kvaser();
 
@@ -31,31 +31,30 @@ public:
 	void write(const CAN_Frame& frame) override;
 
 private:
-	typedef void(__stdcall fcanInitializeLibrary)(void);
-	typedef CanHandle(__stdcall fcanOpenChannel)(int channel, int flags);
-	typedef canStatus(__stdcall fcanSetBusParams)(const CanHandle hnd, long freq, unsigned int tseg1, unsigned int tseg2, unsigned int sjw, unsigned int noSamp, unsigned int syncmode);
-	typedef canStatus(__stdcall fcanBusOn)(const CanHandle hnd);
-	typedef canStatus(__stdcall fcanBusOff)(const CanHandle hnd);
-	typedef canStatus(__stdcall fcanClose)(const CanHandle hnd);
-	typedef canStatus(__stdcall fcanWrite)(const CanHandle hnd, long id, void *msg, unsigned int dlc, unsigned int flag);
-	typedef canStatus(__stdcall fcanReadWait)(const CanHandle hnd, long *id, void *msg, unsigned int *dlc, unsigned int *flag, unsigned long *time, unsigned long timeout);
-	typedef canStatus(__stdcall fcanGetErrorText)(canStatus err, char *buf, unsigned int bufsiz);
-	typedef canStatus(__stdcall fcanReadErrorCounters)(const CanHandle hnd, unsigned int *txErr, unsigned int *rxErr, unsigned int *ovErr);
+	template<typename T>
+	static T* resolve(HINSTANCE dll, const char* name);
 
-	fcanInitializeLibrary* pfcanInitializeLibrary;
-	fcanOpenChannel* pfcanOpenChannel;
-	fcanSetBusParams* pfcanSetBusParams;
-	fcanBusOn* pfcanBusOn;
+	using fcanInitializeLibrary = decltype(canInitializeLibrary);
+	using fcanOpenChannel = decltype(canOpenChannel);
+	using fcanSetBusParams = decltype(canSetBusParams);
+	using fcanBusOn = decltype(canBusOn);
+	using fcanBusOff = decltype(canBusOff);
+	using fcanClose = decltype(canClose);
+	using fcanWrite = decltype(canWrite);
+	using fcanReadWait = decltype(canReadWait);
+	using fcanGetErrorText = decltype(canGetErrorText);
+	using fcanReadErrorCounters = decltype(canReadErrorCounters);
+	using fcanIoCtl = decltype(canIoCtl);
+
 	fcanBusOff* pfcanBusOff;
 	fcanClose* pfcanClose;
 	fcanWrite* pfcanWrite;
 	fcanReadWait* pfcanReadWait;
 	fcanGetErrorText* pfcanGetErrorText;
 	fcanReadErrorCounters* pfcanReadErrorCounters;
+	fcanIoCtl* pfcanIoCtl;
 
 	CanHandle m_handle = canINVALID_HANDLE;
-	HINSTANCE m_hInstance;
-	bool m_initialized = false;
 
 	std::string get_error_text(canStatus status) const;
 };
