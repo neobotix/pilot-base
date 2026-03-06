@@ -30,7 +30,7 @@ CAN_Kvaser::CAN_Kvaser(int channel, int bitrate, const socketcan_options_t &opti
 	const std::string libname = "canlib32";
 	const auto dll = LoadLibrary(libname.c_str());
 	if(!dll){
-		throw std::runtime_error("Dynamic library " + libname + " can't be loaded");
+		throw std::runtime_error("Dynamic library " + libname + " could not be loaded");
 	}
 	p_canInitializeLibrary = get_proc<f_canInitializeLibrary>(dll, "canInitializeLibrary");
 	p_canOpenChannel = get_proc<f_canOpenChannel>(dll, "canOpenChannel");
@@ -115,16 +115,17 @@ bool CAN_Kvaser::read(CAN_Frame &frame, int timeout_ms) {
 	unsigned int flag = 0;
 
 	const auto result = p_canReadWait(handle, &id, frame.data.data(), &size, &flag, NULL, timeout_ms);
-	bool received = false;
-	if(result == canOK){
-		frame.time = vnx::get_time_micros();
-		frame.id = id;
-		frame.size = size;
-		received = true;
-	}else if(result != canERR_NOMSG){
+	if(result == canERR_NOMSG){
+		return false;
+	}else if(result != canOK){
 		throw std::runtime_error("canReadWait() failed with: " + get_error_text(result));
 	}
-	if(received && (flag & canMSG_ERROR_FRAME)){
+
+	frame.time = vnx::get_time_micros();
+	frame.id = id;
+	frame.size = size;
+
+	if(flag & canMSG_ERROR_FRAME){
 		can_error_t error;
 		// error.error_classes  ->  no correspondence
 		unsigned int rx_errors;
@@ -136,7 +137,8 @@ bool CAN_Kvaser::read(CAN_Frame &frame, int timeout_ms) {
 		}
 		frame.error = error;
 	}
-	return received;
+
+	return true;
 }
 
 
