@@ -4,5 +4,6 @@ enum can_adapter_e {
 	
 	SOCKETCAN,
 	PEAKUSB,
+	KVASER,
 	
 }
