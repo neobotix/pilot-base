@@ -19,8 +19,6 @@ class CAN_Socket : public CAN_Interface {
 public:
 	CAN_Socket(const std::string& iface, const socketcan_options_t &socket_options);
 	
-	~CAN_Socket();
-	
 	void close() override;
 	
 	bool read(CAN_Frame &frame, int timout_ms) override;

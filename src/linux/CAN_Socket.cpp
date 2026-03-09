@@ -106,10 +106,6 @@ CAN_Socket::CAN_Socket(const std::string& iface, const socketcan_options_t &sock
 	}
 }
 
-CAN_Socket::~CAN_Socket() {
-	close();
-}
-
 void CAN_Socket::close()
 {
 	if(sock >= 0) {

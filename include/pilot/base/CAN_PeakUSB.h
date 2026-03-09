@@ -10,6 +10,7 @@
 
 #include <pilot/base/CAN_Frame.hxx>
 #include <pilot/base/CAN_Interface.h>
+
 #include <windows.h>
 #include <pcanbasic/PCANBasic.h>
 
@@ -19,9 +20,7 @@ namespace base {
 
 class CAN_PeakUSB : public CAN_Interface {
 public:
-	CAN_PeakUSB(int baud_rate, const socketcan_options_t &socket_options);
-
-	~CAN_PeakUSB();
+	CAN_PeakUSB(int channel, int baud_rate, const socketcan_options_t &socket_options);
 
 	void close() override;
 
@@ -30,25 +29,23 @@ public:
 	void write(const CAN_Frame& frame) override;
 
 private:
-	typedef TPCANStatus(__stdcall fCAN_Init)(TPCANHandle, TPCANBaudrate, TPCANType, DWORD, WORD);
-	typedef TPCANStatus(__stdcall fCAN_Read)(TPCANHandle, TPCANMsg*, TPCANTimestamp*);
-	typedef TPCANStatus(__stdcall fCAN_Write)(TPCANHandle, TPCANMsg*);
-	typedef TPCANStatus(__stdcall fCAN_Close)(TPCANHandle);
-	typedef TPCANStatus(__stdcall fCAN_SetValue)(TPCANHandle, TPCANParameter, void*, WORD);
-	typedef TPCANStatus(__stdcall fCAN_FilterMessages)(TPCANHandle, DWORD, DWORD, TPCANMode);
-	typedef TPCANStatus(__stdcall fCAN_GetErrorText)(TPCANStatus, WORD, LPSTR);
+	using f_CAN_Initialize = decltype(CAN_Initialize);
+	using f_CAN_Read = decltype(CAN_Read);
+	using f_CAN_Write = decltype(CAN_Write);
+	using f_CAN_Uninitialize = decltype(CAN_Uninitialize);
+	using f_CAN_SetValue = decltype(CAN_SetValue);
+	using f_CAN_FilterMessages = decltype(CAN_FilterMessages);
+	using f_CAN_GetErrorText = decltype(CAN_GetErrorText);
 
-	fCAN_Init* pfCAN_Init;
-	fCAN_Read* pfCAN_Read;
-	fCAN_Write* pfCAN_Write;
-	fCAN_Close* pfCAN_Close;
-	fCAN_SetValue *pfCAN_SetValue;
-	fCAN_FilterMessages *pfCAN_FilterMessages;
-	fCAN_GetErrorText *pfCAN_GetErrorText;
+	f_CAN_Initialize *p_CAN_Initialize;
+	f_CAN_Read *p_CAN_Read;
+	f_CAN_Write *p_CAN_Write;
+	f_CAN_Uninitialize *p_CAN_Uninitialize;
+	f_CAN_SetValue *p_CAN_SetValue;
+	f_CAN_FilterMessages *p_CAN_FilterMessages;
+	f_CAN_GetErrorText *p_CAN_GetErrorText;
 
-	TPCANHandle m_pcanHandle;
-	HINSTANCE m_hInstance;
-	bool m_initialized = false;
+	TPCANHandle pcan_interface;
 	HANDLE m_event_read;
 
 	std::string get_error_text(const TPCANStatus &status) const;

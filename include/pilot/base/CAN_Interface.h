@@ -17,8 +17,6 @@ namespace base {
 class CAN_Interface {
 public:
 
-	virtual ~CAN_Interface() = default;
-
 	virtual void close() = 0;
 
 	virtual bool read(CAN_Frame &frame, int timeout_ms) = 0;

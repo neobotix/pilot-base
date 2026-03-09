@@ -36,7 +36,7 @@ void CAN_Proxy::main()
 	switch(adapter){
 #ifdef _WIN32
 	case can_adapter_e::PEAKUSB:
-		socket = std::make_shared<CAN_PeakUSB>(baud_rate, socket_options);
+		socket = std::make_shared<CAN_PeakUSB>(channel, baud_rate, socket_options);
 		break;
 	case can_adapter_e::KVASER:
 		socket = std::make_shared<CAN_Kvaser>(channel, baud_rate, socket_options);

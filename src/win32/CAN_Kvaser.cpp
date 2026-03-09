@@ -98,11 +98,6 @@ CAN_Kvaser::CAN_Kvaser(int channel, int bitrate, const socketcan_options_t &opti
 }
 
 
-CAN_Kvaser::~CAN_Kvaser() {
-	close();
-}
-
-
 void CAN_Kvaser::close() {
 	p_canBusOff(handle);
 	p_canClose(handle);

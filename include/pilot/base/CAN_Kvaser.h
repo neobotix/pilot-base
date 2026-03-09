@@ -21,7 +21,6 @@ namespace base {
 class CAN_Kvaser : public CAN_Interface {
 public:
 	CAN_Kvaser(int channel, int bitrate, const socketcan_options_t &options);
-	~CAN_Kvaser();
 
 	void close() override;
 	bool read(CAN_Frame &frame, int timeout_ms) override;
