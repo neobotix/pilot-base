@@ -23,6 +23,7 @@ public:
 	::vnx::TopicPtr output_error;
 	::pilot::base::can_adapter_e adapter = ::pilot::base::can_adapter_e::SOCKETCAN;
 	std::string device;
+	int32_t channel = 0;
 	int32_t baud_rate = 0;
 	vnx::bool_t is_big_endian = 0;
 	::pilot::base::socketcan_options_t socket_options;

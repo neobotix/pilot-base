@@ -14,6 +14,7 @@ namespace base {
 struct can_adapter_e {
 	
 	enum enum_t : uint32_t {
+		KVASER = 1963042220l,
 		PEAKUSB = 373846577l,
 		SOCKETCAN = 1771438529l,
 	};
