@@ -46,6 +46,7 @@ void CANopen_Proxy::main(){
 	}
 	if(heartbeat_interval_ms > 0){
 		set_timer_millis(heartbeat_interval_ms, std::bind(&CANopen_Proxy::heartbeat, this));
+		heartbeat_sync_divider = 0;
 	}
 
 	if(activate_network){
@@ -538,6 +539,10 @@ void CANopen_Proxy::request_names(){
 void CANopen_Proxy::sync() const{
 	auto out = node_t::sync();
 	publish(out, output_can);
+	sync_counter++;
+	if(heartbeat_sync_divider > 0 && (sync_counter % heartbeat_sync_divider) == 0){
+		heartbeat();
+	}
 }
 
 

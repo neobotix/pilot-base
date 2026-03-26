@@ -9,6 +9,7 @@ module CANopen_Proxy{
 
 	int sync_interval_ms = 0;                                                      // <= 0 for no sync
 	int heartbeat_interval_ms = 0;                                                 // <= 0 for no heartbeat
+	int heartbeat_sync_divider = 0;                                                // <= 0 for no heartbeat (alternative to interval)
 	int shutdown_delay_ms = 200;
 	node_t own_node;
 	vector<node_t> network;

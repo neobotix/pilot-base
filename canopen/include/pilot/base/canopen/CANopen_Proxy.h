@@ -66,6 +66,7 @@ private:
 	std::map<uint32_t, node_state_t> node_states;
 	bool is_network_init = false;
 	std::shared_ptr<vnx::Timer> init_timer;
+	mutable size_t sync_counter = 0;
 
 	const node_t &find_node(uint32_t node_id) const;
 	std::shared_ptr<sdo_request_t> upload_internal(uint32_t node_id, uint16_t index, uint8_t subindex, int32_t timeout_ms) const;
