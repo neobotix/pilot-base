@@ -79,10 +79,13 @@ void UDP_Socket::handle(std::shared_ptr<const DataPacket> value){
 		const bool padding = false;
 		const bool has_extension = static_cast<bool>(rtp_extension);
 		const uint8_t csrc_count = rtp_csrc.size();
+		if(csrc_count > 15){
+			throw std::logic_error("CSRC count > 15");
+		}
 		const bool marker = false;
 		const uint32_t timestamp = value->time * (rtp_time_resolution / 1e6);
 
-		const size_t header_size = 12 + csrc_count*4 + (has_extension ? 4 : 0);
+		const size_t header_size = 12 + csrc_count*4 + (has_extension ? 4 + rtp_extension->second.size()*4 : 0);
 		std::vector<uint8_t> payload;
 		payload.resize(value->payload.size() + header_size);
 		payload[0] = (rtp_version << 6) | (padding << 5) | (has_extension << 4) | csrc_count;
@@ -106,12 +109,22 @@ void UDP_Socket::handle(std::shared_ptr<const DataPacket> value){
 			payload[pos+3] = csrc;
 		}
 		if(rtp_extension){
-			const uint32_t extension = *rtp_extension;
+			const auto id = rtp_extension->first;
+			const auto &data = rtp_extension->second;
+			const uint16_t data_size = data.size();
 			const size_t pos = 12 + csrc_count*4;
-			payload[pos+0] = (extension >> 24);
-			payload[pos+1] = (extension >> 16);
-			payload[pos+2] = (extension >> 8);
-			payload[pos+3] = extension;
+			payload[pos+0] = (id >> 8);
+			payload[pos+1] = id;
+			payload[pos+2] = (data_size >> 8);
+			payload[pos+3] = data_size;
+			for(size_t i=0; i<data_size; i++){
+				const uint32_t word = data[i];
+				const size_t offset = pos + 4 + i*4;
+				payload[offset+0] = (word >> 24);
+				payload[offset+1] = (word >> 16);
+				payload[offset+2] = (word >> 8);
+				payload[offset+3] = word;
+			}
 		}
 		std::copy(value->payload.begin(), value->payload.end(), payload.begin()+header_size);
 

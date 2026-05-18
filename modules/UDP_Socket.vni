@@ -16,7 +16,7 @@ module UDP_Socket{
 	uchar rtp_payload_type = 128;                      // 0-127 to enable RTP sending with this payload type
 	uint rtp_ssrc = 0;
 	vector<uint> rtp_csrc;
-	optional<uint> rtp_extension;
+	optional<pair<ushort, vector<uint>>> rtp_extension;// (identifier, data)
 	uint rtp_time_resolution = 1000000;                // [Hz]
 
 	int shutdown_delay_ms = 200;                       // how much to delay module shutdown [ms]
