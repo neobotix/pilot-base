@@ -2,6 +2,7 @@
 #include <pilot/base/socketcan_options_t.hxx>
 #ifdef _WIN32
 #include <pilot/base/CAN_PeakUSB.h>
+#include <pilot/base/CAN_Kvaser.h>
 #else
 #include <pilot/base/CAN_Socket.h>
 #endif
