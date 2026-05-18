@@ -1,9 +1,9 @@
 #include <pilot/base/canopen/node_t.hxx>
+#include <pilot/base/socketcan_options_t.hxx>
 #ifdef _WIN32
 #include <pilot/base/CAN_PeakUSB.h>
 #else
 #include <pilot/base/CAN_Socket.h>
-#include <pilot/base/socketcan_options_t.hxx>
 #endif
 #include <vnx/Input.hpp>
 #include <vnx/Output.hpp>
