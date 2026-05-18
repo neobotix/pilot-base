@@ -29,7 +29,7 @@ public:
 	uint8_t rtp_payload_type = 128;
 	uint32_t rtp_ssrc = 0;
 	std::vector<uint32_t> rtp_csrc;
-	vnx::optional<uint32_t> rtp_extension;
+	vnx::optional<std::pair<uint16_t, std::vector<uint32_t>>> rtp_extension;
 	uint32_t rtp_time_resolution = 1000000;
 	int32_t shutdown_delay_ms = 200;
 	

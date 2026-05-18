@@ -35,7 +35,7 @@ namespace base {
 
 
 const vnx::Hash64 UDP_SocketBase::VNX_TYPE_HASH(0xed63df42c27a66ebull);
-const vnx::Hash64 UDP_SocketBase::VNX_CODE_HASH(0x29f63c5a81d92a32ull);
+const vnx::Hash64 UDP_SocketBase::VNX_CODE_HASH(0x6c80b9d69588f1e6ull);
 
 UDP_SocketBase::UDP_SocketBase(const std::string& _vnx_name)
 	:	Module::Module(_vnx_name)
@@ -282,7 +282,7 @@ std::shared_ptr<vnx::TypeCode> UDP_SocketBase::static_create_type_code() {
 	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.base.UDP_Socket";
 	type_code->type_hash = vnx::Hash64(0xed63df42c27a66ebull);
-	type_code->code_hash = vnx::Hash64(0x29f63c5a81d92a32ull);
+	type_code->code_hash = vnx::Hash64(0x6c80b9d69588f1e6ull);
 	type_code->is_native = true;
 	type_code->native_size = sizeof(::pilot::base::UDP_SocketBase);
 	type_code->depends.resize(1);
@@ -382,7 +382,7 @@ std::shared_ptr<vnx::TypeCode> UDP_SocketBase::static_create_type_code() {
 		auto& field = type_code->fields[12];
 		field.is_extended = true;
 		field.name = "rtp_extension";
-		field.code = {33, 3};
+		field.code = {33, 23, 2, 4, 5, 2, 12, 3};
 	}
 	{
 		auto& field = type_code->fields[13];
