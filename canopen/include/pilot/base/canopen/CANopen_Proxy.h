@@ -25,12 +25,12 @@ protected:
 	bool vnx_shutdown() override;
 
 	void reset_network() override;
-	void upload_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) const override;
-	void download_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const std::vector<uint8_t> &data, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) override;
-	void download_expedited_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const uint32_t &data, const uint32_t &num_bytes, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) override;
-	void map_rpdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_address_t> &objects, const bool &rtr, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) override;
-	void map_tpdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_address_t> &objects, const bool &rtr, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) override;
-	void pdo_sync_async(const uint32_t &node_id, const uint32_t &pdo_type, const uint8_t &sync_divider, const int32_t &timeout_ms, const vnx::request_id_t &_request_id) override;
+	void upload_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const vnx::request_id_t &_request_id) const override;
+	void download_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const std::vector<uint8_t> &data, const vnx::request_id_t &_request_id) override;
+	void download_expedited_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const uint32_t &data, const uint32_t &num_bytes, const vnx::request_id_t &_request_id) override;
+	void map_rpdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_address_t> &objects, const bool &rtr, const vnx::request_id_t &_request_id) override;
+	void map_tpdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_address_t> &objects, const bool &rtr, const vnx::request_id_t &_request_id) override;
+	void pdo_sync_async(const uint32_t &node_id, const uint32_t &pdo_type, const uint8_t &sync_divider, const vnx::request_id_t &_request_id) override;
 
 	void handle(std::shared_ptr<const CAN_Frame> sample) override;
 	void handle(std::shared_ptr<const PDO> sample) override;
@@ -69,10 +69,10 @@ private:
 	mutable size_t sync_counter = 0;
 
 	const node_t &find_node(uint32_t node_id) const;
-	std::shared_ptr<sdo_request_t> upload_internal(uint32_t node_id, uint16_t index, uint8_t subindex, int32_t timeout_ms) const;
-	std::shared_ptr<sdo_request_t> download_internal(uint32_t node_id, uint16_t index, uint8_t subindex, const std::vector<uint8_t> &data, int32_t timeout_ms) const;
-	std::shared_ptr<sdo_request_t> download_expedited_internal(uint32_t node_id, uint16_t index, uint8_t subindex, uint32_t data, uint32_t num_bytes, int32_t timeout_ms) const;
-	void map_pdo_internal(uint32_t node_id, uint16_t pdo_comm, uint16_t pdo_map, uint32_t cob_entry, const std::vector<object_address_t> &objects, int32_t timeout_ms, const std::function<void()> &callback, const std::function<void(const std::string &)> &callback_error_what) const;
+	std::shared_ptr<sdo_request_t> upload_internal(uint32_t node_id, uint16_t index, uint8_t subindex) const;
+	std::shared_ptr<sdo_request_t> download_internal(uint32_t node_id, uint16_t index, uint8_t subindex, const std::vector<uint8_t> &data) const;
+	std::shared_ptr<sdo_request_t> download_expedited_internal(uint32_t node_id, uint16_t index, uint8_t subindex, uint32_t data, uint32_t num_bytes) const;
+	void map_pdo_internal(uint32_t node_id, uint16_t pdo_comm, uint16_t pdo_map, uint32_t cob_entry, const std::vector<object_address_t> &objects, const std::function<void()> &callback, const std::function<void(const std::string &)> &callback_error_what) const;
 	void trigger_request(const sdo_request_t &request) const;
 	void check_request_timeouts();
 	void reset_network_internal();

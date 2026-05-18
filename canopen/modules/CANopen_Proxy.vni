@@ -11,6 +11,7 @@ module CANopen_Proxy{
 	int heartbeat_interval_ms = 0;                                                 // <= 0 for no heartbeat
 	int heartbeat_sync_divider = 0;                                                // <= 0 for no heartbeat (alternative to interval)
 	int shutdown_delay_ms = 200;
+	int sdo_timeout_ms = 0;                                                        // <= 0 for no timeout
 	node_t own_node;
 	vector<node_t> network;
 	bool activate_network = true;
@@ -19,12 +20,12 @@ module CANopen_Proxy{
 	bool shutdown_network = true;
 
 	void reset_network();
-	vector<uchar> upload(uint node_id, ushort index, uchar subindex, int timeout_ms=0) const async;
-	void download(uint node_id, ushort index, uchar subindex, vector<uchar> data, int timeout_ms=0) async;
-	void download_expedited(uint node_id, ushort index, uchar subindex, uint data, uint num_bytes=4, int timeout_ms=0) async;
-	void map_rpdo(uint node_id, uint pdo_type, vector<object_address_t> objects, bool rtr, int timeout_ms=0) async;
-	void map_tpdo(uint node_id, uint pdo_type, vector<object_address_t> objects, bool rtr, int timeout_ms=0) async;
-	void pdo_sync(uint node_id, uint pdo_type, uchar sync_divider=1, int timeout_ms=0) async;
+	vector<uchar> upload(uint node_id, ushort index, uchar subindex) const async;
+	void download(uint node_id, ushort index, uchar subindex, vector<uchar> data) async;
+	void download_expedited(uint node_id, ushort index, uchar subindex, uint data, uint num_bytes=4) async;
+	void map_rpdo(uint node_id, uint pdo_type, vector<object_address_t> objects, bool rtr) async;
+	void map_tpdo(uint node_id, uint pdo_type, vector<object_address_t> objects, bool rtr) async;
+	void pdo_sync(uint node_id, uint pdo_type, uchar sync_divider=1) async;
 
 	void handle(pilot.base.CAN_Frame sample);
 	void handle(PDO sample);

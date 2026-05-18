@@ -91,10 +91,10 @@ void CANopen_Proxy::reset_network(){
 }
 
 
-void CANopen_Proxy::upload_async(const uint32_t& node_id, const uint16_t& index, const uint8_t& subindex, const int32_t &timeout_ms, const vnx::request_id_t& _request_id) const{
+void CANopen_Proxy::upload_async(const uint32_t& node_id, const uint16_t& index, const uint8_t& subindex, const vnx::request_id_t& _request_id) const{
 	std::shared_ptr<sdo_request_t> request;
 	try{
-		request = upload_internal(node_id, index, subindex, timeout_ms);
+		request = upload_internal(node_id, index, subindex);
 	}catch(const std::exception &err){
 		vnx_async_return_ex_what(_request_id, err.what());
 		return;
@@ -105,10 +105,10 @@ void CANopen_Proxy::upload_async(const uint32_t& node_id, const uint16_t& index,
 }
 
 
-void CANopen_Proxy::download_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const std::vector<uint8_t> &data, const int32_t &timeout_ms, const vnx::request_id_t &_request_id){
+void CANopen_Proxy::download_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const std::vector<uint8_t> &data, const vnx::request_id_t &_request_id){
 	std::shared_ptr<sdo_request_t> request;
 	try{
-		request = download_internal(node_id, index, subindex, data, timeout_ms);
+		request = download_internal(node_id, index, subindex, data);
 	}catch(const std::exception &err){
 		vnx_async_return_ex_what(_request_id, err.what());
 		return;
@@ -119,10 +119,10 @@ void CANopen_Proxy::download_async(const uint32_t &node_id, const uint16_t &inde
 }
 
 
-void CANopen_Proxy::download_expedited_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const uint32_t &data, const uint32_t &num_bytes, const int32_t &timeout_ms, const vnx::request_id_t &_request_id){
+void CANopen_Proxy::download_expedited_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const uint32_t &data, const uint32_t &num_bytes, const vnx::request_id_t &_request_id){
 	std::shared_ptr<sdo_request_t> request;
 	try{
-		request = download_expedited_internal(node_id, index, subindex, data, num_bytes, timeout_ms);
+		request = download_expedited_internal(node_id, index, subindex, data, num_bytes);
 	}catch(const std::exception &err){
 		vnx_async_return_ex_what(_request_id, err.what());
 		return;
@@ -134,7 +134,7 @@ void CANopen_Proxy::download_expedited_async(const uint32_t &node_id, const uint
 }
 
 
-void CANopen_Proxy::map_rpdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_address_t> &objects, const bool &rtr, const int32_t &timeout_ms, const vnx::request_id_t &_request_id){
+void CANopen_Proxy::map_rpdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_address_t> &objects, const bool &rtr, const vnx::request_id_t &_request_id){
 	if(pdo_type < 1 || pdo_type > 4){
 		vnx_async_return_ex_what(_request_id, "Invalid PDO type");
 		return;
@@ -152,11 +152,11 @@ void CANopen_Proxy::map_rpdo_async(const uint32_t &node_id, const uint32_t &pdo_
 	const uint32_t cob_entry = (rtr << 30) | ((can_id > 2047 ? 1 : 0) << 29) | can_id;
 	const auto callback = std::bind(&CANopen_Proxy::map_rpdo_async_return, this, _request_id);
 	const auto callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
-	map_pdo_internal(node_id, pdo_comm, pdo_map, cob_entry, objects, timeout_ms, callback, callback_error_what);
+	map_pdo_internal(node_id, pdo_comm, pdo_map, cob_entry, objects, callback, callback_error_what);
 }
 
 
-void CANopen_Proxy::map_tpdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_address_t> &objects, const bool &rtr, const int32_t &timeout_ms, const vnx::request_id_t &_request_id){
+void CANopen_Proxy::map_tpdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_address_t> &objects, const bool &rtr, const vnx::request_id_t &_request_id){
 	if(pdo_type < 1 || pdo_type > 4){
 		vnx_async_return_ex_what(_request_id, "Invalid PDO type");
 		return;
@@ -174,11 +174,11 @@ void CANopen_Proxy::map_tpdo_async(const uint32_t &node_id, const uint32_t &pdo_
 	const uint32_t cob_entry = (rtr << 30) | ((can_id > 2047 ? 1 : 0) << 29) | can_id;
 	const auto callback = std::bind(&CANopen_Proxy::map_tpdo_async_return, this, _request_id);
 	const auto callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
-	map_pdo_internal(node_id, pdo_comm, pdo_map, cob_entry, objects, timeout_ms, callback, callback_error_what);
+	map_pdo_internal(node_id, pdo_comm, pdo_map, cob_entry, objects, callback, callback_error_what);
 }
 
 
-void CANopen_Proxy::pdo_sync_async(const uint32_t &node_id, const uint32_t &pdo_type, const uint8_t &sync_divider, const int32_t &timeout_ms, const vnx::request_id_t &_request_id){
+void CANopen_Proxy::pdo_sync_async(const uint32_t &node_id, const uint32_t &pdo_type, const uint8_t &sync_divider, const vnx::request_id_t &_request_id){
 	if(pdo_type < 1 || pdo_type > 4){
 		vnx_async_return_ex_what(_request_id, "Invalid PDO type");
 		return;
@@ -188,7 +188,7 @@ void CANopen_Proxy::pdo_sync_async(const uint32_t &node_id, const uint32_t &pdo_
 	std::shared_ptr<sdo_request_t> request;
 	try{
 		// transmission type SYNC: pdo_comm.2  =  sync_divider
-		request = download_expedited_internal(node_id, index, subindex, sync_divider, 4, timeout_ms);
+		request = download_expedited_internal(node_id, index, subindex, sync_divider, 4);
 	}catch(const std::exception &err){
 		vnx_async_return_ex_what(_request_id, err.what());
 		return;
@@ -377,21 +377,21 @@ const node_t &CANopen_Proxy::find_node(uint32_t node_id) const{
 }
 
 
-std::shared_ptr<CANopen_Proxy::sdo_request_t> CANopen_Proxy::upload_internal(uint32_t node_id, uint16_t index, uint8_t subindex, int32_t timeout_ms) const{
+std::shared_ptr<CANopen_Proxy::sdo_request_t> CANopen_Proxy::upload_internal(uint32_t node_id, uint16_t index, uint8_t subindex) const{
 	auto frame = find_node(node_id).upload_request(index, subindex);
 	auto request = std::make_shared<sdo_request_t>();
 	request->node_id = node_id;
 	request->index = index;
 	request->subindex = subindex;
-	if(timeout_ms > 0){
-		request->timeout = vnx::get_wall_time_micros() + timeout_ms*1000;
+	if(sdo_timeout_ms > 0){
+		request->timeout = vnx::get_wall_time_micros() + sdo_timeout_ms*1000;
 	}
 	request->initial_frame = frame;
 	return request;
 }
 
 
-std::shared_ptr<CANopen_Proxy::sdo_request_t> CANopen_Proxy::download_internal(uint32_t node_id, uint16_t index, uint8_t subindex, const std::vector<uint8_t> &data, int32_t timeout_ms) const{
+std::shared_ptr<CANopen_Proxy::sdo_request_t> CANopen_Proxy::download_internal(uint32_t node_id, uint16_t index, uint8_t subindex, const std::vector<uint8_t> &data) const{
 	std::shared_ptr<const CAN_Frame> expedited_frame;
 	std::vector<std::shared_ptr<const CAN_Frame>> segmented_frames;
 	{
@@ -413,8 +413,8 @@ std::shared_ptr<CANopen_Proxy::sdo_request_t> CANopen_Proxy::download_internal(u
 	request->node_id = node_id;
 	request->index = index;
 	request->subindex = subindex;
-	if(timeout_ms > 0){
-		request->timeout = vnx::get_wall_time_micros() + timeout_ms*1000;
+	if(sdo_timeout_ms > 0){
+		request->timeout = vnx::get_wall_time_micros() + sdo_timeout_ms*1000;
 	}
 	if(expedited_frame){
 		request->download.frames.push_back(expedited_frame);
@@ -427,23 +427,23 @@ std::shared_ptr<CANopen_Proxy::sdo_request_t> CANopen_Proxy::download_internal(u
 }
 
 
-std::shared_ptr<CANopen_Proxy::sdo_request_t> CANopen_Proxy::download_expedited_internal(uint32_t node_id, uint16_t index, uint8_t subindex, uint32_t data, uint32_t num_bytes, int32_t timeout_ms) const{
+std::shared_ptr<CANopen_Proxy::sdo_request_t> CANopen_Proxy::download_expedited_internal(uint32_t node_id, uint16_t index, uint8_t subindex, uint32_t data, uint32_t num_bytes) const{
 	std::vector<uint8_t> vec_data;
 	for(size_t i=0; i<num_bytes; i++){
 		vec_data.push_back(data >> (8*i));
 	}
-	return download_internal(node_id, index, subindex, vec_data, timeout_ms);
+	return download_internal(node_id, index, subindex, vec_data);
 }
 
 
-void CANopen_Proxy::map_pdo_internal(uint32_t node_id, uint16_t pdo_comm, uint16_t pdo_map, uint32_t cob_entry, const std::vector<object_address_t> &objects, int32_t timeout_ms, const std::function<void()> &callback, const std::function<void(const std::string &)> &callback_error_what) const{
+void CANopen_Proxy::map_pdo_internal(uint32_t node_id, uint16_t pdo_comm, uint16_t pdo_map, uint32_t cob_entry, const std::vector<object_address_t> &objects, const std::function<void()> &callback, const std::function<void(const std::string &)> &callback_error_what) const{
 	// disable PDO: pdo_comm.1  |=  (1 << 31)
-	auto first_request = download_expedited_internal(node_id, pdo_comm, 1, (1 << 31) | cob_entry, 4, timeout_ms);
+	auto first_request = download_expedited_internal(node_id, pdo_comm, 1, (1 << 31) | cob_entry, 4);
 	first_request->callback_error_what = callback_error_what;
 	auto current_request = first_request;
 
 	// destroy PDO mapping: pdo_map.0  =  0
-	current_request->next = download_expedited_internal(node_id, pdo_map, 0, 0, 4, timeout_ms);
+	current_request->next = download_expedited_internal(node_id, pdo_map, 0, 0, 4);
 	current_request = current_request->next;
 	current_request->callback_error_what = callback_error_what;
 
@@ -451,18 +451,18 @@ void CANopen_Proxy::map_pdo_internal(uint32_t node_id, uint16_t pdo_comm, uint16
 		const auto &object = objects[i];
 		const uint32_t value = (object.index << 16) | (object.subindex << 8) | object.num_bits;
 		// map object to index: pdo_map.i  =  value
-		current_request->next = download_expedited_internal(node_id, pdo_map, i, value, 4, timeout_ms);
+		current_request->next = download_expedited_internal(node_id, pdo_map, i, value, 4);
 		current_request = current_request->next;
 		current_request->callback_error_what = callback_error_what;
 	}
 
 	// activate mapped objects: pdo_map.0  =  objects.size()
-	current_request->next = download_expedited_internal(node_id, pdo_map, 0, objects.size(), 4, timeout_ms);
+	current_request->next = download_expedited_internal(node_id, pdo_map, 0, objects.size(), 4);
 	current_request = current_request->next;
 	current_request->callback_error_what = callback_error_what;
 
 	// enable PDO: pdo_comm.1  &=  ~(1 << 31)
-	current_request->next = download_expedited_internal(node_id, pdo_comm, 1, cob_entry, 4, timeout_ms);
+	current_request->next = download_expedited_internal(node_id, pdo_comm, 1, cob_entry, 4);
 	current_request = current_request->next;
 	current_request->callback_error_what = callback_error_what;
 	current_request->download.callback = callback;
@@ -528,7 +528,7 @@ void CANopen_Proxy::request_names(){
 		}
 		std::shared_ptr<sdo_request_t> request;
 		try{
-			request = upload_internal(node.id, index, subindex, 0);
+			request = upload_internal(node.id, index, subindex);
 		}catch(const std::exception &err){
 		}
 		trigger_request(*request);
