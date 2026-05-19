@@ -135,14 +135,10 @@ void CANopen_Proxy::download_expedited_async(const uint32_t &node_id, const uint
 
 
 void CANopen_Proxy::map_rpdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_address_t> &objects, const bool &rtr, const vnx::request_id_t &_request_id){
-	if(pdo_type < 1 || pdo_type > 4){
-		vnx_async_return_ex_what(_request_id, "Invalid PDO type");
-		return;
-	}
 	uint32_t can_id;
 	try{
 		const auto &node = find_node(node_id);
-		can_id = pdo_type==1 ? node.rx_pdo_1 : pdo_type==2 ? node.rx_pdo_2 : pdo_type==3 ? node.rx_pdo_3 : node.rx_pdo_4;
+		can_id = node.get_rx_pdo(pdo_type);
 	}catch(const std::exception &err){
 		vnx_async_return_ex_what(_request_id, err.what());
 		return;
@@ -157,14 +153,10 @@ void CANopen_Proxy::map_rpdo_async(const uint32_t &node_id, const uint32_t &pdo_
 
 
 void CANopen_Proxy::map_tpdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_address_t> &objects, const bool &rtr, const vnx::request_id_t &_request_id){
-	if(pdo_type < 1 || pdo_type > 4){
-		vnx_async_return_ex_what(_request_id, "Invalid PDO type");
-		return;
-	}
 	uint32_t can_id;
 	try{
 		const auto &node = find_node(node_id);
-		can_id = pdo_type==1 ? node.tx_pdo_1 : pdo_type==2 ? node.tx_pdo_2 : pdo_type==3 ? node.tx_pdo_3 : node.tx_pdo_4;
+		can_id = node.get_tx_pdo(pdo_type);
 	}catch(const std::exception &err){
 		vnx_async_return_ex_what(_request_id, err.what());
 		return;
@@ -205,14 +197,28 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 	}
 	bool check_network_init = false;
 	for(auto &node : network){
-		const bool is_pdo_1 = (sample->id == node.tx_pdo_1);
-		const bool is_pdo_2 = (sample->id == node.tx_pdo_2);
-		const bool is_pdo_3 = (sample->id == node.tx_pdo_3);
-		const bool is_pdo_4 = (sample->id == node.tx_pdo_4);
-		if(is_pdo_1 || is_pdo_2 || is_pdo_3 || is_pdo_4){
+		int pdo_type = 0;
+		for(const auto &entry : node.tx_pdo){
+			if(sample->id == entry.second){
+				pdo_type = entry.first;
+				break;
+			}
+		}
+		if(pdo_type <= 0){
+			if(sample->id == node.tx_pdo_1){
+				pdo_type = 1;
+			}else if(sample->id == node.tx_pdo_2){
+				pdo_type = 2;
+			}else if(sample->id == node.tx_pdo_3){
+				pdo_type = 3;
+			}else if(sample->id == node.tx_pdo_4){
+				pdo_type = 4;
+			}
+		}
+		if(pdo_type > 0){
 			auto out = PDO::create();
 			out->node_id = node.id;
-			out->type = is_pdo_1 ? 1 : is_pdo_2 ? 2 : is_pdo_3 ? 3 : 4;
+			out->type = pdo_type;
 			out->time = sample->time;
 			out->payload.resize(sample->size);
 			for(size_t i=0; i<sample->size; i++){
@@ -337,23 +343,7 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 
 void CANopen_Proxy::handle(std::shared_ptr<const PDO> sample){
 	const auto &node = find_node(sample->node_id);
-	uint32_t can_id = 0;
-	switch(sample->type){
-	case 1:
-		can_id = node.rx_pdo_1;
-		break;
-	case 2:
-		can_id = node.rx_pdo_2;
-		break;
-	case 3:
-		can_id = node.rx_pdo_3;
-		break;
-	case 4:
-		can_id = node.rx_pdo_4;
-		break;
-	default:
-		throw std::logic_error("Invalid PDO type " + std::to_string(sample->type));
-	}
+	const auto can_id = node.get_rx_pdo(sample->type);
 
 	auto out = CAN_Frame::create();
 	out->time = sample->time;

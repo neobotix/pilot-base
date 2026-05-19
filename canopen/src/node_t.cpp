@@ -302,6 +302,42 @@ void node_t::calculate_can_ids(){
 }
 
 
+uint32_t node_t::get_tx_pdo(const uint16_t &pdo_type) const{
+	const auto find = tx_pdo.find(pdo_type);
+	if(find != tx_pdo.end()){
+		return find->second;
+	}
+	if(pdo_type == 1){
+		return tx_pdo_1;
+	}else if(pdo_type == 2){
+		return tx_pdo_2;
+	}else if(pdo_type == 3){
+		return tx_pdo_3;
+	}else if(pdo_type == 4){
+		return tx_pdo_4;
+	}
+	throw std::logic_error("Invalid Tx PDO type " + std::to_string(pdo_type));
+}
+
+
+uint32_t node_t::get_rx_pdo(const uint16_t &pdo_type) const{
+	const auto find = rx_pdo.find(pdo_type);
+	if(find != rx_pdo.end()){
+		return find->second;
+	}
+	if(pdo_type == 1){
+		return rx_pdo_1;
+	}else if(pdo_type == 2){
+		return rx_pdo_2;
+	}else if(pdo_type == 3){
+		return rx_pdo_3;
+	}else if(pdo_type == 4){
+		return rx_pdo_4;
+	}
+	throw std::logic_error("Invalid Rx PDO type " + std::to_string(pdo_type));
+}
+
+
 std::shared_ptr<const CAN_Frame> node_t::heartbeat(const nmt_state_e &state) const{
 	const uint8_t state_byte = convert_nmt_state(state);
 
