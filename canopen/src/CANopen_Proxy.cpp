@@ -256,9 +256,18 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 					sdo_requests.erase(find);
 				}else if(scs == sdo_scs_e::INIT_UPLOAD_RESPONSE || scs == sdo_scs_e::SEGMENT_UPLOAD_RESPONSE){
 					const auto answer = node.get_uploaded_data(*sample);
-					request.upload.data.insert(request.upload.data.end(), answer.first.begin(), answer.first.end());
-					if(answer.second){
+					const bool toggle = ((sample->data[0] >> 4) & 0x1);
+					if(scs == sdo_scs_e::SEGMENT_UPLOAD_RESPONSE && toggle != request.expected_toggle){
+						auto abort_frame = node.abort_client(index, subindex, sdo_error_e::TOGGLE_BIT_ERROR);
+						publish(abort_frame, output_can);
+						const std::string message = "Toggle bit error";
+						if(request.callback_error_what){
+							request.callback_error_what(message);
+						}
+						sdo_requests.erase(find);
+					}else if(answer.second){
 						// upload finished
+						request.upload.data.insert(request.upload.data.end(), answer.first.begin(), answer.first.end());
 						if(request.upload.callback){
 							request.upload.callback(request.upload.data);
 						}
@@ -273,18 +282,32 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 						}
 					}else{
 						// segmented upload initiated or continued
+						if(scs == sdo_scs_e::SEGMENT_UPLOAD_RESPONSE){
+							request.upload.data.insert(request.upload.data.end(), answer.first.begin(), answer.first.end());
+							request.expected_toggle = !request.expected_toggle;
+						}
 						node_states[node.id].active_upload = {index, subindex};
 						if(!request.upload.frames.first || !request.upload.frames.second){
 							request.upload.frames = node.upload_segment_request(index, subindex);
 						}
-						auto frame = request.upload.toggle ? request.upload.frames.first : request.upload.frames.second;
+						auto frame = request.upload.toggle ? request.upload.frames.second : request.upload.frames.first;
 						request.upload.toggle = !request.upload.toggle;
 						publish(frame, output_can);
 					}
 				}else if(scs == sdo_scs_e::INIT_DOWNLOAD_RESPONSE || scs == sdo_scs_e::SEGMENT_DOWNLOAD_RESPONSE){
-					if(request.download.index < request.download.frames.size()){
+					const bool toggle = ((sample->data[0] >> 4) & 0x1);
+					if(scs == sdo_scs_e::SEGMENT_DOWNLOAD_RESPONSE && toggle != request.expected_toggle){
+						auto abort_frame = node.abort_client(index, subindex, sdo_error_e::TOGGLE_BIT_ERROR);
+						publish(abort_frame, output_can);
+						const std::string message = "Toggle bit error";
+						if(request.callback_error_what){
+							request.callback_error_what(message);
+						}
+						sdo_requests.erase(find);
+					}else if(request.download.index < request.download.frames.size()){
 						// segmented download initiated or continued
 						node_states[node.id].active_download = {index, subindex};
+						request.expected_toggle = !request.expected_toggle;
 						publish(request.download.frames[request.download.index++], output_can);
 					}else{
 						// download finished

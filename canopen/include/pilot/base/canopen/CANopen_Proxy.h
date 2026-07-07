@@ -42,11 +42,12 @@ private:
 		uint16_t index;
 		uint8_t subindex;
 		int64_t timeout = 0;
+		bool expected_toggle = false;
 		std::shared_ptr<const CAN_Frame> initial_frame;
 		struct{
 			std::function<void(const std::vector<uint8_t> &)> callback;
 			std::pair<std::shared_ptr<const CAN_Frame>, std::shared_ptr<const CAN_Frame>> frames;
-			bool toggle = true;
+			bool toggle = false;
 			std::vector<uint8_t> data;
 		} upload;
 		struct{
