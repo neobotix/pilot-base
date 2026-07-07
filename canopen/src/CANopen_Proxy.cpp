@@ -467,6 +467,12 @@ void CANopen_Proxy::trigger_request(const sdo_request_t &request) const{
 	auto &entry = sdo_requests[key];
 	if(sdo_requests.size() == size_before){
 		// request already exists, cancel
+		try{
+			const auto &node = find_node(request.node_id);
+			auto frame = node.abort_client(request.index, request.subindex, sdo_error_e::DATA_TRANSFER);
+			publish(frame, output_can);
+		}catch(const std::exception &){
+		}
 		const std::string message = "SDO request on object " + object_name(entry.index, entry.subindex) + " of node " + std::to_string(entry.node_id) + " superseded";
 		if(entry.callback_error_what){
 			entry.callback_error_what(message);
@@ -482,6 +488,12 @@ void CANopen_Proxy::check_request_timeouts(){
 	for(auto iter=sdo_requests.begin(); iter!=sdo_requests.end(); /* no iter */){
 		const auto &request = iter->second;
 		if(request.timeout > 0 && request.timeout <= now){
+			try{
+				const auto &node = find_node(request.node_id);
+				auto frame = node.abort_client(request.index, request.subindex, sdo_error_e::TIMEOUT);
+				publish(frame, output_can);
+			}catch(const std::exception &){
+			}
 			const std::string message = "Timeout for SDO request on object " + object_name(request.index, request.subindex) + " of node " + std::to_string(request.node_id);
 			if(request.callback_error_what){
 				request.callback_error_what(message);
