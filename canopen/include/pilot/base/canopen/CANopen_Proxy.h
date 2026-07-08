@@ -76,7 +76,7 @@ private:
 	void map_pdo_internal(uint32_t node_id, uint16_t pdo_comm, uint16_t pdo_map, uint32_t cob_entry, const std::vector<object_address_t> &objects, const std::function<void()> &callback, const std::function<void(const std::string &)> &callback_error_what) const;
 	void trigger_request(const sdo_request_t &request) const;
 	void check_request_timeouts();
-	void reset_network_internal();
+	void check_initialized();
 	void set_operational();
 	void request_names();
 	void sync() const;

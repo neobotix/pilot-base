@@ -80,12 +80,16 @@ bool CANopen_Proxy::vnx_shutdown(){
 
 
 void CANopen_Proxy::reset_network(){
-	reset_network_internal();
+	log(INFO) << "Resetting network ...";
+	is_network_init = false;
+	node_states.clear();
+
+	check_initialized();
 	if(activate_network){
 		if(init_timer){
 			init_timer->reset();
 		}else{
-			init_timer = set_timer_millis(1000, std::bind(&CANopen_Proxy::reset_network_internal, this));
+			init_timer = set_timer_millis(1000, std::bind(&CANopen_Proxy::check_initialized, this));
 		}
 	}
 }
@@ -195,7 +199,6 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 	if(sample->id == own_node.rx_sdo){
 		// TODO: answer?
 	}
-	bool check_network_init = false;
 	for(auto &node : network){
 		int pdo_type = 0;
 		for(const auto &entry : node.tx_pdo){
@@ -329,36 +332,6 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 			}
 		}else if(sample->id == node.nmt){
 			node_states[node.id].state = node.get_nmt_state(*sample);
-			if(!is_network_init){
-				check_network_init = true;
-			}
-		}
-	}
-
-	if(check_network_init){
-		bool alive = true;
-		for(const auto &node : network){
-			if(node.is_virtual){
-				continue;
-			}
-			const auto find = node_states.find(node.id);
-			if(find == node_states.end() || !find->second.state){
-				alive = false;
-				break;
-			}
-		}
-		if(alive){
-			log(INFO) << "All nodes alive";
-			is_network_init = true;
-			if(activate_network_operational){
-				set_operational();
-			}
-			if(query_information){
-				request_names();
-			}
-			if(init_timer){
-				init_timer->stop();
-			}
 		}
 	}
 }
@@ -529,12 +502,46 @@ void CANopen_Proxy::check_request_timeouts(){
 }
 
 
-void CANopen_Proxy::reset_network_internal(){
-	log(INFO) << "Resetting network ...";
-	is_network_init = false;
-	node_states.clear();
-	auto frame = node_t::module_control(nmt_command_e::GO_TO_RESET_NODE, 0);
-	publish(frame, output_can);
+void CANopen_Proxy::check_initialized(){
+	bool empty = true;
+	for(const auto &entry : node_states){
+		if(entry.second.state){
+			empty = false;
+		}
+	}
+
+	bool alive = true;
+	if(empty){
+		alive = false;
+		auto frame = node_t::module_control(nmt_command_e::GO_TO_RESET_NODE, 0);
+		publish(frame, output_can);
+	}else{
+		for(const auto &node : network){
+			if(node.is_virtual){
+				continue;
+			}
+			const auto find = node_states.find(node.id);
+			if(find == node_states.end() || !find->second.state){
+				alive = false;
+				auto frame = node_t::module_control(nmt_command_e::GO_TO_RESET_NODE, node.id);
+				publish(frame, output_can);
+			}
+		}
+	}
+
+	if(alive){
+		log(INFO) << "All nodes alive";
+		is_network_init = true;
+		if(activate_network_operational){
+			set_operational();
+		}
+		if(query_information){
+			request_names();
+		}
+		if(init_timer){
+			init_timer->stop();
+		}
+	}
 }
 
 
