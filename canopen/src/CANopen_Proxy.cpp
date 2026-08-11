@@ -563,7 +563,9 @@ void CANopen_Proxy::request_names(){
 			request = upload_internal(node.id, index, subindex);
 		}catch(const std::exception &err){
 		}
-		trigger_request(*request);
+		if(request){
+			trigger_request(*request);
+		}
 	}
 }
 
