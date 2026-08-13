@@ -56,6 +56,7 @@ void usage(const std::string &cmd0){
 	std::cout << "    " << cmd0 << " [OPTIONS] download-segmented <node-id> <index> <subindex> <byte_1> [byte_2 [byte_3 ...]]" << std::endl;
 	std::cout << "    " << cmd0 << " [OPTIONS] abort <node-id> <index> <subindex> <sdo-error>" << std::endl;
 	std::cout << "where OPTIONS may be zero, one or more of the following" << std::endl;
+	std::cout << "    -v                   - be verbose and print ignored CAN IDs" << std::endl;
 #ifdef _WIN32
 	std::cout << "    -b <baudrate>        - give the baud rate of the CAN bus in symbols/s" << std::endl;
 	std::cout << "                           default is 1000000" << std::endl;
@@ -78,7 +79,7 @@ void usage(const std::string &cmd0){
 }
 
 
-std::vector<std::string>::const_iterator parse_command(const std::vector<std::string> &args, opmode_e &opmode, int &baud_rate, std::string &device){
+std::vector<std::string>::const_iterator parse_command(const std::vector<std::string> &args, opmode_e &opmode, bool &verbose, int &baud_rate, std::string &device){
 	baud_rate = 1000000;
 	device = "can0";
 
@@ -107,6 +108,9 @@ std::vector<std::string>::const_iterator parse_command(const std::vector<std::st
 		}else if(token == "abort"){
 			opmode = opmode_e::ABORT;
 			return ++iter;
+		}else if(token == "-v"){
+			verbose = true;
+			iter++;
 #ifdef _WIN32
 		}else if(token == "-b"){
 			iter++;
@@ -211,6 +215,7 @@ void parse_segmented_data(std::vector<std::string>::const_iterator iter, std::ve
 
 int main(int argc, char **argv){
 	opmode_e opmode = opmode_e::NONE;
+	bool verbose = false;
 	int baud_rate;
 	std::string device;
 	uint32_t node_id;
@@ -228,7 +233,7 @@ int main(int argc, char **argv){
 		args.push_back(argv[i]);
 	}
 	try{
-		auto iter = parse_command(args, opmode, baud_rate, device);
+		auto iter = parse_command(args, opmode, verbose, baud_rate, device);
 		switch(opmode){
 		case opmode_e::NONE: break;
 		case opmode_e::SYNC: parse_command_sync(iter, args.end()); break;
@@ -443,7 +448,7 @@ int main(int argc, char **argv){
 				const auto error = canopen_node.handle_emcy(response);
 				std::cerr << "EMCY: " << vnx::to_string_value(error) << std::endl;
 				std::cerr << "EMCY register: " << vnx::to_string(canopen_node.emcy_register) << std::endl;
-			}else{
+			}else if(verbose){
 				std::cout << "Ignoring CAN ID 0x" << std::hex << response.id << std::dec << std::endl;
 			}
 		}
