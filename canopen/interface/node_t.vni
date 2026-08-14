@@ -30,6 +30,8 @@ struct node_t{
 	void calculate_can_ids();                                                                              // no effect if !use_predefined_connection_set
 	uint get_tx_pdo(ushort pdo_type) const;
 	uint get_rx_pdo(ushort pdo_type) const;
+	ushort find_tx_pdo_type(uint can_id) const;
+	ushort find_rx_pdo_type(uint can_id) const;
 	CAN_Frame *heartbeat(nmt_state_e state) const;
 	nmt_state_e get_nmt_state(CAN_Frame frame) const;
 	emcy_code_e handle_emcy(CAN_Frame frame);

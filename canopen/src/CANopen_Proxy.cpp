@@ -200,24 +200,7 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 		// TODO: answer?
 	}
 	for(auto &node : network){
-		int pdo_type = 0;
-		for(const auto &entry : node.tx_pdo){
-			if(sample->id == entry.second){
-				pdo_type = entry.first;
-				break;
-			}
-		}
-		if(pdo_type <= 0){
-			if(sample->id == node.tx_pdo_1){
-				pdo_type = 1;
-			}else if(sample->id == node.tx_pdo_2){
-				pdo_type = 2;
-			}else if(sample->id == node.tx_pdo_3){
-				pdo_type = 3;
-			}else if(sample->id == node.tx_pdo_4){
-				pdo_type = 4;
-			}
-		}
+		const auto pdo_type = node.find_tx_pdo_type(sample->id);
 		if(pdo_type > 0){
 			auto out = PDO::create();
 			out->node_id = node.id;
