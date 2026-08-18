@@ -248,6 +248,8 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 					const std::string message = "SDO request on object " + object_name(request.index, request.subindex) + " of node " + std::to_string(request.node_id) + " failed with: " + vnx::to_string_value(error);
 					if(request.callback_error_what){
 						request.callback_error_what(message);
+					}else{
+						log(WARN) << message;
 					}
 					sdo_requests.erase(find);
 				}else if(scs == sdo_scs_e::INIT_UPLOAD_RESPONSE || scs == sdo_scs_e::SEGMENT_UPLOAD_RESPONSE){
@@ -259,6 +261,8 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 						const std::string message = "Toggle bit error";
 						if(request.callback_error_what){
 							request.callback_error_what(message);
+						}else{
+							log(WARN) << message;
 						}
 						sdo_requests.erase(find);
 					}else if(answer.second){
@@ -298,6 +302,8 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 						const std::string message = "Toggle bit error";
 						if(request.callback_error_what){
 							request.callback_error_what(message);
+						}else{
+							log(WARN) << message;
 						}
 						sdo_requests.erase(find);
 					}else if(request.download.index < request.download.frames.size()){
@@ -465,6 +471,8 @@ void CANopen_Proxy::trigger_request(const sdo_request_t &request) const{
 		const std::string message = "SDO request on object " + object_name(entry.index, entry.subindex) + " of node " + std::to_string(entry.node_id) + " superseded";
 		if(entry.callback_error_what){
 			entry.callback_error_what(message);
+		}else{
+			log(WARN) << message;
 		}
 	}
 	entry = request;
@@ -486,6 +494,8 @@ void CANopen_Proxy::check_request_timeouts(){
 			const std::string message = "Timeout for SDO request on object " + object_name(request.index, request.subindex) + " of node " + std::to_string(request.node_id);
 			if(request.callback_error_what){
 				request.callback_error_what(message);
+			}else{
+				log(WARN) << message;
 			}
 			iter = sdo_requests.erase(iter);
 		}else{
