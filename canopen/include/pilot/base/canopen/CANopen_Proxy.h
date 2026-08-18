@@ -25,6 +25,7 @@ protected:
 	bool vnx_shutdown() override;
 
 	void reset_network() override;
+	void set_network_operational() override;
 	void upload_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const vnx::request_id_t &_request_id) const override;
 	void download_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const std::vector<uint8_t> &data, const vnx::request_id_t &_request_id) override;
 	void download_expedited_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const uint32_t &data, const uint32_t &num_bytes, const vnx::request_id_t &_request_id) override;
@@ -66,7 +67,6 @@ private:
 	mutable std::map<std::tuple<uint32_t, uint16_t, uint8_t>, sdo_request_t> sdo_requests;
 	std::map<uint32_t, node_state_t> node_states;
 	bool is_network_init = false;
-	std::shared_ptr<vnx::Timer> init_timer;
 	mutable size_t sync_counter = 0;
 
 	const node_t &find_node(uint32_t node_id) const;
@@ -77,7 +77,6 @@ private:
 	void trigger_request(const sdo_request_t &request) const;
 	void check_request_timeouts();
 	void check_initialized();
-	void set_operational();
 	void request_names();
 	void sync() const;
 	void heartbeat() const;

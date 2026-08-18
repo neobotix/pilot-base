@@ -48,13 +48,14 @@ void CANopen_Proxy::main(){
 		set_timer_millis(heartbeat_interval_ms, std::bind(&CANopen_Proxy::heartbeat, this));
 		heartbeat_sync_divider = 0;
 	}
+	set_timer_millis(1000, std::bind(&CANopen_Proxy::check_initialized, this));
 
 	if(activate_network){
 		reset_network();
 	}else{
 		is_network_init = true;
 		if(activate_network_operational){
-			set_operational();
+			set_network_operational();
 		}
 		if(query_information){
 			request_names();
@@ -83,15 +84,13 @@ void CANopen_Proxy::reset_network(){
 	log(INFO) << "Resetting network ...";
 	is_network_init = false;
 	node_states.clear();
-
 	check_initialized();
-	if(activate_network){
-		if(init_timer){
-			init_timer->reset();
-		}else{
-			init_timer = set_timer_millis(1000, std::bind(&CANopen_Proxy::check_initialized, this));
-		}
-	}
+}
+
+
+void CANopen_Proxy::set_network_operational(){
+	auto frame = node_t::module_control(nmt_command_e::GO_TO_OPERATIONAL, 0);
+	publish(frame, output_can);
 }
 
 
@@ -506,6 +505,10 @@ void CANopen_Proxy::check_request_timeouts(){
 
 
 void CANopen_Proxy::check_initialized(){
+	if(is_network_init){
+		return;
+	}
+
 	bool empty = true;
 	for(const auto &entry : node_states){
 		if(entry.second.state){
@@ -536,21 +539,12 @@ void CANopen_Proxy::check_initialized(){
 		log(INFO) << "All nodes alive";
 		is_network_init = true;
 		if(activate_network_operational){
-			set_operational();
+			set_network_operational();
 		}
 		if(query_information){
 			request_names();
 		}
-		if(init_timer){
-			init_timer->stop();
-		}
 	}
-}
-
-
-void CANopen_Proxy::set_operational(){
-	auto frame = node_t::module_control(nmt_command_e::GO_TO_OPERATIONAL, 0);
-	publish(frame, output_can);
 }
 
 
