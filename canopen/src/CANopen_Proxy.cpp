@@ -197,7 +197,17 @@ void CANopen_Proxy::pdo_sync_async(const uint32_t &node_id, const uint32_t &pdo_
 
 void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 	if(sample->id == own_node.rx_sdo){
-		// TODO: answer?
+		const auto ccs = own_node.get_sdo_ccs(*sample);
+		if(ccs != sdo_ccs_e::ABORT){
+			uint16_t index = 0;
+			uint8_t subindex = 0;
+			if(ccs == sdo_ccs_e::INIT_DOWNLOAD || ccs == sdo_ccs_e::INIT_UPLOAD || ccs == sdo_ccs_e::SEGMENT_UPLOAD){
+				index = (sample->data[2] << 8) | sample->data[1];
+				subindex = sample->data[3];
+			}
+			auto frame = own_node.abort_server(index, subindex, sdo_error_e::GENERAL_ERROR);
+			publish(frame, output_can);
+		}
 	}
 	for(auto &node : network){
 		const auto pdo_type = node.find_tx_pdo_type(sample->id);
