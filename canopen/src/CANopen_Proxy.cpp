@@ -148,7 +148,7 @@ void CANopen_Proxy::map_rpdo_async(const uint32_t &node_id, const uint32_t &pdo_
 	}
 	const uint16_t pdo_comm = 0x1400 + pdo_type - 1;
 	const uint16_t pdo_map = 0x1600 + pdo_type - 1;
-	const uint32_t cob_entry = (rtr << 30) | ((can_id > 2047 ? 1 : 0) << 29) | can_id;
+	const uint32_t cob_entry = ((!rtr) << 30) | ((can_id > 2047 ? 1 : 0) << 29) | can_id;
 	const auto callback = std::bind(&CANopen_Proxy::map_rpdo_async_return, this, _request_id);
 	const auto callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
 	map_pdo_internal(node_id, pdo_comm, pdo_map, cob_entry, objects, callback, callback_error_what);
@@ -166,7 +166,7 @@ void CANopen_Proxy::map_tpdo_async(const uint32_t &node_id, const uint32_t &pdo_
 	}
 	const uint16_t pdo_comm = 0x1800 + pdo_type - 1;
 	const uint16_t pdo_map = 0x1a00 + pdo_type - 1;
-	const uint32_t cob_entry = (rtr << 30) | ((can_id > 2047 ? 1 : 0) << 29) | can_id;
+	const uint32_t cob_entry = ((!rtr) << 30) | ((can_id > 2047 ? 1 : 0) << 29) | can_id;
 	const auto callback = std::bind(&CANopen_Proxy::map_tpdo_async_return, this, _request_id);
 	const auto callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
 	map_pdo_internal(node_id, pdo_comm, pdo_map, cob_entry, objects, callback, callback_error_what);
@@ -435,7 +435,7 @@ void CANopen_Proxy::map_pdo_internal(uint32_t node_id, uint16_t pdo_comm, uint16
 		const auto &object = objects[i];
 		const uint32_t value = (object.index << 16) | (object.subindex << 8) | object.num_bits;
 		// map object to index: pdo_map.i  =  value
-		current_request->next = download_expedited_internal(node_id, pdo_map, i, value, 4);
+		current_request->next = download_expedited_internal(node_id, pdo_map, i+1, value, 4);
 		current_request = current_request->next;
 		current_request->callback_error_what = callback_error_what;
 	}
