@@ -5,16 +5,19 @@ import pilot.base.CAN_Frame;
 struct node_t{
 	uint id;
 	bool use_predefined_connection_set = true;                                                             // calculate CAN IDs based on node_id
+	bool is_virtual = false;                                                                               // node is not physically present (e.g. group id)
 
 	uint emcy;
 	uint tx_pdo_1;
 	uint tx_pdo_2;
 	uint tx_pdo_3;
 	uint tx_pdo_4;
+	map<ushort, uint> tx_pdo;                                                                              // additional PDOs [type (1-512) => CAN id]
 	uint rx_pdo_1;
 	uint rx_pdo_2;
 	uint rx_pdo_3;
 	uint rx_pdo_4;
+	map<ushort, uint> rx_pdo;                                                                              // additional PDOs [type (1-512) => CAN id]
 	uint tx_sdo;
 	uint rx_sdo;
 	uint nmt;
@@ -25,7 +28,12 @@ struct node_t{
 	static CAN_Frame *module_control(nmt_command_e command, uchar node_id);                                // node_id = 0 for broadcast
 
 	void calculate_can_ids();                                                                              // no effect if !use_predefined_connection_set
+	uint get_tx_pdo(ushort pdo_type) const;
+	uint get_rx_pdo(ushort pdo_type) const;
+	ushort find_tx_pdo_type(uint can_id) const;
+	ushort find_rx_pdo_type(uint can_id) const;
 	CAN_Frame *heartbeat(nmt_state_e state) const;
+	nmt_state_e get_nmt_state(CAN_Frame frame) const;
 	emcy_code_e handle_emcy(CAN_Frame frame);
 
 	sdo_scs_e get_sdo_scs(CAN_Frame frame) const;                                                          // type of message sent from server (i.e. device)

@@ -24,6 +24,17 @@ static uint8_t convert_nmt_state(const nmt_state_e &state){
 }
 
 
+static nmt_state_e convert_nmt_state(uint8_t byte){
+	switch(byte){
+	case 0: return nmt_state_e::BOOT_UP;
+	case 4: return nmt_state_e::STOPPED;
+	case 5: return nmt_state_e::OPERATIONAL;
+	case 0x7f: return nmt_state_e::PRE_OPERATIONAL;
+	}
+	throw std::logic_error("Unknown NMT state byte: " + std::to_string(static_cast<int>(byte)));
+}
+
+
 static uint8_t convert_nmt_command(const nmt_command_e &command){
 	switch(command){
 	case nmt_command_e::GO_TO_OPERATIONAL: return 1;
@@ -291,6 +302,80 @@ void node_t::calculate_can_ids(){
 }
 
 
+uint32_t node_t::get_tx_pdo(const uint16_t &pdo_type) const{
+	const auto find = tx_pdo.find(pdo_type);
+	if(find != tx_pdo.end()){
+		return find->second;
+	}
+	if(pdo_type == 1){
+		return tx_pdo_1;
+	}else if(pdo_type == 2){
+		return tx_pdo_2;
+	}else if(pdo_type == 3){
+		return tx_pdo_3;
+	}else if(pdo_type == 4){
+		return tx_pdo_4;
+	}
+	throw std::logic_error("Invalid Tx PDO type " + std::to_string(pdo_type));
+}
+
+
+uint32_t node_t::get_rx_pdo(const uint16_t &pdo_type) const{
+	const auto find = rx_pdo.find(pdo_type);
+	if(find != rx_pdo.end()){
+		return find->second;
+	}
+	if(pdo_type == 1){
+		return rx_pdo_1;
+	}else if(pdo_type == 2){
+		return rx_pdo_2;
+	}else if(pdo_type == 3){
+		return rx_pdo_3;
+	}else if(pdo_type == 4){
+		return rx_pdo_4;
+	}
+	throw std::logic_error("Invalid Rx PDO type " + std::to_string(pdo_type));
+}
+
+
+uint16_t node_t::find_tx_pdo_type(const uint32_t &can_id) const{
+	for(const auto &entry : tx_pdo){
+		if(can_id == entry.second){
+			return entry.first;
+		}
+	}
+	if(can_id == tx_pdo_1){
+		return 1;
+	}else if(can_id == tx_pdo_2){
+		return 2;
+	}else if(can_id == tx_pdo_3){
+		return 3;
+	}else if(can_id == tx_pdo_4){
+		return 4;
+	}
+	return 0;
+}
+
+
+uint16_t node_t::find_rx_pdo_type(const uint32_t &can_id) const{
+	for(const auto &entry : rx_pdo){
+		if(can_id == entry.second){
+			return entry.first;
+		}
+	}
+	if(can_id == rx_pdo_1){
+		return 1;
+	}else if(can_id == rx_pdo_2){
+		return 2;
+	}else if(can_id == rx_pdo_3){
+		return 3;
+	}else if(can_id == rx_pdo_4){
+		return 4;
+	}
+	return 0;
+}
+
+
 std::shared_ptr<const CAN_Frame> node_t::heartbeat(const nmt_state_e &state) const{
 	const uint8_t state_byte = convert_nmt_state(state);
 
@@ -299,6 +384,14 @@ std::shared_ptr<const CAN_Frame> node_t::heartbeat(const nmt_state_e &state) con
 	frame->size = 1;
 	frame->data[0] = state_byte;
 	return frame;
+}
+
+
+nmt_state_e node_t::get_nmt_state(const CAN_Frame &frame) const{
+	if(frame.id != nmt){
+		throw std::logic_error("CAN frame ID " + std::to_string(frame.id) + " is not node NMT id " + std::to_string(nmt));
+	}
+	return convert_nmt_state(frame.data[0]);
 }
 
 

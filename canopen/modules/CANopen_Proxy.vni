@@ -1,0 +1,33 @@
+package pilot.base.canopen;
+
+module CANopen_Proxy{
+	vnx.TopicPtr input_can;
+	vnx.TopicPtr input_pdo;
+
+	vnx.TopicPtr output_can;
+	vnx.TopicPtr output_pdo;
+
+	int sync_interval_ms = 0;                                                      // <= 0 for no sync
+	int heartbeat_interval_ms = 0;                                                 // <= 0 for no heartbeat
+	int heartbeat_sync_divider = 0;                                                // <= 0 for no heartbeat (alternative to interval)
+	int shutdown_delay_ms = 200;
+	int sdo_timeout_ms = 0;                                                        // <= 0 for no timeout
+	node_t own_node;
+	vector<node_t> network;
+	bool activate_network = true;
+	bool activate_network_operational = true;
+	bool query_information = false;
+	bool shutdown_network = true;
+
+	void reset_network();
+	void set_network_operational();
+	vector<uchar> upload(uint node_id, ushort index, uchar subindex) const async;
+	void download(uint node_id, ushort index, uchar subindex, vector<uchar> data) async;
+	void download_expedited(uint node_id, ushort index, uchar subindex, uint data, uint num_bytes=4) async;
+	void map_rpdo(uint node_id, uint pdo_type, vector<object_address_t> objects, bool rtr) async;
+	void map_tpdo(uint node_id, uint pdo_type, vector<object_address_t> objects, bool rtr) async;
+	void pdo_sync(uint node_id, uint pdo_type, uchar sync_divider=1) async;
+
+	void handle(pilot.base.CAN_Frame sample);
+	void handle(PDO sample);
+}
