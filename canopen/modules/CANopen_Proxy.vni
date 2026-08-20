@@ -6,6 +6,7 @@ module CANopen_Proxy{
 
 	vnx.TopicPtr output_can;
 	vnx.TopicPtr output_pdo;
+	vnx.TopicPtr output_emcy;
 
 	int sync_interval_ms = 0;                                                      // <= 0 for no sync
 	int heartbeat_interval_ms = 0;                                                 // <= 0 for no heartbeat

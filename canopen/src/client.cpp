@@ -445,9 +445,9 @@ int main(int argc, char **argv){
 					std::cerr << "Ignoring SCS " << vnx::to_string_value(scs) << std::endl;
 				}
 			}else if(response.id == canopen_node.emcy){
-				const auto error = canopen_node.handle_emcy(response);
-				std::cerr << "EMCY: " << vnx::to_string_value(error) << std::endl;
-				std::cerr << "EMCY register: " << vnx::to_string(canopen_node.emcy_register) << std::endl;
+				const auto emcy = canopen_node.get_emcy(response);
+				std::cerr << "EMCY: " << vnx::to_string_value(emcy->code) << " (0x" << std::hex << emcy->full_code << std::dec << ")" << std::endl;
+				std::cerr << "EMCY register: " << vnx::to_string(emcy->error_register) << std::endl;
 			}else if(verbose){
 				std::cout << "Ignoring CAN ID 0x" << std::hex << response.id << std::dec << std::endl;
 			}

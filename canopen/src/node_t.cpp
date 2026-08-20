@@ -395,7 +395,7 @@ nmt_state_e node_t::get_nmt_state(const CAN_Frame &frame) const{
 }
 
 
-emcy_code_e node_t::handle_emcy(const CAN_Frame &frame){
+std::shared_ptr<const EMCY> node_t::get_emcy(const CAN_Frame &frame){
 	if(frame.id != emcy){
 		throw std::logic_error("CAN frame ID " + std::to_string(frame.id) + " is not node EMCY id " + std::to_string(emcy));
 	}
@@ -452,7 +452,7 @@ emcy_code_e node_t::handle_emcy(const CAN_Frame &frame){
 	default: err = emcy_code_e::CUSTOM; break;
 	}
 
-	emcy_register.clear();
+	std::set<emcy_register_e> emcy_register;
 	if(error_register_mask & 1)   emcy_register.insert(emcy_register_e::GENERIC);
 	if(error_register_mask & 2)   emcy_register.insert(emcy_register_e::CURRENT);
 	if(error_register_mask & 4)   emcy_register.insert(emcy_register_e::VOLTAGE);
@@ -461,7 +461,16 @@ emcy_code_e node_t::handle_emcy(const CAN_Frame &frame){
 	if(error_register_mask & 32)  emcy_register.insert(emcy_register_e::DEVICE_PROFILE_SPECIFIC);
 	if(error_register_mask & 128) emcy_register.insert(emcy_register_e::MANUFACTURER_SPECIFIC);
 
-	return err;
+	auto result = EMCY::create();
+	result->time = frame.time;
+	result->node_id = id;
+	result->code = err;
+	result->full_code = error_code;
+	result->error_register = emcy_register;
+	for(size_t i=0; i<4; i++){
+		result->error_field[i] = frame.data[i+3];
+	}
+	return result;
 }
 
 

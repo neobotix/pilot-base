@@ -1,0 +1,11 @@
+package pilot.base.canopen;
+
+class EMCY{
+	long time;
+	uint node_id;
+	emcy_code_e code;
+	ushort full_code;
+	set<emcy_register_e> error_register;
+	uchar error_field[5];                                                // bytes 3-7 from CAN frame, manufacturer specific
+}
+

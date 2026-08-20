@@ -6,6 +6,7 @@
  */
 
 #include <pilot/base/canopen/CANopen_Proxy.h>
+#include <pilot/base/canopen/EMCY.hxx>
 
 
 namespace pilot {
@@ -324,9 +325,9 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 				}
 			}
 		}else if(sample->id == node.emcy){
-			const auto code = node.handle_emcy(*sample);
-			if(code != emcy_code_e::NO_ERROR){
-				log(WARN) << "Node " << node.id << " EMCY: " << code;
+			const auto emcy = node.get_emcy(*sample);
+			if(emcy){
+				publish(emcy, output_emcy);
 			}
 		}else if(sample->id == node.nmt){
 			node_states[node.id].state = node.get_nmt_state(*sample);
