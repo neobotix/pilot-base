@@ -404,6 +404,7 @@ emcy_code_e node_t::handle_emcy(const CAN_Frame &frame){
 
 	emcy_code_e err = emcy_code_e::NO_ERROR;
 	switch(error_code & 0xff00){
+	case 0x0000: err = emcy_code_e::NO_ERROR; break;
 	case 0x1000: err = emcy_code_e::GENERIC_ERROR; break;
 	case 0x2000: err = emcy_code_e::CURRENT; break;
 	case 0x2100: err = emcy_code_e::CURRENT_INPUT; break;
@@ -443,17 +444,12 @@ emcy_code_e node_t::handle_emcy(const CAN_Frame &frame){
 			err = emcy_code_e::PDO_LENGTH_ERROR;
 		}else if(error_code == 0x8220){
 			err = emcy_code_e::PDO_LENGTH_EXCEEDED;
-		}else if(error_code == 0x8230){
-			err = emcy_code_e::DAM_MPDO_NOT_PROCESSED;
-		}else if(error_code == 0x8240){
-			err = emcy_code_e::UNEXPECTED_SYNC_LENGTH;
-		}else if(error_code == 0x8250){
-			err = emcy_code_e::RPDO_TIMEOUT;
 		}
 		break;
 	case 0x9000: err = emcy_code_e::EXTERNAL_ERROR; break;
 	case 0xf000: err = emcy_code_e::ADDITIONAL_FUNCTIONS; break;
 	case 0xff00: err = emcy_code_e::DEVICE_SPECIFIC; break;
+	default: err = emcy_code_e::CUSTOM; break;
 	}
 
 	emcy_register.clear();
