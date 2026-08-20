@@ -302,7 +302,7 @@ void node_t::calculate_can_ids(){
 }
 
 
-uint32_t node_t::get_tx_pdo(const uint16_t &pdo_type) const{
+uint32_t node_t::get_tx_pdo_id(const uint16_t &pdo_type) const{
 	const auto find = tx_pdo.find(pdo_type);
 	if(find != tx_pdo.end()){
 		return find->second;
@@ -320,7 +320,7 @@ uint32_t node_t::get_tx_pdo(const uint16_t &pdo_type) const{
 }
 
 
-uint32_t node_t::get_rx_pdo(const uint16_t &pdo_type) const{
+uint32_t node_t::get_rx_pdo_id(const uint16_t &pdo_type) const{
 	const auto find = rx_pdo.find(pdo_type);
 	if(find != rx_pdo.end()){
 		return find->second;
@@ -395,7 +395,7 @@ nmt_state_e node_t::get_nmt_state(const CAN_Frame &frame) const{
 }
 
 
-std::shared_ptr<const EMCY> node_t::get_emcy(const CAN_Frame &frame){
+std::shared_ptr<const EMCY> node_t::get_emcy(const CAN_Frame &frame) const{
 	if(frame.id != emcy){
 		throw std::logic_error("CAN frame ID " + std::to_string(frame.id) + " is not node EMCY id " + std::to_string(emcy));
 	}
@@ -471,6 +471,40 @@ std::shared_ptr<const EMCY> node_t::get_emcy(const CAN_Frame &frame){
 		result->error_field[i] = frame.data[i+3];
 	}
 	return result;
+}
+
+
+std::shared_ptr<const PDO> node_t::get_tx_pdo(const CAN_Frame &frame) const{
+	const auto pdo_type = find_tx_pdo_type(frame.id);
+	if(pdo_type > 0){
+		auto out = PDO::create();
+		out->node_id = id;
+		out->type = pdo_type;
+		out->time = frame.time;
+		out->payload.resize(frame.size);
+		for(size_t i=0; i<frame.size; i++){
+			out->payload[i] = frame.data[i];
+		}
+		return out;
+	}
+	return nullptr;
+}
+
+
+std::shared_ptr<const PDO> node_t::get_rx_pdo(const CAN_Frame &frame) const{
+	const auto pdo_type = find_rx_pdo_type(frame.id);
+	if(pdo_type > 0){
+		auto out = PDO::create();
+		out->node_id = id;
+		out->type = pdo_type;
+		out->time = frame.time;
+		out->payload.resize(frame.size);
+		for(size_t i=0; i<frame.size; i++){
+			out->payload[i] = frame.data[i];
+		}
+		return out;
+	}
+	return nullptr;
 }
 
 

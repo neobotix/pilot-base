@@ -26,18 +26,20 @@ struct node_t{
 	static CAN_Frame *module_control(nmt_command_e command, uchar node_id);                                // node_id = 0 for broadcast
 
 	void calculate_can_ids();                                                                              // no effect if !use_predefined_connection_set
-	uint get_tx_pdo(ushort pdo_type) const;
-	uint get_rx_pdo(ushort pdo_type) const;
+	uint get_tx_pdo_id(ushort pdo_type) const;
+	uint get_rx_pdo_id(ushort pdo_type) const;
 	ushort find_tx_pdo_type(uint can_id) const;
 	ushort find_rx_pdo_type(uint can_id) const;
-	CAN_Frame *heartbeat(nmt_state_e state) const;
-	nmt_state_e get_nmt_state(CAN_Frame frame) const;
-	EMCY* get_emcy(CAN_Frame frame);
 
 	sdo_scs_e get_sdo_scs(CAN_Frame frame) const;                                                          // type of message sent from server (i.e. device)
 	sdo_ccs_e get_sdo_ccs(CAN_Frame frame) const;                                                          // type of message sent from client (i.e. SPS)
 	sdo_error_e get_sdo_error(CAN_Frame frame) const;
+	nmt_state_e get_nmt_state(CAN_Frame frame) const;
+	EMCY* get_emcy(CAN_Frame frame) const;
+	PDO* get_tx_pdo(CAN_Frame frame) const;
+	PDO* get_rx_pdo(CAN_Frame frame) const;
 
+	CAN_Frame *heartbeat(nmt_state_e state) const;
 	CAN_Frame *download_expedited(ushort index, uchar subindex, uint data, uint num_bytes=4) const;
 	CAN_Frame *upload_expedited(ushort index, uchar subindex, uint data, uint num_bytes=4) const;
 	vector<CAN_Frame *> download_segmented(ushort index, uchar subindex, vector<uchar> data) const;

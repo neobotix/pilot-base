@@ -142,7 +142,7 @@ void CANopen_Proxy::map_rpdo_async(const uint32_t &node_id, const uint32_t &pdo_
 	uint32_t can_id;
 	try{
 		const auto &node = find_node(node_id);
-		can_id = node.get_rx_pdo(pdo_type);
+		can_id = node.get_rx_pdo_id(pdo_type);
 	}catch(const std::exception &err){
 		vnx_async_return_ex_what(_request_id, err.what());
 		return;
@@ -160,7 +160,7 @@ void CANopen_Proxy::map_tpdo_async(const uint32_t &node_id, const uint32_t &pdo_
 	uint32_t can_id;
 	try{
 		const auto &node = find_node(node_id);
-		can_id = node.get_tx_pdo(pdo_type);
+		can_id = node.get_tx_pdo_id(pdo_type);
 	}catch(const std::exception &err){
 		vnx_async_return_ex_what(_request_id, err.what());
 		return;
@@ -210,17 +210,8 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 		}
 	}
 	for(auto &node : network){
-		const auto pdo_type = node.find_tx_pdo_type(sample->id);
-		if(pdo_type > 0){
-			auto out = PDO::create();
-			out->node_id = node.id;
-			out->type = pdo_type;
-			out->time = sample->time;
-			out->payload.resize(sample->size);
-			for(size_t i=0; i<sample->size; i++){
-				out->payload[i] = sample->data[i];
-			}
-			publish(out, output_pdo);
+		if(auto pdo = node.get_tx_pdo(*sample)){
+			publish(pdo, output_pdo);
 		}else if(sample->id == node.tx_sdo){
 			const auto scs = node.get_sdo_scs(*sample);
 			uint16_t index = 0;
@@ -338,7 +329,7 @@ void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 
 void CANopen_Proxy::handle(std::shared_ptr<const PDO> sample){
 	const auto &node = find_node(sample->node_id);
-	const auto can_id = node.get_rx_pdo(sample->type);
+	const auto can_id = node.get_rx_pdo_id(sample->type);
 
 	auto out = CAN_Frame::create();
 	out->time = sample->time;
