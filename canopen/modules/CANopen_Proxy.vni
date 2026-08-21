@@ -27,7 +27,8 @@ module CANopen_Proxy{
 	void download_expedited(uint node_id, ushort index, uchar subindex, uint data, uint num_bytes=4) async;
 	void map_rpdo(uint node_id, uint pdo_type, vector<object_address_t> objects, bool rtr) async;
 	void map_tpdo(uint node_id, uint pdo_type, vector<object_address_t> objects, bool rtr) async;
-	void pdo_sync(uint node_id, uint pdo_type, uchar sync_divider=1) async;
+	void rpdo_sync(uint node_id, uint pdo_type, uchar sync_divider=1) async;
+	void tpdo_sync(uint node_id, uint pdo_type, uchar sync_divider=1) async;
 
 	void handle(pilot.base.CAN_Frame sample);
 	void handle(PDO sample);

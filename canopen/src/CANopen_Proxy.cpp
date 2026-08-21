@@ -174,9 +174,36 @@ void CANopen_Proxy::map_tpdo_async(const uint32_t &node_id, const uint32_t &pdo_
 }
 
 
-void CANopen_Proxy::pdo_sync_async(const uint32_t &node_id, const uint32_t &pdo_type, const uint8_t &sync_divider, const vnx::request_id_t &_request_id){
-	if(pdo_type < 1 || pdo_type > 4){
-		vnx_async_return_ex_what(_request_id, "Invalid PDO type");
+void CANopen_Proxy::rpdo_sync_async(const uint32_t &node_id, const uint32_t &pdo_type, const uint8_t &sync_divider, const vnx::request_id_t &_request_id){
+	try{
+		const auto &node = find_node(node_id);
+		node.get_rx_pdo_id(pdo_type);
+	}catch(const std::exception &err){
+		vnx_async_return_ex_what(_request_id, err.what());
+		return;
+	}
+	const uint16_t index = 0x1400 + pdo_type - 1;
+	const uint8_t subindex = 2;
+	std::shared_ptr<sdo_request_t> request;
+	try{
+		// transmission type SYNC: pdo_comm.2  =  sync_divider
+		request = download_expedited_internal(node_id, index, subindex, sync_divider, 4);
+	}catch(const std::exception &err){
+		vnx_async_return_ex_what(_request_id, err.what());
+		return;
+	}
+	request->callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
+	request->download.callback = std::bind(&CANopen_Proxy::rpdo_sync_async_return, this, _request_id);
+	trigger_request(*request);
+}
+
+
+void CANopen_Proxy::tpdo_sync_async(const uint32_t &node_id, const uint32_t &pdo_type, const uint8_t &sync_divider, const vnx::request_id_t &_request_id){
+	try{
+		const auto &node = find_node(node_id);
+		node.get_tx_pdo_id(pdo_type);
+	}catch(const std::exception &err){
+		vnx_async_return_ex_what(_request_id, err.what());
 		return;
 	}
 	const uint16_t index = 0x1800 + pdo_type - 1;
@@ -190,7 +217,7 @@ void CANopen_Proxy::pdo_sync_async(const uint32_t &node_id, const uint32_t &pdo_
 		return;
 	}
 	request->callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
-	request->download.callback = std::bind(&CANopen_Proxy::pdo_sync_async_return, this, _request_id);
+	request->download.callback = std::bind(&CANopen_Proxy::tpdo_sync_async_return, this, _request_id);
 	trigger_request(*request);
 }
 

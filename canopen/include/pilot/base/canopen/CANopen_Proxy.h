@@ -31,7 +31,8 @@ protected:
 	void download_expedited_async(const uint32_t &node_id, const uint16_t &index, const uint8_t &subindex, const uint32_t &data, const uint32_t &num_bytes, const vnx::request_id_t &_request_id) override;
 	void map_rpdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_address_t> &objects, const bool &rtr, const vnx::request_id_t &_request_id) override;
 	void map_tpdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_address_t> &objects, const bool &rtr, const vnx::request_id_t &_request_id) override;
-	void pdo_sync_async(const uint32_t &node_id, const uint32_t &pdo_type, const uint8_t &sync_divider, const vnx::request_id_t &_request_id) override;
+	void rpdo_sync_async(const uint32_t &node_id, const uint32_t &pdo_type, const uint8_t &sync_divider, const vnx::request_id_t &_request_id) override;
+	void tpdo_sync_async(const uint32_t &node_id, const uint32_t &pdo_type, const uint8_t &sync_divider, const vnx::request_id_t &_request_id) override;
 
 	void handle(std::shared_ptr<const CAN_Frame> sample) override;
 	void handle(std::shared_ptr<const PDO> sample) override;
