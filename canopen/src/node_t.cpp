@@ -467,7 +467,7 @@ std::shared_ptr<const EMCY> node_t::get_emcy(const CAN_Frame &frame) const{
 	result->code = err;
 	result->full_code = error_code;
 	result->error_register = emcy_register;
-	for(size_t i=0; i<4; i++){
+	for(size_t i=0; i<5; i++){
 		result->error_field[i] = frame.data[i+3];
 	}
 	return result;
