@@ -1,0 +1,8 @@
+package pilot.base.canopen;
+
+enum error_behaviour_e{
+	NONE,
+	GO_TO_PRE_OPERATIONAL,
+	GO_TO_STOPPED,
+}
+

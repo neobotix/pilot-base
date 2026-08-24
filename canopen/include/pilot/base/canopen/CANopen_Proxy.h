@@ -36,6 +36,7 @@ protected:
 	void tpdo_sync_async(const uint32_t &node_id, const uint32_t &pdo_type, const uint8_t &sync_divider, const vnx::request_id_t &_request_id) override;
 	void heartbeat_timeout_async(const uint32_t &node_id, const uint16_t &timeout_ms, const vnx::request_id_t &_request_id) override;
 	void heartbeat_timeout_count_async(const uint32_t &node_id, const uint32_t &count, const vnx::request_id_t &_request_id) override;
+	void error_behaviour_async(const uint32_t &node_id, const error_behaviour_e &behaviour, const uint8_t &error_type, const vnx::request_id_t &_request_id) override;
 
 	void handle(std::shared_ptr<const CAN_Frame> sample) override;
 	void handle(std::shared_ptr<const PDO> sample) override;

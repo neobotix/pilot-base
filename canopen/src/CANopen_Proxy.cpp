@@ -248,6 +248,29 @@ void CANopen_Proxy::heartbeat_timeout_count_async(const uint32_t &node_id, const
 }
 
 
+void CANopen_Proxy::error_behaviour_async(const uint32_t &node_id, const error_behaviour_e &behaviour, const uint8_t &error_type, const vnx::request_id_t &_request_id){
+	const uint16_t index = 0x1029;
+	const uint8_t subindex = error_type;
+	uint8_t value = 1;
+	switch(behaviour){
+	case error_behaviour_e::NONE: value = 1; break;
+	case error_behaviour_e::GO_TO_PRE_OPERATIONAL: value = 0; break;
+	case error_behaviour_e::GO_TO_STOPPED: value = 2; break;
+	}
+
+	std::shared_ptr<sdo_request_t> request;
+	try{
+		request = download_expedited_internal(node_id, index, subindex, value, 1);
+	}catch(const std::exception &err){
+		vnx_async_return_ex_what(_request_id, err.what());
+		return;
+	}
+	request->callback_error_what = std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1);
+	request->download.callback = std::bind(&CANopen_Proxy::error_behaviour_async_return, this, _request_id);
+	trigger_request(*request);
+}
+
+
 void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 	if(sample->id == own_node.rx_sdo){
 		const auto ccs = own_node.get_sdo_ccs(*sample);

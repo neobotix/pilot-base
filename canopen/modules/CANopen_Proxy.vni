@@ -32,6 +32,7 @@ module CANopen_Proxy{
 	void tpdo_sync(uint node_id, uint pdo_type, uchar sync_divider=1) async;
 	void heartbeat_timeout(uint node_id, ushort timeout_ms) async;
 	void heartbeat_timeout_count(uint node_id, uint count) async;
+	void error_behaviour(uint node_id, error_behaviour_e behaviour, uchar error_type=1) async;
 
 	void handle(pilot.base.CAN_Frame sample);
 	void handle(PDO sample);
