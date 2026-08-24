@@ -36,9 +36,9 @@ void CANopen_Proxy::main(){
 	subscribe(input_can, 100);
 	subscribe(input_pdo, 100);
 
-	own_node.calculate_can_ids();
+	own_node.setup();
 	for(auto &node : network){
-		node.calculate_can_ids();
+		node.setup();
 	}
 
 	set_timer_millis(50, std::bind(&CANopen_Proxy::check_request_timeouts, this));

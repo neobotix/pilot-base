@@ -297,7 +297,7 @@ int main(int argc, char **argv){
 	if(opmode == opmode_e::HEARTBEAT || opmode == opmode_e::UPLOAD || opmode == opmode_e::DOWNLOAD || opmode == opmode_e::DOWNLOAD_SEGMENTED || opmode == opmode_e::ABORT){
 		canopen_node.id = node_id;
 		try{
-			canopen_node.calculate_can_ids();
+			canopen_node.setup();
 		}catch(const std::exception &err){
 			std::cerr << "CAN ID calculation failed with: " << err.what() << std::endl;
 			return 1;

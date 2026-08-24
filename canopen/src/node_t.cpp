@@ -281,11 +281,11 @@ std::shared_ptr<const CAN_Frame> node_t::module_control(const nmt_command_e &com
 }
 
 
-void node_t::calculate_can_ids(){
+void node_t::setup(){
+	if(id < 1 || id > 127){
+		throw std::logic_error("Invalid node ID " + std::to_string(id));
+	}
 	if(use_predefined_connection_set){
-		if(id < 1 || id > 127){
-			throw std::logic_error("Invalid node ID " + std::to_string(id));
-		}
 		emcy = 0x80 + id;
 		tx_pdo_1 = 0x180 + id;
 		rx_pdo_1 = 0x200 + id;
