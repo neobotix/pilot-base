@@ -34,6 +34,8 @@ protected:
 	void map_tpdo_async(const uint32_t &node_id, const uint32_t &pdo_type, const std::vector<object_address_t> &objects, const bool &rtr, const vnx::request_id_t &_request_id) override;
 	void rpdo_sync_async(const uint32_t &node_id, const uint32_t &pdo_type, const uint8_t &sync_divider, const vnx::request_id_t &_request_id) override;
 	void tpdo_sync_async(const uint32_t &node_id, const uint32_t &pdo_type, const uint8_t &sync_divider, const vnx::request_id_t &_request_id) override;
+	void heartbeat_timeout_async(const uint32_t &node_id, const uint16_t &timeout_ms, const vnx::request_id_t &_request_id) override;
+	void heartbeat_timeout_count_async(const uint32_t &node_id, const uint32_t &count, const vnx::request_id_t &_request_id) override;
 
 	void handle(std::shared_ptr<const CAN_Frame> sample) override;
 	void handle(std::shared_ptr<const PDO> sample) override;
@@ -76,6 +78,7 @@ private:
 	std::shared_ptr<sdo_request_t> download_internal(uint32_t node_id, uint16_t index, uint8_t subindex, const std::vector<uint8_t> &data) const;
 	std::shared_ptr<sdo_request_t> download_expedited_internal(uint32_t node_id, uint16_t index, uint8_t subindex, uint32_t data, uint32_t num_bytes) const;
 	void map_pdo_internal(uint32_t node_id, uint16_t pdo_comm, uint16_t pdo_map, uint32_t cob_entry, const std::vector<object_address_t> &objects, const std::function<void()> &callback, const std::function<void(const std::string &)> &callback_error_what) const;
+	void heartbeat_timeout_internal(uint32_t node_id, uint16_t timeout_ms, const std::function<void()> &callback, const std::function<void(const std::string &)> &callback_error_what);
 	void trigger_request(const sdo_request_t &request) const;
 	void check_request_timeouts();
 	void check_initialized();

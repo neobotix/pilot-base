@@ -227,6 +227,27 @@ void CANopen_Proxy::tpdo_sync_async(const uint32_t &node_id, const uint32_t &pdo
 }
 
 
+void CANopen_Proxy::heartbeat_timeout_async(const uint32_t &node_id, const uint16_t &timeout_ms, const vnx::request_id_t &_request_id){
+	heartbeat_timeout_internal(node_id, timeout_ms, std::bind(&CANopen_Proxy::heartbeat_timeout_async_return, this, _request_id), std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1));
+}
+
+
+void CANopen_Proxy::heartbeat_timeout_count_async(const uint32_t &node_id, const uint32_t &count, const vnx::request_id_t &_request_id){
+	int timeout_ms;
+	if(count == 0){
+		timeout_ms = 0;
+	}else if(heartbeat_interval_ms > 0){
+		timeout_ms = heartbeat_interval_ms * count;
+	}else if(heartbeat_sync_divider > 0 && sync_interval_ms > 0){
+		timeout_ms = sync_interval_ms * heartbeat_sync_divider * count;
+	}else{
+		vnx_async_return_ex_what(_request_id, "Heartbeat timeout can not be derived from count");
+		return;
+	}
+	heartbeat_timeout_internal(node_id, timeout_ms, std::bind(&CANopen_Proxy::heartbeat_timeout_count_async_return, this, _request_id), std::bind(&CANopen_Proxy::vnx_async_return_ex_what, this, _request_id, std::placeholders::_1));
+}
+
+
 void CANopen_Proxy::handle(std::shared_ptr<const CAN_Frame> sample){
 	if(sample->id == own_node.rx_sdo){
 		const auto ccs = own_node.get_sdo_ccs(*sample);
@@ -476,6 +497,23 @@ void CANopen_Proxy::map_pdo_internal(uint32_t node_id, uint16_t pdo_comm, uint16
 	current_request->download.callback = callback;
 
 	trigger_request(*first_request);
+}
+
+
+void CANopen_Proxy::heartbeat_timeout_internal(uint32_t node_id, uint16_t timeout_ms, const std::function<void()> &callback, const std::function<void(const std::string &)> &callback_error_what){
+	const uint16_t index = 0x1016;
+	const uint8_t subindex = 1;
+	const uint32_t value = (own_node.id << 16) | timeout_ms;
+	std::shared_ptr<sdo_request_t> request;
+	try{
+		request = download_expedited_internal(node_id, index, subindex, value, 4);
+	}catch(const std::exception &err){
+		callback_error_what(err.what());
+		return;
+	}
+	request->callback_error_what = callback_error_what;
+	request->download.callback = callback;
+	trigger_request(*request);
 }
 
 

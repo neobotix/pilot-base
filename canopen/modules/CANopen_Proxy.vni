@@ -30,6 +30,8 @@ module CANopen_Proxy{
 	void map_tpdo(uint node_id, uint pdo_type, vector<object_address_t> objects, bool rtr) async;
 	void rpdo_sync(uint node_id, uint pdo_type, uchar sync_divider=1) async;
 	void tpdo_sync(uint node_id, uint pdo_type, uchar sync_divider=1) async;
+	void heartbeat_timeout(uint node_id, ushort timeout_ms) async;
+	void heartbeat_timeout_count(uint node_id, uint count) async;
 
 	void handle(pilot.base.CAN_Frame sample);
 	void handle(PDO sample);
