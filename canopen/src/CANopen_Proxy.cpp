@@ -81,6 +81,11 @@ bool CANopen_Proxy::vnx_shutdown(){
 }
 
 
+bool CANopen_Proxy::is_initialized() const{
+	return is_network_init;
+}
+
+
 void CANopen_Proxy::reset_network(){
 	log(INFO) << "Resetting network ...";
 	is_network_init = false;

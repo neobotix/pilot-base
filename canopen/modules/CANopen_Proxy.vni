@@ -20,6 +20,7 @@ module CANopen_Proxy{
 	bool query_information = false;
 	bool shutdown_network = true;
 
+	bool is_initialized() const;
 	void reset_network();
 	void set_network_operational();
 	vector<uchar> upload(uint node_id, ushort index, uchar subindex) const async;
