@@ -374,7 +374,10 @@ int main(int argc, char **argv){
 				const auto scs = canopen_node.get_sdo_scs(response);
 				if(scs == pilot::base::canopen::sdo_scs_e::ABORT){
 					const auto error = canopen_node.get_sdo_error(response);
-					std::cerr << "SDO error: " << vnx::to_string_value(error) << std::endl;
+					const int error_class = response.data[7];
+					const int error_code = response.data[6];
+					const int additional_code = response.data[4] | (response.data[5] << 8);
+					std::cerr << "SDO error: " << vnx::to_string_value(error) << " (0x" << std::hex << error_class << error_code << additional_code << std::dec << ")" << std::endl;
 				}else if(opmode == opmode_e::DOWNLOAD && scs == pilot::base::canopen::sdo_scs_e::INIT_DOWNLOAD_RESPONSE){
 					const uint16_t index = response.data[1] | (response.data[2] << 8);
 					const uint8_t subindex = response.data[3];

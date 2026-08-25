@@ -65,7 +65,7 @@ static std::tuple<uint8_t, uint8_t, uint16_t> convert_sdo_error(const sdo_error_
 	case sdo_error_e::CANNOT_MAP_TO_PDO: return std::make_tuple(6, 4, 0x41);
 	case sdo_error_e::PDO_LENGTH_EXCEEDED: return std::make_tuple(6, 4, 0x42);
 	case sdo_error_e::GENERAL_PARAMETER_INCOMPATIBILITY: return std::make_tuple(6, 4, 0x43);
-	case sdo_error_e::GENERAL_INTERNAL_INCOMPATIBILITY: return std::make_tuple(6, 4, 0x44);        // or is it 0x47? Sources differ.
+	case sdo_error_e::GENERAL_INTERNAL_INCOMPATIBILITY: return std::make_tuple(6, 4, 0x47);
 	case sdo_error_e::HARDWARE_FAULT: return std::make_tuple(6, 6, 0);
 	case sdo_error_e::TYPE_CONFLICT: return std::make_tuple(6, 7, 0);
 	case sdo_error_e::TYPE_MISMATCH: return std::make_tuple(6, 7, 0x10);
@@ -76,14 +76,11 @@ static std::tuple<uint8_t, uint8_t, uint16_t> convert_sdo_error(const sdo_error_
 	case sdo_error_e::PARAMETER_VALUE_OUT_OF_RANGE: return std::make_tuple(6, 9, 0x30);
 	case sdo_error_e::PARAMETER_VALUE_TOO_HIGH: return std::make_tuple(6, 9, 0x31);
 	case sdo_error_e::PARAMETER_VALUE_TOO_LOW: return std::make_tuple(6, 9, 0x32);
-	case sdo_error_e::SUB_PARAMETER_VALUE_OUT_OF_RANGE: return std::make_tuple(6, 9, 0x33);
 	case sdo_error_e::MAX_VALUE_LESS_THAN_MIN_VALUE: return std::make_tuple(6, 9, 0x36);
-	case sdo_error_e::CONNECTION_ERROR: return std::make_tuple(6, 10, 0x23);
 	case sdo_error_e::DATA_TRANSFER: return std::make_tuple(8, 0, 0x20);
 	case sdo_error_e::DATA_TRANSFER_LOCAL: return std::make_tuple(8, 0, 0x21);
 	case sdo_error_e::DATA_TRANSFER_DEVICE_STATE: return std::make_tuple(8, 0, 0x22);
 	case sdo_error_e::OBJECT_DICTIONARY_FAIL: return std::make_tuple(8, 0, 0x23);
-	case sdo_error_e::NO_DATA: return std::make_tuple(8, 0, 0x24);
 	case sdo_error_e::GENERAL_ERROR: return std::make_tuple(8, 0, 0);
 	}
 	throw std::logic_error("Unknown or unspecific SDO error code: " + vnx::to_string_value(error));
@@ -597,7 +594,6 @@ sdo_error_e node_t::get_sdo_error(const CAN_Frame &frame) const{
 			case 0x41: return sdo_error_e::CANNOT_MAP_TO_PDO;
 			case 0x42: return sdo_error_e::PDO_LENGTH_EXCEEDED;
 			case 0x43: return sdo_error_e::GENERAL_PARAMETER_INCOMPATIBILITY;
-			case 0x44:
 			case 0x47: return sdo_error_e::GENERAL_INTERNAL_INCOMPATIBILITY;
 			}
 			return sdo_error_e::INVALID_ADDRESS;
@@ -615,12 +611,9 @@ sdo_error_e node_t::get_sdo_error(const CAN_Frame &frame) const{
 			case 0x30: return sdo_error_e::PARAMETER_VALUE_OUT_OF_RANGE;
 			case 0x31: return sdo_error_e::PARAMETER_VALUE_TOO_HIGH;
 			case 0x32: return sdo_error_e::PARAMETER_VALUE_TOO_LOW;
-			case 0x33: return sdo_error_e::SUB_PARAMETER_VALUE_OUT_OF_RANGE;
 			case 0x36: return sdo_error_e::MAX_VALUE_LESS_THAN_MIN_VALUE;
 			}
 			return sdo_error_e::OBJECT_ATTRIBUTE_INCONSISTENT;
-		case 10:
-			return sdo_error_e::CONNECTION_ERROR;
 		}
 		return sdo_error_e::ACCESS_ERROR;
 	case 8:
@@ -631,12 +624,11 @@ sdo_error_e node_t::get_sdo_error(const CAN_Frame &frame) const{
 			case 0x21: return sdo_error_e::DATA_TRANSFER_LOCAL;
 			case 0x22: return sdo_error_e::DATA_TRANSFER_DEVICE_STATE;
 			case 0x23: return sdo_error_e::OBJECT_DICTIONARY_FAIL;
-			case 0x24: return sdo_error_e::NO_DATA;
 			}
 		}
 		return sdo_error_e::GENERAL_ERROR;
 	default:
-		return sdo_error_e::GENERAL_ERROR;
+		return sdo_error_e::RESERVED;
 	}
 }
 
