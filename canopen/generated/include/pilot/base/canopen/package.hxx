@@ -15,20 +15,82 @@ namespace base {
 namespace canopen {
 
 
+class CANopen_ProxyBase;
+class CANopen_Proxy_download;
+class CANopen_Proxy_download_return;
+class CANopen_Proxy_download_expedited;
+class CANopen_Proxy_download_expedited_return;
+class CANopen_Proxy_error_behaviour;
+class CANopen_Proxy_error_behaviour_return;
+class CANopen_Proxy_heartbeat_timeout;
+class CANopen_Proxy_heartbeat_timeout_return;
+class CANopen_Proxy_heartbeat_timeout_count;
+class CANopen_Proxy_heartbeat_timeout_count_return;
+class CANopen_Proxy_is_initialized;
+class CANopen_Proxy_is_initialized_return;
+class CANopen_Proxy_map_rpdo;
+class CANopen_Proxy_map_rpdo_return;
+class CANopen_Proxy_map_tpdo;
+class CANopen_Proxy_map_tpdo_return;
+class CANopen_Proxy_reset_network;
+class CANopen_Proxy_reset_network_return;
+class CANopen_Proxy_rpdo_sync;
+class CANopen_Proxy_rpdo_sync_return;
+class CANopen_Proxy_set_network_operational;
+class CANopen_Proxy_set_network_operational_return;
+class CANopen_Proxy_tpdo_sync;
+class CANopen_Proxy_tpdo_sync_return;
+class CANopen_Proxy_upload;
+class CANopen_Proxy_upload_return;
+class EMCY;
+class PDO;
 struct emcy_code_e;
 struct emcy_register_e;
+struct error_behaviour_e;
 struct nmt_command_e;
 struct nmt_state_e;
 struct node_t;
+struct object_address_t;
 struct sdo_ccs_e;
 struct sdo_error_e;
 struct sdo_scs_e;
 
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_ProxyBase; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_download; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_download_return; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_download_expedited; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_download_expedited_return; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_error_behaviour; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_error_behaviour_return; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_heartbeat_timeout; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_heartbeat_timeout_return; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_heartbeat_timeout_count; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_heartbeat_timeout_count_return; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_is_initialized; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_is_initialized_return; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_map_rpdo; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_map_rpdo_return; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_map_tpdo; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_map_tpdo_return; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_reset_network; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_reset_network_return; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_rpdo_sync; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_rpdo_sync_return; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_set_network_operational; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_set_network_operational_return; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_tpdo_sync; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_tpdo_sync_return; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_upload; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_CANopen_Proxy_upload_return; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_EMCY; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_PDO; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_emcy_code_e; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_emcy_register_e; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_error_behaviour_e; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_nmt_command_e; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_nmt_state_e; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_node_t; ///< \private
+extern const vnx::TypeCode* const vnx_native_type_code_object_address_t; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_sdo_ccs_e; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_sdo_error_e; ///< \private
 extern const vnx::TypeCode* const vnx_native_type_code_sdo_scs_e; ///< \private
@@ -40,50 +102,841 @@ extern const vnx::TypeCode* const vnx_native_type_code_sdo_scs_e; ///< \private
 
 namespace vnx {
 
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_ProxyBase& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_download& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_download_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_download_expedited& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_download_expedited_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_error_behaviour& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_error_behaviour_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_is_initialized& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_is_initialized_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_map_rpdo& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_map_rpdo_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_map_tpdo& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_map_tpdo_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_reset_network& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_reset_network_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_rpdo_sync& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_rpdo_sync_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_set_network_operational& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_set_network_operational_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_tpdo_sync& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_tpdo_sync_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_upload& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_upload_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::EMCY& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::PDO& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::canopen::emcy_code_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::canopen::emcy_register_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::error_behaviour_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::canopen::nmt_command_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::canopen::nmt_state_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::canopen::node_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void read(TypeInput& in, ::pilot::base::canopen::object_address_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::canopen::sdo_ccs_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::canopen::sdo_error_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void read(TypeInput& in, ::pilot::base::canopen::sdo_scs_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_ProxyBase& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_download& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_download_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_download_expedited& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_download_expedited_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_error_behaviour& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_error_behaviour_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_is_initialized& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_is_initialized_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_map_rpdo& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_map_rpdo_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_map_tpdo& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_map_tpdo_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_reset_network& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_reset_network_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_rpdo_sync& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_rpdo_sync_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_set_network_operational& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_set_network_operational_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_tpdo_sync& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_tpdo_sync_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_upload& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_upload_return& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::EMCY& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::PDO& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::canopen::emcy_code_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::canopen::emcy_register_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::error_behaviour_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::canopen::nmt_command_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::canopen::nmt_state_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::canopen::node_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
+void write(TypeOutput& out, const ::pilot::base::canopen::object_address_t& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::canopen::sdo_ccs_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::canopen::sdo_error_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 void write(TypeOutput& out, const ::pilot::base::canopen::sdo_scs_e& value, const TypeCode* type_code, const uint16_t* code); ///< \private
 
+void read(std::istream& in, ::pilot::base::canopen::CANopen_ProxyBase& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_download& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_download_return& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_download_expedited& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_download_expedited_return& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_error_behaviour& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_error_behaviour_return& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_return& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count_return& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_is_initialized& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_is_initialized_return& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_map_rpdo& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_map_rpdo_return& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_map_tpdo& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_map_tpdo_return& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_reset_network& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_reset_network_return& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_rpdo_sync& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_rpdo_sync_return& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_set_network_operational& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_set_network_operational_return& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_tpdo_sync& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_tpdo_sync_return& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_upload& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_upload_return& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::EMCY& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::PDO& value); ///< \private
 void read(std::istream& in, ::pilot::base::canopen::emcy_code_e& value); ///< \private
 void read(std::istream& in, ::pilot::base::canopen::emcy_register_e& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::error_behaviour_e& value); ///< \private
 void read(std::istream& in, ::pilot::base::canopen::nmt_command_e& value); ///< \private
 void read(std::istream& in, ::pilot::base::canopen::nmt_state_e& value); ///< \private
 void read(std::istream& in, ::pilot::base::canopen::node_t& value); ///< \private
+void read(std::istream& in, ::pilot::base::canopen::object_address_t& value); ///< \private
 void read(std::istream& in, ::pilot::base::canopen::sdo_ccs_e& value); ///< \private
 void read(std::istream& in, ::pilot::base::canopen::sdo_error_e& value); ///< \private
 void read(std::istream& in, ::pilot::base::canopen::sdo_scs_e& value); ///< \private
 
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_ProxyBase& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_download& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_download_return& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_download_expedited& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_download_expedited_return& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_error_behaviour& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_error_behaviour_return& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_return& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count_return& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_is_initialized& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_is_initialized_return& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_map_rpdo& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_map_rpdo_return& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_map_tpdo& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_map_tpdo_return& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_reset_network& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_reset_network_return& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_rpdo_sync& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_rpdo_sync_return& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_set_network_operational& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_set_network_operational_return& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_tpdo_sync& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_tpdo_sync_return& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_upload& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_upload_return& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::EMCY& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::PDO& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::canopen::emcy_code_e& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::canopen::emcy_register_e& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::error_behaviour_e& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::canopen::nmt_command_e& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::canopen::nmt_state_e& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::canopen::node_t& value); ///< \private
+void write(std::ostream& out, const ::pilot::base::canopen::object_address_t& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::canopen::sdo_ccs_e& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::canopen::sdo_error_e& value); ///< \private
 void write(std::ostream& out, const ::pilot::base::canopen::sdo_scs_e& value); ///< \private
 
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_ProxyBase& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_download& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_download_return& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_download_expedited& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_download_expedited_return& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_error_behaviour& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_error_behaviour_return& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_return& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count_return& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_is_initialized& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_is_initialized_return& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_map_rpdo& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_map_rpdo_return& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_map_tpdo& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_map_tpdo_return& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_reset_network& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_reset_network_return& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_rpdo_sync& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_rpdo_sync_return& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_set_network_operational& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_set_network_operational_return& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_tpdo_sync& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_tpdo_sync_return& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_upload& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_upload_return& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::EMCY& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::PDO& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::canopen::emcy_code_e& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::canopen::emcy_register_e& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::error_behaviour_e& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::canopen::nmt_command_e& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::canopen::nmt_state_e& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::canopen::node_t& value); ///< \private
+void accept(Visitor& visitor, const ::pilot::base::canopen::object_address_t& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::canopen::sdo_ccs_e& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::canopen::sdo_error_e& value); ///< \private
 void accept(Visitor& visitor, const ::pilot::base::canopen::sdo_scs_e& value); ///< \private
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_ProxyBase> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_ProxyBase& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_ProxyBase& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_ProxyBase& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_ProxyBase& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_ProxyBase& value) {
+		vnx::accept(visitor, value);
+	}
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_download> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_download& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_download& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_download& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_download& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_download& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_download& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_download_return> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_download_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_download_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_download_return& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_download_return& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_download_return& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_download_return& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_download_expedited> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_download_expedited& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_download_expedited& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_download_expedited& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_download_expedited& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_download_expedited& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_download_expedited& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_download_expedited_return> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_download_expedited_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_download_expedited_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_download_expedited_return& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_download_expedited_return& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_download_expedited_return& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_download_expedited_return& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_error_behaviour> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_error_behaviour& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_error_behaviour& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_error_behaviour& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_error_behaviour& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_error_behaviour& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_error_behaviour& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_error_behaviour_return> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_error_behaviour_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_error_behaviour_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_error_behaviour_return& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_error_behaviour_return& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_error_behaviour_return& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_error_behaviour_return& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_return> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_return& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_return& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_return& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_return& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count_return> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count_return& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count_return& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count_return& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_heartbeat_timeout_count_return& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_is_initialized> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_is_initialized& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_is_initialized& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_is_initialized& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_is_initialized& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_is_initialized& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_is_initialized& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_is_initialized_return> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_is_initialized_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_is_initialized_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_is_initialized_return& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_is_initialized_return& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_is_initialized_return& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_is_initialized_return& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_map_rpdo> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_map_rpdo& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_map_rpdo& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_map_rpdo& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_map_rpdo& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_map_rpdo& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_map_rpdo& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_map_rpdo_return> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_map_rpdo_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_map_rpdo_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_map_rpdo_return& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_map_rpdo_return& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_map_rpdo_return& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_map_rpdo_return& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_map_tpdo> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_map_tpdo& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_map_tpdo& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_map_tpdo& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_map_tpdo& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_map_tpdo& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_map_tpdo& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_map_tpdo_return> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_map_tpdo_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_map_tpdo_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_map_tpdo_return& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_map_tpdo_return& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_map_tpdo_return& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_map_tpdo_return& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_reset_network> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_reset_network& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_reset_network& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_reset_network& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_reset_network& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_reset_network& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_reset_network& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_reset_network_return> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_reset_network_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_reset_network_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_reset_network_return& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_reset_network_return& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_reset_network_return& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_reset_network_return& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_rpdo_sync> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_rpdo_sync& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_rpdo_sync& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_rpdo_sync& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_rpdo_sync& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_rpdo_sync& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_rpdo_sync& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_rpdo_sync_return> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_rpdo_sync_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_rpdo_sync_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_rpdo_sync_return& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_rpdo_sync_return& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_rpdo_sync_return& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_rpdo_sync_return& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_set_network_operational> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_set_network_operational& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_set_network_operational& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_set_network_operational& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_set_network_operational& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_set_network_operational& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_set_network_operational& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_set_network_operational_return> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_set_network_operational_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_set_network_operational_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_set_network_operational_return& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_set_network_operational_return& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_set_network_operational_return& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_set_network_operational_return& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_tpdo_sync> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_tpdo_sync& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_tpdo_sync& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_tpdo_sync& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_tpdo_sync& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_tpdo_sync& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_tpdo_sync& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_tpdo_sync_return> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_tpdo_sync_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_tpdo_sync_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_tpdo_sync_return& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_tpdo_sync_return& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_tpdo_sync_return& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_tpdo_sync_return& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_upload> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_upload& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_upload& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_upload& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_upload& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_upload& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_upload& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::CANopen_Proxy_upload_return> {
+	void read(TypeInput& in, ::pilot::base::canopen::CANopen_Proxy_upload_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::CANopen_Proxy_upload_return& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::CANopen_Proxy_upload_return& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::CANopen_Proxy_upload_return& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::CANopen_Proxy_upload_return& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::CANopen_Proxy_upload_return& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::EMCY> {
+	void read(TypeInput& in, ::pilot::base::canopen::EMCY& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::EMCY& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::EMCY& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::EMCY& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::EMCY& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::EMCY& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::PDO> {
+	void read(TypeInput& in, ::pilot::base::canopen::PDO& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::PDO& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::PDO& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::PDO& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::PDO& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::PDO& value, bool special = false);
+};
 
 /// \private
 template<>
@@ -127,6 +980,28 @@ struct type<::pilot::base::canopen::emcy_register_e> {
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code);
 	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::emcy_register_e& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::error_behaviour_e> {
+	void read(TypeInput& in, ::pilot::base::canopen::error_behaviour_e& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::error_behaviour_e& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::error_behaviour_e& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::error_behaviour_e& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::error_behaviour_e& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::error_behaviour_e& value, bool special = false);
 };
 
 /// \private
@@ -193,6 +1068,28 @@ struct type<::pilot::base::canopen::node_t> {
 	}
 	void create_dynamic_code(std::vector<uint16_t>& code);
 	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::node_t& value, bool special = false);
+};
+
+/// \private
+template<>
+struct type<::pilot::base::canopen::object_address_t> {
+	void read(TypeInput& in, ::pilot::base::canopen::object_address_t& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::read(in, value, type_code, code);
+	}
+	void write(TypeOutput& out, const ::pilot::base::canopen::object_address_t& value, const TypeCode* type_code, const uint16_t* code) {
+		vnx::write(out, value, type_code, code);
+	}
+	void read(std::istream& in, ::pilot::base::canopen::object_address_t& value) {
+		vnx::read(in, value);
+	}
+	void write(std::ostream& out, const ::pilot::base::canopen::object_address_t& value) {
+		vnx::write(out, value);
+	}
+	void accept(Visitor& visitor, const ::pilot::base::canopen::object_address_t& value) {
+		vnx::accept(visitor, value);
+	}
+	void create_dynamic_code(std::vector<uint16_t>& code);
+	void create_dynamic_code(std::vector<uint16_t>& code, const ::pilot::base::canopen::object_address_t& value, bool special = false);
 };
 
 /// \private

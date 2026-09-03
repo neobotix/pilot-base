@@ -4,8 +4,8 @@
 #include <pilot/base/canopen/package.hxx>
 #include <pilot/base/canopen/node_t.hxx>
 #include <pilot/base/CAN_Frame.hxx>
-#include <pilot/base/canopen/emcy_code_e.hxx>
-#include <pilot/base/canopen/emcy_register_e.hxx>
+#include <pilot/base/canopen/EMCY.hxx>
+#include <pilot/base/canopen/PDO.hxx>
 #include <pilot/base/canopen/nmt_command_e.hxx>
 #include <pilot/base/canopen/nmt_state_e.hxx>
 #include <pilot/base/canopen/sdo_ccs_e.hxx>
@@ -21,7 +21,7 @@ namespace canopen {
 
 
 const vnx::Hash64 node_t::VNX_TYPE_HASH(0x2368a77e3516a12aull);
-const vnx::Hash64 node_t::VNX_CODE_HASH(0x49e244399ff9d88cull);
+const vnx::Hash64 node_t::VNX_CODE_HASH(0x9bd469915a655acdull);
 
 vnx::Hash64 node_t::get_type_hash() const {
 	return VNX_TYPE_HASH;
@@ -56,19 +56,21 @@ void node_t::accept(vnx::Visitor& _visitor) const {
 	_visitor.type_begin(*_type_code);
 	_visitor.type_field(_type_code->fields[0], 0); vnx::accept(_visitor, id);
 	_visitor.type_field(_type_code->fields[1], 1); vnx::accept(_visitor, use_predefined_connection_set);
-	_visitor.type_field(_type_code->fields[2], 2); vnx::accept(_visitor, emcy);
-	_visitor.type_field(_type_code->fields[3], 3); vnx::accept(_visitor, tx_pdo_1);
-	_visitor.type_field(_type_code->fields[4], 4); vnx::accept(_visitor, tx_pdo_2);
-	_visitor.type_field(_type_code->fields[5], 5); vnx::accept(_visitor, tx_pdo_3);
-	_visitor.type_field(_type_code->fields[6], 6); vnx::accept(_visitor, tx_pdo_4);
-	_visitor.type_field(_type_code->fields[7], 7); vnx::accept(_visitor, rx_pdo_1);
-	_visitor.type_field(_type_code->fields[8], 8); vnx::accept(_visitor, rx_pdo_2);
-	_visitor.type_field(_type_code->fields[9], 9); vnx::accept(_visitor, rx_pdo_3);
-	_visitor.type_field(_type_code->fields[10], 10); vnx::accept(_visitor, rx_pdo_4);
-	_visitor.type_field(_type_code->fields[11], 11); vnx::accept(_visitor, tx_sdo);
-	_visitor.type_field(_type_code->fields[12], 12); vnx::accept(_visitor, rx_sdo);
-	_visitor.type_field(_type_code->fields[13], 13); vnx::accept(_visitor, nmt);
-	_visitor.type_field(_type_code->fields[14], 14); vnx::accept(_visitor, emcy_register);
+	_visitor.type_field(_type_code->fields[2], 2); vnx::accept(_visitor, is_virtual);
+	_visitor.type_field(_type_code->fields[3], 3); vnx::accept(_visitor, emcy);
+	_visitor.type_field(_type_code->fields[4], 4); vnx::accept(_visitor, tx_pdo_1);
+	_visitor.type_field(_type_code->fields[5], 5); vnx::accept(_visitor, tx_pdo_2);
+	_visitor.type_field(_type_code->fields[6], 6); vnx::accept(_visitor, tx_pdo_3);
+	_visitor.type_field(_type_code->fields[7], 7); vnx::accept(_visitor, tx_pdo_4);
+	_visitor.type_field(_type_code->fields[8], 8); vnx::accept(_visitor, tx_pdo);
+	_visitor.type_field(_type_code->fields[9], 9); vnx::accept(_visitor, rx_pdo_1);
+	_visitor.type_field(_type_code->fields[10], 10); vnx::accept(_visitor, rx_pdo_2);
+	_visitor.type_field(_type_code->fields[11], 11); vnx::accept(_visitor, rx_pdo_3);
+	_visitor.type_field(_type_code->fields[12], 12); vnx::accept(_visitor, rx_pdo_4);
+	_visitor.type_field(_type_code->fields[13], 13); vnx::accept(_visitor, rx_pdo);
+	_visitor.type_field(_type_code->fields[14], 14); vnx::accept(_visitor, tx_sdo);
+	_visitor.type_field(_type_code->fields[15], 15); vnx::accept(_visitor, rx_sdo);
+	_visitor.type_field(_type_code->fields[16], 16); vnx::accept(_visitor, nmt);
 	_visitor.type_end(*_type_code);
 }
 
@@ -76,19 +78,21 @@ void node_t::write(std::ostream& _out) const {
 	_out << "{";
 	_out << "\"id\": "; vnx::write(_out, id);
 	_out << ", \"use_predefined_connection_set\": "; vnx::write(_out, use_predefined_connection_set);
+	_out << ", \"is_virtual\": "; vnx::write(_out, is_virtual);
 	_out << ", \"emcy\": "; vnx::write(_out, emcy);
 	_out << ", \"tx_pdo_1\": "; vnx::write(_out, tx_pdo_1);
 	_out << ", \"tx_pdo_2\": "; vnx::write(_out, tx_pdo_2);
 	_out << ", \"tx_pdo_3\": "; vnx::write(_out, tx_pdo_3);
 	_out << ", \"tx_pdo_4\": "; vnx::write(_out, tx_pdo_4);
+	_out << ", \"tx_pdo\": "; vnx::write(_out, tx_pdo);
 	_out << ", \"rx_pdo_1\": "; vnx::write(_out, rx_pdo_1);
 	_out << ", \"rx_pdo_2\": "; vnx::write(_out, rx_pdo_2);
 	_out << ", \"rx_pdo_3\": "; vnx::write(_out, rx_pdo_3);
 	_out << ", \"rx_pdo_4\": "; vnx::write(_out, rx_pdo_4);
+	_out << ", \"rx_pdo\": "; vnx::write(_out, rx_pdo);
 	_out << ", \"tx_sdo\": "; vnx::write(_out, tx_sdo);
 	_out << ", \"rx_sdo\": "; vnx::write(_out, rx_sdo);
 	_out << ", \"nmt\": "; vnx::write(_out, nmt);
-	_out << ", \"emcy_register\": "; vnx::write(_out, emcy_register);
 	_out << "}";
 }
 
@@ -103,19 +107,21 @@ vnx::Object node_t::to_object() const {
 	_object["__type"] = "pilot.base.canopen.node_t";
 	_object["id"] = id;
 	_object["use_predefined_connection_set"] = use_predefined_connection_set;
+	_object["is_virtual"] = is_virtual;
 	_object["emcy"] = emcy;
 	_object["tx_pdo_1"] = tx_pdo_1;
 	_object["tx_pdo_2"] = tx_pdo_2;
 	_object["tx_pdo_3"] = tx_pdo_3;
 	_object["tx_pdo_4"] = tx_pdo_4;
+	_object["tx_pdo"] = tx_pdo;
 	_object["rx_pdo_1"] = rx_pdo_1;
 	_object["rx_pdo_2"] = rx_pdo_2;
 	_object["rx_pdo_3"] = rx_pdo_3;
 	_object["rx_pdo_4"] = rx_pdo_4;
+	_object["rx_pdo"] = rx_pdo;
 	_object["tx_sdo"] = tx_sdo;
 	_object["rx_sdo"] = rx_sdo;
 	_object["nmt"] = nmt;
-	_object["emcy_register"] = emcy_register;
 	return _object;
 }
 
@@ -123,12 +129,14 @@ void node_t::from_object(const vnx::Object& _object) {
 	for(const auto& _entry : _object.field) {
 		if(_entry.first == "emcy") {
 			_entry.second.to(emcy);
-		} else if(_entry.first == "emcy_register") {
-			_entry.second.to(emcy_register);
 		} else if(_entry.first == "id") {
 			_entry.second.to(id);
+		} else if(_entry.first == "is_virtual") {
+			_entry.second.to(is_virtual);
 		} else if(_entry.first == "nmt") {
 			_entry.second.to(nmt);
+		} else if(_entry.first == "rx_pdo") {
+			_entry.second.to(rx_pdo);
 		} else if(_entry.first == "rx_pdo_1") {
 			_entry.second.to(rx_pdo_1);
 		} else if(_entry.first == "rx_pdo_2") {
@@ -139,6 +147,8 @@ void node_t::from_object(const vnx::Object& _object) {
 			_entry.second.to(rx_pdo_4);
 		} else if(_entry.first == "rx_sdo") {
 			_entry.second.to(rx_sdo);
+		} else if(_entry.first == "tx_pdo") {
+			_entry.second.to(tx_pdo);
 		} else if(_entry.first == "tx_pdo_1") {
 			_entry.second.to(tx_pdo_1);
 		} else if(_entry.first == "tx_pdo_2") {
@@ -162,6 +172,9 @@ vnx::Variant node_t::get_field(const std::string& _name) const {
 	if(_name == "use_predefined_connection_set") {
 		return vnx::Variant(use_predefined_connection_set);
 	}
+	if(_name == "is_virtual") {
+		return vnx::Variant(is_virtual);
+	}
 	if(_name == "emcy") {
 		return vnx::Variant(emcy);
 	}
@@ -177,6 +190,9 @@ vnx::Variant node_t::get_field(const std::string& _name) const {
 	if(_name == "tx_pdo_4") {
 		return vnx::Variant(tx_pdo_4);
 	}
+	if(_name == "tx_pdo") {
+		return vnx::Variant(tx_pdo);
+	}
 	if(_name == "rx_pdo_1") {
 		return vnx::Variant(rx_pdo_1);
 	}
@@ -189,6 +205,9 @@ vnx::Variant node_t::get_field(const std::string& _name) const {
 	if(_name == "rx_pdo_4") {
 		return vnx::Variant(rx_pdo_4);
 	}
+	if(_name == "rx_pdo") {
+		return vnx::Variant(rx_pdo);
+	}
 	if(_name == "tx_sdo") {
 		return vnx::Variant(tx_sdo);
 	}
@@ -198,9 +217,6 @@ vnx::Variant node_t::get_field(const std::string& _name) const {
 	if(_name == "nmt") {
 		return vnx::Variant(nmt);
 	}
-	if(_name == "emcy_register") {
-		return vnx::Variant(emcy_register);
-	}
 	return vnx::Variant();
 }
 
@@ -209,6 +225,8 @@ void node_t::set_field(const std::string& _name, const vnx::Variant& _value) {
 		_value.to(id);
 	} else if(_name == "use_predefined_connection_set") {
 		_value.to(use_predefined_connection_set);
+	} else if(_name == "is_virtual") {
+		_value.to(is_virtual);
 	} else if(_name == "emcy") {
 		_value.to(emcy);
 	} else if(_name == "tx_pdo_1") {
@@ -219,6 +237,8 @@ void node_t::set_field(const std::string& _name, const vnx::Variant& _value) {
 		_value.to(tx_pdo_3);
 	} else if(_name == "tx_pdo_4") {
 		_value.to(tx_pdo_4);
+	} else if(_name == "tx_pdo") {
+		_value.to(tx_pdo);
 	} else if(_name == "rx_pdo_1") {
 		_value.to(rx_pdo_1);
 	} else if(_name == "rx_pdo_2") {
@@ -227,14 +247,14 @@ void node_t::set_field(const std::string& _name, const vnx::Variant& _value) {
 		_value.to(rx_pdo_3);
 	} else if(_name == "rx_pdo_4") {
 		_value.to(rx_pdo_4);
+	} else if(_name == "rx_pdo") {
+		_value.to(rx_pdo);
 	} else if(_name == "tx_sdo") {
 		_value.to(tx_sdo);
 	} else if(_name == "rx_sdo") {
 		_value.to(rx_sdo);
 	} else if(_name == "nmt") {
 		_value.to(nmt);
-	} else if(_name == "emcy_register") {
-		_value.to(emcy_register);
 	} else {
 		throw std::logic_error("no such field: '" + _name + "'");
 	}
@@ -264,13 +284,11 @@ std::shared_ptr<vnx::TypeCode> node_t::static_create_type_code() {
 	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.base.canopen.node_t";
 	type_code->type_hash = vnx::Hash64(0x2368a77e3516a12aull);
-	type_code->code_hash = vnx::Hash64(0x49e244399ff9d88cull);
+	type_code->code_hash = vnx::Hash64(0x9bd469915a655acdull);
 	type_code->is_native = true;
 	type_code->native_size = sizeof(::pilot::base::canopen::node_t);
 	type_code->create_value = []() -> std::shared_ptr<vnx::Value> { return std::make_shared<vnx::Struct<node_t>>(); };
-	type_code->depends.resize(1);
-	type_code->depends[0] = ::pilot::base::canopen::emcy_register_e::static_get_type_code();
-	type_code->fields.resize(15);
+	type_code->fields.resize(17);
 	{
 		auto& field = type_code->fields[0];
 		field.data_size = 4;
@@ -286,81 +304,94 @@ std::shared_ptr<vnx::TypeCode> node_t::static_create_type_code() {
 	}
 	{
 		auto& field = type_code->fields[2];
+		field.data_size = 1;
+		field.name = "is_virtual";
+		field.value = vnx::to_string(false);
+		field.code = {31};
+	}
+	{
+		auto& field = type_code->fields[3];
 		field.data_size = 4;
 		field.name = "emcy";
 		field.code = {3};
 	}
 	{
-		auto& field = type_code->fields[3];
+		auto& field = type_code->fields[4];
 		field.data_size = 4;
 		field.name = "tx_pdo_1";
 		field.code = {3};
 	}
 	{
-		auto& field = type_code->fields[4];
+		auto& field = type_code->fields[5];
 		field.data_size = 4;
 		field.name = "tx_pdo_2";
 		field.code = {3};
 	}
 	{
-		auto& field = type_code->fields[5];
+		auto& field = type_code->fields[6];
 		field.data_size = 4;
 		field.name = "tx_pdo_3";
 		field.code = {3};
 	}
 	{
-		auto& field = type_code->fields[6];
+		auto& field = type_code->fields[7];
 		field.data_size = 4;
 		field.name = "tx_pdo_4";
 		field.code = {3};
 	}
 	{
-		auto& field = type_code->fields[7];
+		auto& field = type_code->fields[8];
+		field.is_extended = true;
+		field.name = "tx_pdo";
+		field.code = {13, 3, 2, 3};
+	}
+	{
+		auto& field = type_code->fields[9];
 		field.data_size = 4;
 		field.name = "rx_pdo_1";
 		field.code = {3};
 	}
 	{
-		auto& field = type_code->fields[8];
+		auto& field = type_code->fields[10];
 		field.data_size = 4;
 		field.name = "rx_pdo_2";
 		field.code = {3};
 	}
 	{
-		auto& field = type_code->fields[9];
+		auto& field = type_code->fields[11];
 		field.data_size = 4;
 		field.name = "rx_pdo_3";
 		field.code = {3};
 	}
 	{
-		auto& field = type_code->fields[10];
+		auto& field = type_code->fields[12];
 		field.data_size = 4;
 		field.name = "rx_pdo_4";
 		field.code = {3};
 	}
 	{
-		auto& field = type_code->fields[11];
+		auto& field = type_code->fields[13];
+		field.is_extended = true;
+		field.name = "rx_pdo";
+		field.code = {13, 3, 2, 3};
+	}
+	{
+		auto& field = type_code->fields[14];
 		field.data_size = 4;
 		field.name = "tx_sdo";
 		field.code = {3};
 	}
 	{
-		auto& field = type_code->fields[12];
+		auto& field = type_code->fields[15];
 		field.data_size = 4;
 		field.name = "rx_sdo";
 		field.code = {3};
 	}
 	{
-		auto& field = type_code->fields[13];
+		auto& field = type_code->fields[16];
 		field.data_size = 4;
 		field.name = "nmt";
 		field.code = {3};
-	}
-	{
-		auto& field = type_code->fields[14];
-		field.is_extended = true;
-		field.name = "emcy_register";
-		field.code = {12, 19, 0};
 	}
 	type_code->build();
 	return type_code;
@@ -413,45 +444,49 @@ void read(TypeInput& in, ::pilot::base::canopen::node_t& value, const TypeCode* 
 			vnx::read_value(_buf + _field->offset, value.use_predefined_connection_set, _field->code.data());
 		}
 		if(const auto* const _field = type_code->field_map[2]) {
-			vnx::read_value(_buf + _field->offset, value.emcy, _field->code.data());
+			vnx::read_value(_buf + _field->offset, value.is_virtual, _field->code.data());
 		}
 		if(const auto* const _field = type_code->field_map[3]) {
-			vnx::read_value(_buf + _field->offset, value.tx_pdo_1, _field->code.data());
+			vnx::read_value(_buf + _field->offset, value.emcy, _field->code.data());
 		}
 		if(const auto* const _field = type_code->field_map[4]) {
-			vnx::read_value(_buf + _field->offset, value.tx_pdo_2, _field->code.data());
+			vnx::read_value(_buf + _field->offset, value.tx_pdo_1, _field->code.data());
 		}
 		if(const auto* const _field = type_code->field_map[5]) {
-			vnx::read_value(_buf + _field->offset, value.tx_pdo_3, _field->code.data());
+			vnx::read_value(_buf + _field->offset, value.tx_pdo_2, _field->code.data());
 		}
 		if(const auto* const _field = type_code->field_map[6]) {
-			vnx::read_value(_buf + _field->offset, value.tx_pdo_4, _field->code.data());
+			vnx::read_value(_buf + _field->offset, value.tx_pdo_3, _field->code.data());
 		}
 		if(const auto* const _field = type_code->field_map[7]) {
-			vnx::read_value(_buf + _field->offset, value.rx_pdo_1, _field->code.data());
-		}
-		if(const auto* const _field = type_code->field_map[8]) {
-			vnx::read_value(_buf + _field->offset, value.rx_pdo_2, _field->code.data());
+			vnx::read_value(_buf + _field->offset, value.tx_pdo_4, _field->code.data());
 		}
 		if(const auto* const _field = type_code->field_map[9]) {
-			vnx::read_value(_buf + _field->offset, value.rx_pdo_3, _field->code.data());
+			vnx::read_value(_buf + _field->offset, value.rx_pdo_1, _field->code.data());
 		}
 		if(const auto* const _field = type_code->field_map[10]) {
-			vnx::read_value(_buf + _field->offset, value.rx_pdo_4, _field->code.data());
+			vnx::read_value(_buf + _field->offset, value.rx_pdo_2, _field->code.data());
 		}
 		if(const auto* const _field = type_code->field_map[11]) {
-			vnx::read_value(_buf + _field->offset, value.tx_sdo, _field->code.data());
+			vnx::read_value(_buf + _field->offset, value.rx_pdo_3, _field->code.data());
 		}
 		if(const auto* const _field = type_code->field_map[12]) {
+			vnx::read_value(_buf + _field->offset, value.rx_pdo_4, _field->code.data());
+		}
+		if(const auto* const _field = type_code->field_map[14]) {
+			vnx::read_value(_buf + _field->offset, value.tx_sdo, _field->code.data());
+		}
+		if(const auto* const _field = type_code->field_map[15]) {
 			vnx::read_value(_buf + _field->offset, value.rx_sdo, _field->code.data());
 		}
-		if(const auto* const _field = type_code->field_map[13]) {
+		if(const auto* const _field = type_code->field_map[16]) {
 			vnx::read_value(_buf + _field->offset, value.nmt, _field->code.data());
 		}
 	}
 	for(const auto* _field : type_code->ext_fields) {
 		switch(_field->native_index) {
-			case 14: vnx::read(in, value.emcy_register, type_code, _field->code.data()); break;
+			case 8: vnx::read(in, value.tx_pdo, type_code, _field->code.data()); break;
+			case 13: vnx::read(in, value.rx_pdo, type_code, _field->code.data()); break;
 			default: vnx::skip(in, type_code, _field->code.data());
 		}
 	}
@@ -470,22 +505,24 @@ void write(TypeOutput& out, const ::pilot::base::canopen::node_t& value, const T
 	else if(code && code[0] == CODE_STRUCT) {
 		type_code = type_code->depends[code[1]];
 	}
-	char* const _buf = out.write(53);
+	char* const _buf = out.write(54);
 	vnx::write_value(_buf + 0, value.id);
 	vnx::write_value(_buf + 4, value.use_predefined_connection_set);
-	vnx::write_value(_buf + 5, value.emcy);
-	vnx::write_value(_buf + 9, value.tx_pdo_1);
-	vnx::write_value(_buf + 13, value.tx_pdo_2);
-	vnx::write_value(_buf + 17, value.tx_pdo_3);
-	vnx::write_value(_buf + 21, value.tx_pdo_4);
-	vnx::write_value(_buf + 25, value.rx_pdo_1);
-	vnx::write_value(_buf + 29, value.rx_pdo_2);
-	vnx::write_value(_buf + 33, value.rx_pdo_3);
-	vnx::write_value(_buf + 37, value.rx_pdo_4);
-	vnx::write_value(_buf + 41, value.tx_sdo);
-	vnx::write_value(_buf + 45, value.rx_sdo);
-	vnx::write_value(_buf + 49, value.nmt);
-	vnx::write(out, value.emcy_register, type_code, type_code->fields[14].code.data());
+	vnx::write_value(_buf + 5, value.is_virtual);
+	vnx::write_value(_buf + 6, value.emcy);
+	vnx::write_value(_buf + 10, value.tx_pdo_1);
+	vnx::write_value(_buf + 14, value.tx_pdo_2);
+	vnx::write_value(_buf + 18, value.tx_pdo_3);
+	vnx::write_value(_buf + 22, value.tx_pdo_4);
+	vnx::write_value(_buf + 26, value.rx_pdo_1);
+	vnx::write_value(_buf + 30, value.rx_pdo_2);
+	vnx::write_value(_buf + 34, value.rx_pdo_3);
+	vnx::write_value(_buf + 38, value.rx_pdo_4);
+	vnx::write_value(_buf + 42, value.tx_sdo);
+	vnx::write_value(_buf + 46, value.rx_sdo);
+	vnx::write_value(_buf + 50, value.nmt);
+	vnx::write(out, value.tx_pdo, type_code, type_code->fields[8].code.data());
+	vnx::write(out, value.rx_pdo, type_code, type_code->fields[13].code.data());
 }
 
 void read(std::istream& in, ::pilot::base::canopen::node_t& value) {

@@ -7,8 +7,8 @@
 #include <vnx/Type.h>
 #include <pilot/base/canopen/package.hxx>
 #include <pilot/base/CAN_Frame.hxx>
-#include <pilot/base/canopen/emcy_code_e.hxx>
-#include <pilot/base/canopen/emcy_register_e.hxx>
+#include <pilot/base/canopen/EMCY.hxx>
+#include <pilot/base/canopen/PDO.hxx>
 #include <pilot/base/canopen/nmt_command_e.hxx>
 #include <pilot/base/canopen/nmt_state_e.hxx>
 #include <pilot/base/canopen/sdo_ccs_e.hxx>
@@ -25,19 +25,21 @@ struct node_t {
 	
 	uint32_t id = 0;
 	vnx::bool_t use_predefined_connection_set = true;
+	vnx::bool_t is_virtual = false;
 	uint32_t emcy = 0;
 	uint32_t tx_pdo_1 = 0;
 	uint32_t tx_pdo_2 = 0;
 	uint32_t tx_pdo_3 = 0;
 	uint32_t tx_pdo_4 = 0;
+	std::map<uint16_t, uint32_t> tx_pdo;
 	uint32_t rx_pdo_1 = 0;
 	uint32_t rx_pdo_2 = 0;
 	uint32_t rx_pdo_3 = 0;
 	uint32_t rx_pdo_4 = 0;
+	std::map<uint16_t, uint32_t> rx_pdo;
 	uint32_t tx_sdo = 0;
 	uint32_t rx_sdo = 0;
 	uint32_t nmt = 0;
-	std::set<::pilot::base::canopen::emcy_register_e> emcy_register;
 	
 	static const vnx::Hash64 VNX_TYPE_HASH;
 	static const vnx::Hash64 VNX_CODE_HASH;
@@ -52,12 +54,19 @@ struct node_t {
 	
 	static std::shared_ptr<const ::pilot::base::CAN_Frame> sync();
 	static std::shared_ptr<const ::pilot::base::CAN_Frame> module_control(const ::pilot::base::canopen::nmt_command_e& command = ::pilot::base::canopen::nmt_command_e(), const uint8_t& node_id = 0);
-	void calculate_can_ids();
-	std::shared_ptr<const ::pilot::base::CAN_Frame> heartbeat(const ::pilot::base::canopen::nmt_state_e& state = ::pilot::base::canopen::nmt_state_e()) const;
-	::pilot::base::canopen::emcy_code_e handle_emcy(const ::pilot::base::CAN_Frame& frame = ::pilot::base::CAN_Frame());
+	void setup();
+	uint32_t get_tx_pdo_id(const uint16_t& pdo_type = 0) const;
+	uint32_t get_rx_pdo_id(const uint16_t& pdo_type = 0) const;
+	uint16_t find_tx_pdo_type(const uint32_t& can_id = 0) const;
+	uint16_t find_rx_pdo_type(const uint32_t& can_id = 0) const;
 	::pilot::base::canopen::sdo_scs_e get_sdo_scs(const ::pilot::base::CAN_Frame& frame = ::pilot::base::CAN_Frame()) const;
 	::pilot::base::canopen::sdo_ccs_e get_sdo_ccs(const ::pilot::base::CAN_Frame& frame = ::pilot::base::CAN_Frame()) const;
 	::pilot::base::canopen::sdo_error_e get_sdo_error(const ::pilot::base::CAN_Frame& frame = ::pilot::base::CAN_Frame()) const;
+	::pilot::base::canopen::nmt_state_e get_nmt_state(const ::pilot::base::CAN_Frame& frame = ::pilot::base::CAN_Frame()) const;
+	std::shared_ptr<const ::pilot::base::canopen::EMCY> get_emcy(const ::pilot::base::CAN_Frame& frame = ::pilot::base::CAN_Frame()) const;
+	std::shared_ptr<const ::pilot::base::canopen::PDO> get_tx_pdo(const ::pilot::base::CAN_Frame& frame = ::pilot::base::CAN_Frame()) const;
+	std::shared_ptr<const ::pilot::base::canopen::PDO> get_rx_pdo(const ::pilot::base::CAN_Frame& frame = ::pilot::base::CAN_Frame()) const;
+	std::shared_ptr<const ::pilot::base::CAN_Frame> heartbeat(const ::pilot::base::canopen::nmt_state_e& state = ::pilot::base::canopen::nmt_state_e()) const;
 	std::shared_ptr<const ::pilot::base::CAN_Frame> download_expedited(const uint16_t& index = 0, const uint8_t& subindex = 0, const uint32_t& data = 0, const uint32_t& num_bytes = 4) const;
 	std::shared_ptr<const ::pilot::base::CAN_Frame> upload_expedited(const uint16_t& index = 0, const uint8_t& subindex = 0, const uint32_t& data = 0, const uint32_t& num_bytes = 4) const;
 	std::vector<std::shared_ptr<const ::pilot::base::CAN_Frame>> download_segmented(const uint16_t& index = 0, const uint8_t& subindex = 0, const std::vector<uint8_t>& data = {}) const;

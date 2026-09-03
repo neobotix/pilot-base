@@ -13,7 +13,7 @@ namespace canopen {
 
 
 const vnx::Hash64 sdo_error_e::VNX_TYPE_HASH(0x9b27dfeddc64e9c2ull);
-const vnx::Hash64 sdo_error_e::VNX_CODE_HASH(0x20f19aa211c94138ull);
+const vnx::Hash64 sdo_error_e::VNX_CODE_HASH(0xb227eadaf1b3c4fcull);
 
 vnx::Hash64 sdo_error_e::get_type_hash() const {
 	return VNX_TYPE_HASH;
@@ -47,7 +47,6 @@ vnx::bool_t sdo_error_e::is_valid() const {
 	switch(value) {
 		case ACCESS_ERROR: return true;
 		case CANNOT_MAP_TO_PDO: return true;
-		case CONNECTION_ERROR: return true;
 		case DATA_TRANSFER: return true;
 		case DATA_TRANSFER_DEVICE_STATE: return true;
 		case DATA_TRANSFER_LOCAL: return true;
@@ -63,7 +62,6 @@ vnx::bool_t sdo_error_e::is_valid() const {
 		case INVALID_BLOCK_SIZE: return true;
 		case INVALID_COMMAND: return true;
 		case MAX_VALUE_LESS_THAN_MIN_VALUE: return true;
-		case NO_DATA: return true;
 		case NO_ERROR: return true;
 		case OBJECT_ACCESS_READ_ONLY: return true;
 		case OBJECT_ACCESS_UNSUPPORTED: return true;
@@ -79,9 +77,9 @@ vnx::bool_t sdo_error_e::is_valid() const {
 		case PARAMETER_VALUE_TOO_HIGH: return true;
 		case PARAMETER_VALUE_TOO_LOW: return true;
 		case PDO_LENGTH_EXCEEDED: return true;
+		case RESERVED: return true;
 		case SERVICE_ERROR: return true;
 		case SUB_INDEX_DOES_NOT_EXIST: return true;
-		case SUB_PARAMETER_VALUE_OUT_OF_RANGE: return true;
 		case TIMEOUT: return true;
 		case TOGGLE_BIT_ERROR: return true;
 		case TYPE_CONFLICT: return true;
@@ -94,7 +92,6 @@ std::string sdo_error_e::to_string() const {
 	switch(value) {
 		case ACCESS_ERROR: return "\"ACCESS_ERROR\"";
 		case CANNOT_MAP_TO_PDO: return "\"CANNOT_MAP_TO_PDO\"";
-		case CONNECTION_ERROR: return "\"CONNECTION_ERROR\"";
 		case DATA_TRANSFER: return "\"DATA_TRANSFER\"";
 		case DATA_TRANSFER_DEVICE_STATE: return "\"DATA_TRANSFER_DEVICE_STATE\"";
 		case DATA_TRANSFER_LOCAL: return "\"DATA_TRANSFER_LOCAL\"";
@@ -110,7 +107,6 @@ std::string sdo_error_e::to_string() const {
 		case INVALID_BLOCK_SIZE: return "\"INVALID_BLOCK_SIZE\"";
 		case INVALID_COMMAND: return "\"INVALID_COMMAND\"";
 		case MAX_VALUE_LESS_THAN_MIN_VALUE: return "\"MAX_VALUE_LESS_THAN_MIN_VALUE\"";
-		case NO_DATA: return "\"NO_DATA\"";
 		case NO_ERROR: return "\"NO_ERROR\"";
 		case OBJECT_ACCESS_READ_ONLY: return "\"OBJECT_ACCESS_READ_ONLY\"";
 		case OBJECT_ACCESS_UNSUPPORTED: return "\"OBJECT_ACCESS_UNSUPPORTED\"";
@@ -126,9 +122,9 @@ std::string sdo_error_e::to_string() const {
 		case PARAMETER_VALUE_TOO_HIGH: return "\"PARAMETER_VALUE_TOO_HIGH\"";
 		case PARAMETER_VALUE_TOO_LOW: return "\"PARAMETER_VALUE_TOO_LOW\"";
 		case PDO_LENGTH_EXCEEDED: return "\"PDO_LENGTH_EXCEEDED\"";
+		case RESERVED: return "\"RESERVED\"";
 		case SERVICE_ERROR: return "\"SERVICE_ERROR\"";
 		case SUB_INDEX_DOES_NOT_EXIST: return "\"SUB_INDEX_DOES_NOT_EXIST\"";
-		case SUB_PARAMETER_VALUE_OUT_OF_RANGE: return "\"SUB_PARAMETER_VALUE_OUT_OF_RANGE\"";
 		case TIMEOUT: return "\"TIMEOUT\"";
 		case TOGGLE_BIT_ERROR: return "\"TOGGLE_BIT_ERROR\"";
 		case TYPE_CONFLICT: return "\"TYPE_CONFLICT\"";
@@ -141,7 +137,6 @@ std::string sdo_error_e::to_string_value() const {
 	switch(value) {
 		case ACCESS_ERROR: return "ACCESS_ERROR";
 		case CANNOT_MAP_TO_PDO: return "CANNOT_MAP_TO_PDO";
-		case CONNECTION_ERROR: return "CONNECTION_ERROR";
 		case DATA_TRANSFER: return "DATA_TRANSFER";
 		case DATA_TRANSFER_DEVICE_STATE: return "DATA_TRANSFER_DEVICE_STATE";
 		case DATA_TRANSFER_LOCAL: return "DATA_TRANSFER_LOCAL";
@@ -157,7 +152,6 @@ std::string sdo_error_e::to_string_value() const {
 		case INVALID_BLOCK_SIZE: return "INVALID_BLOCK_SIZE";
 		case INVALID_COMMAND: return "INVALID_COMMAND";
 		case MAX_VALUE_LESS_THAN_MIN_VALUE: return "MAX_VALUE_LESS_THAN_MIN_VALUE";
-		case NO_DATA: return "NO_DATA";
 		case NO_ERROR: return "NO_ERROR";
 		case OBJECT_ACCESS_READ_ONLY: return "OBJECT_ACCESS_READ_ONLY";
 		case OBJECT_ACCESS_UNSUPPORTED: return "OBJECT_ACCESS_UNSUPPORTED";
@@ -173,9 +167,9 @@ std::string sdo_error_e::to_string_value() const {
 		case PARAMETER_VALUE_TOO_HIGH: return "PARAMETER_VALUE_TOO_HIGH";
 		case PARAMETER_VALUE_TOO_LOW: return "PARAMETER_VALUE_TOO_LOW";
 		case PDO_LENGTH_EXCEEDED: return "PDO_LENGTH_EXCEEDED";
+		case RESERVED: return "RESERVED";
 		case SERVICE_ERROR: return "SERVICE_ERROR";
 		case SUB_INDEX_DOES_NOT_EXIST: return "SUB_INDEX_DOES_NOT_EXIST";
-		case SUB_PARAMETER_VALUE_OUT_OF_RANGE: return "SUB_PARAMETER_VALUE_OUT_OF_RANGE";
 		case TIMEOUT: return "TIMEOUT";
 		case TOGGLE_BIT_ERROR: return "TOGGLE_BIT_ERROR";
 		case TYPE_CONFLICT: return "TYPE_CONFLICT";
@@ -188,7 +182,6 @@ std::string sdo_error_e::to_string_value_full() const {
 	switch(value) {
 		case ACCESS_ERROR: return "pilot.base.canopen.sdo_error_e.ACCESS_ERROR";
 		case CANNOT_MAP_TO_PDO: return "pilot.base.canopen.sdo_error_e.CANNOT_MAP_TO_PDO";
-		case CONNECTION_ERROR: return "pilot.base.canopen.sdo_error_e.CONNECTION_ERROR";
 		case DATA_TRANSFER: return "pilot.base.canopen.sdo_error_e.DATA_TRANSFER";
 		case DATA_TRANSFER_DEVICE_STATE: return "pilot.base.canopen.sdo_error_e.DATA_TRANSFER_DEVICE_STATE";
 		case DATA_TRANSFER_LOCAL: return "pilot.base.canopen.sdo_error_e.DATA_TRANSFER_LOCAL";
@@ -204,7 +197,6 @@ std::string sdo_error_e::to_string_value_full() const {
 		case INVALID_BLOCK_SIZE: return "pilot.base.canopen.sdo_error_e.INVALID_BLOCK_SIZE";
 		case INVALID_COMMAND: return "pilot.base.canopen.sdo_error_e.INVALID_COMMAND";
 		case MAX_VALUE_LESS_THAN_MIN_VALUE: return "pilot.base.canopen.sdo_error_e.MAX_VALUE_LESS_THAN_MIN_VALUE";
-		case NO_DATA: return "pilot.base.canopen.sdo_error_e.NO_DATA";
 		case NO_ERROR: return "pilot.base.canopen.sdo_error_e.NO_ERROR";
 		case OBJECT_ACCESS_READ_ONLY: return "pilot.base.canopen.sdo_error_e.OBJECT_ACCESS_READ_ONLY";
 		case OBJECT_ACCESS_UNSUPPORTED: return "pilot.base.canopen.sdo_error_e.OBJECT_ACCESS_UNSUPPORTED";
@@ -220,9 +212,9 @@ std::string sdo_error_e::to_string_value_full() const {
 		case PARAMETER_VALUE_TOO_HIGH: return "pilot.base.canopen.sdo_error_e.PARAMETER_VALUE_TOO_HIGH";
 		case PARAMETER_VALUE_TOO_LOW: return "pilot.base.canopen.sdo_error_e.PARAMETER_VALUE_TOO_LOW";
 		case PDO_LENGTH_EXCEEDED: return "pilot.base.canopen.sdo_error_e.PDO_LENGTH_EXCEEDED";
+		case RESERVED: return "pilot.base.canopen.sdo_error_e.RESERVED";
 		case SERVICE_ERROR: return "pilot.base.canopen.sdo_error_e.SERVICE_ERROR";
 		case SUB_INDEX_DOES_NOT_EXIST: return "pilot.base.canopen.sdo_error_e.SUB_INDEX_DOES_NOT_EXIST";
-		case SUB_PARAMETER_VALUE_OUT_OF_RANGE: return "pilot.base.canopen.sdo_error_e.SUB_PARAMETER_VALUE_OUT_OF_RANGE";
 		case TIMEOUT: return "pilot.base.canopen.sdo_error_e.TIMEOUT";
 		case TOGGLE_BIT_ERROR: return "pilot.base.canopen.sdo_error_e.TOGGLE_BIT_ERROR";
 		case TYPE_CONFLICT: return "pilot.base.canopen.sdo_error_e.TYPE_CONFLICT";
@@ -243,7 +235,6 @@ void sdo_error_e::from_string_value(const std::string& _name) {
 	if(var.is_string()) {
 		if(_name == "ACCESS_ERROR") value = ACCESS_ERROR;
 		else if(_name == "CANNOT_MAP_TO_PDO") value = CANNOT_MAP_TO_PDO;
-		else if(_name == "CONNECTION_ERROR") value = CONNECTION_ERROR;
 		else if(_name == "DATA_TRANSFER") value = DATA_TRANSFER;
 		else if(_name == "DATA_TRANSFER_DEVICE_STATE") value = DATA_TRANSFER_DEVICE_STATE;
 		else if(_name == "DATA_TRANSFER_LOCAL") value = DATA_TRANSFER_LOCAL;
@@ -259,7 +250,6 @@ void sdo_error_e::from_string_value(const std::string& _name) {
 		else if(_name == "INVALID_BLOCK_SIZE") value = INVALID_BLOCK_SIZE;
 		else if(_name == "INVALID_COMMAND") value = INVALID_COMMAND;
 		else if(_name == "MAX_VALUE_LESS_THAN_MIN_VALUE") value = MAX_VALUE_LESS_THAN_MIN_VALUE;
-		else if(_name == "NO_DATA") value = NO_DATA;
 		else if(_name == "NO_ERROR") value = NO_ERROR;
 		else if(_name == "OBJECT_ACCESS_READ_ONLY") value = OBJECT_ACCESS_READ_ONLY;
 		else if(_name == "OBJECT_ACCESS_UNSUPPORTED") value = OBJECT_ACCESS_UNSUPPORTED;
@@ -275,9 +265,9 @@ void sdo_error_e::from_string_value(const std::string& _name) {
 		else if(_name == "PARAMETER_VALUE_TOO_HIGH") value = PARAMETER_VALUE_TOO_HIGH;
 		else if(_name == "PARAMETER_VALUE_TOO_LOW") value = PARAMETER_VALUE_TOO_LOW;
 		else if(_name == "PDO_LENGTH_EXCEEDED") value = PDO_LENGTH_EXCEEDED;
+		else if(_name == "RESERVED") value = RESERVED;
 		else if(_name == "SERVICE_ERROR") value = SERVICE_ERROR;
 		else if(_name == "SUB_INDEX_DOES_NOT_EXIST") value = SUB_INDEX_DOES_NOT_EXIST;
-		else if(_name == "SUB_PARAMETER_VALUE_OUT_OF_RANGE") value = SUB_PARAMETER_VALUE_OUT_OF_RANGE;
 		else if(_name == "TIMEOUT") value = TIMEOUT;
 		else if(_name == "TOGGLE_BIT_ERROR") value = TOGGLE_BIT_ERROR;
 		else if(_name == "TYPE_CONFLICT") value = TYPE_CONFLICT;
@@ -293,7 +283,6 @@ void sdo_error_e::accept(vnx::Visitor& _visitor) const {
 	switch(value) {
 		case ACCESS_ERROR: _name = "ACCESS_ERROR"; break;
 		case CANNOT_MAP_TO_PDO: _name = "CANNOT_MAP_TO_PDO"; break;
-		case CONNECTION_ERROR: _name = "CONNECTION_ERROR"; break;
 		case DATA_TRANSFER: _name = "DATA_TRANSFER"; break;
 		case DATA_TRANSFER_DEVICE_STATE: _name = "DATA_TRANSFER_DEVICE_STATE"; break;
 		case DATA_TRANSFER_LOCAL: _name = "DATA_TRANSFER_LOCAL"; break;
@@ -309,7 +298,6 @@ void sdo_error_e::accept(vnx::Visitor& _visitor) const {
 		case INVALID_BLOCK_SIZE: _name = "INVALID_BLOCK_SIZE"; break;
 		case INVALID_COMMAND: _name = "INVALID_COMMAND"; break;
 		case MAX_VALUE_LESS_THAN_MIN_VALUE: _name = "MAX_VALUE_LESS_THAN_MIN_VALUE"; break;
-		case NO_DATA: _name = "NO_DATA"; break;
 		case NO_ERROR: _name = "NO_ERROR"; break;
 		case OBJECT_ACCESS_READ_ONLY: _name = "OBJECT_ACCESS_READ_ONLY"; break;
 		case OBJECT_ACCESS_UNSUPPORTED: _name = "OBJECT_ACCESS_UNSUPPORTED"; break;
@@ -325,9 +313,9 @@ void sdo_error_e::accept(vnx::Visitor& _visitor) const {
 		case PARAMETER_VALUE_TOO_HIGH: _name = "PARAMETER_VALUE_TOO_HIGH"; break;
 		case PARAMETER_VALUE_TOO_LOW: _name = "PARAMETER_VALUE_TOO_LOW"; break;
 		case PDO_LENGTH_EXCEEDED: _name = "PDO_LENGTH_EXCEEDED"; break;
+		case RESERVED: _name = "RESERVED"; break;
 		case SERVICE_ERROR: _name = "SERVICE_ERROR"; break;
 		case SUB_INDEX_DOES_NOT_EXIST: _name = "SUB_INDEX_DOES_NOT_EXIST"; break;
-		case SUB_PARAMETER_VALUE_OUT_OF_RANGE: _name = "SUB_PARAMETER_VALUE_OUT_OF_RANGE"; break;
 		case TIMEOUT: _name = "TIMEOUT"; break;
 		case TOGGLE_BIT_ERROR: _name = "TOGGLE_BIT_ERROR"; break;
 		case TYPE_CONFLICT: _name = "TYPE_CONFLICT"; break;
@@ -340,7 +328,6 @@ void sdo_error_e::write(std::ostream& _out) const {
 	switch(value) {
 		case ACCESS_ERROR: _out << "\"ACCESS_ERROR\""; break;
 		case CANNOT_MAP_TO_PDO: _out << "\"CANNOT_MAP_TO_PDO\""; break;
-		case CONNECTION_ERROR: _out << "\"CONNECTION_ERROR\""; break;
 		case DATA_TRANSFER: _out << "\"DATA_TRANSFER\""; break;
 		case DATA_TRANSFER_DEVICE_STATE: _out << "\"DATA_TRANSFER_DEVICE_STATE\""; break;
 		case DATA_TRANSFER_LOCAL: _out << "\"DATA_TRANSFER_LOCAL\""; break;
@@ -356,7 +343,6 @@ void sdo_error_e::write(std::ostream& _out) const {
 		case INVALID_BLOCK_SIZE: _out << "\"INVALID_BLOCK_SIZE\""; break;
 		case INVALID_COMMAND: _out << "\"INVALID_COMMAND\""; break;
 		case MAX_VALUE_LESS_THAN_MIN_VALUE: _out << "\"MAX_VALUE_LESS_THAN_MIN_VALUE\""; break;
-		case NO_DATA: _out << "\"NO_DATA\""; break;
 		case NO_ERROR: _out << "\"NO_ERROR\""; break;
 		case OBJECT_ACCESS_READ_ONLY: _out << "\"OBJECT_ACCESS_READ_ONLY\""; break;
 		case OBJECT_ACCESS_UNSUPPORTED: _out << "\"OBJECT_ACCESS_UNSUPPORTED\""; break;
@@ -372,9 +358,9 @@ void sdo_error_e::write(std::ostream& _out) const {
 		case PARAMETER_VALUE_TOO_HIGH: _out << "\"PARAMETER_VALUE_TOO_HIGH\""; break;
 		case PARAMETER_VALUE_TOO_LOW: _out << "\"PARAMETER_VALUE_TOO_LOW\""; break;
 		case PDO_LENGTH_EXCEEDED: _out << "\"PDO_LENGTH_EXCEEDED\""; break;
+		case RESERVED: _out << "\"RESERVED\""; break;
 		case SERVICE_ERROR: _out << "\"SERVICE_ERROR\""; break;
 		case SUB_INDEX_DOES_NOT_EXIST: _out << "\"SUB_INDEX_DOES_NOT_EXIST\""; break;
-		case SUB_PARAMETER_VALUE_OUT_OF_RANGE: _out << "\"SUB_PARAMETER_VALUE_OUT_OF_RANGE\""; break;
 		case TIMEOUT: _out << "\"TIMEOUT\""; break;
 		case TOGGLE_BIT_ERROR: _out << "\"TOGGLE_BIT_ERROR\""; break;
 		case TYPE_CONFLICT: _out << "\"TYPE_CONFLICT\""; break;
@@ -441,7 +427,7 @@ std::shared_ptr<vnx::TypeCode> sdo_error_e::static_create_type_code() {
 	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.base.canopen.sdo_error_e";
 	type_code->type_hash = vnx::Hash64(0x9b27dfeddc64e9c2ull);
-	type_code->code_hash = vnx::Hash64(0x20f19aa211c94138ull);
+	type_code->code_hash = vnx::Hash64(0xb227eadaf1b3c4fcull);
 	type_code->is_native = true;
 	type_code->is_enum = true;
 	type_code->native_size = sizeof(::pilot::base::canopen::sdo_error_e);
@@ -455,7 +441,6 @@ std::shared_ptr<vnx::TypeCode> sdo_error_e::static_create_type_code() {
 	}
 	type_code->enum_map[2983389154] = "ACCESS_ERROR";
 	type_code->enum_map[102157286] = "CANNOT_MAP_TO_PDO";
-	type_code->enum_map[983926906] = "CONNECTION_ERROR";
 	type_code->enum_map[3212620913] = "DATA_TRANSFER";
 	type_code->enum_map[1312520157] = "DATA_TRANSFER_DEVICE_STATE";
 	type_code->enum_map[2084807517] = "DATA_TRANSFER_LOCAL";
@@ -471,7 +456,6 @@ std::shared_ptr<vnx::TypeCode> sdo_error_e::static_create_type_code() {
 	type_code->enum_map[424332037] = "INVALID_BLOCK_SIZE";
 	type_code->enum_map[2016579960] = "INVALID_COMMAND";
 	type_code->enum_map[2572043046] = "MAX_VALUE_LESS_THAN_MIN_VALUE";
-	type_code->enum_map[3860596597] = "NO_DATA";
 	type_code->enum_map[134115394] = "NO_ERROR";
 	type_code->enum_map[1579395730] = "OBJECT_ACCESS_READ_ONLY";
 	type_code->enum_map[633315882] = "OBJECT_ACCESS_UNSUPPORTED";
@@ -487,9 +471,9 @@ std::shared_ptr<vnx::TypeCode> sdo_error_e::static_create_type_code() {
 	type_code->enum_map[4275016742] = "PARAMETER_VALUE_TOO_HIGH";
 	type_code->enum_map[1419246051] = "PARAMETER_VALUE_TOO_LOW";
 	type_code->enum_map[722766574] = "PDO_LENGTH_EXCEEDED";
+	type_code->enum_map[1298709147] = "RESERVED";
 	type_code->enum_map[520912540] = "SERVICE_ERROR";
 	type_code->enum_map[1435966880] = "SUB_INDEX_DOES_NOT_EXIST";
-	type_code->enum_map[1995812059] = "SUB_PARAMETER_VALUE_OUT_OF_RANGE";
 	type_code->enum_map[2481323511] = "TIMEOUT";
 	type_code->enum_map[3556383544] = "TOGGLE_BIT_ERROR";
 	type_code->enum_map[4291194971] = "TYPE_CONFLICT";

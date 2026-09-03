@@ -13,7 +13,7 @@ namespace canopen {
 
 
 const vnx::Hash64 emcy_code_e::VNX_TYPE_HASH(0xc0297cb989826ca8ull);
-const vnx::Hash64 emcy_code_e::VNX_CODE_HASH(0x19522a178fe34b72ull);
+const vnx::Hash64 emcy_code_e::VNX_CODE_HASH(0x12d0badf1b67c578ull);
 
 vnx::Hash64 emcy_code_e::get_type_hash() const {
 	return VNX_TYPE_HASH;
@@ -56,7 +56,7 @@ vnx::bool_t emcy_code_e::is_valid() const {
 		case CURRENT_INPUT: return true;
 		case CURRENT_INSIDE: return true;
 		case CURRENT_OUTPUT: return true;
-		case DAM_MPDO_NOT_PROCESSED: return true;
+		case CUSTOM: return true;
 		case DATA_SET: return true;
 		case DEVICE_SPECIFIC: return true;
 		case EXTERNAL_ERROR: return true;
@@ -69,12 +69,10 @@ vnx::bool_t emcy_code_e::is_valid() const {
 		case PDO_LENGTH_ERROR: return true;
 		case PDO_LENGTH_EXCEEDED: return true;
 		case PROTOCOL_ERROR: return true;
-		case RPDO_TIMEOUT: return true;
 		case SOFTWARE: return true;
 		case TEMPERATURE: return true;
 		case TEMPERATURE_AMBIENT: return true;
 		case TEMPERATURE_DEVICE: return true;
-		case UNEXPECTED_SYNC_LENGTH: return true;
 		case USER_SOFTWARE: return true;
 		case VOLTAGE: return true;
 		case VOLTAGE_INSIDE: return true;
@@ -97,7 +95,7 @@ std::string emcy_code_e::to_string() const {
 		case CURRENT_INPUT: return "\"CURRENT_INPUT\"";
 		case CURRENT_INSIDE: return "\"CURRENT_INSIDE\"";
 		case CURRENT_OUTPUT: return "\"CURRENT_OUTPUT\"";
-		case DAM_MPDO_NOT_PROCESSED: return "\"DAM_MPDO_NOT_PROCESSED\"";
+		case CUSTOM: return "\"CUSTOM\"";
 		case DATA_SET: return "\"DATA_SET\"";
 		case DEVICE_SPECIFIC: return "\"DEVICE_SPECIFIC\"";
 		case EXTERNAL_ERROR: return "\"EXTERNAL_ERROR\"";
@@ -110,12 +108,10 @@ std::string emcy_code_e::to_string() const {
 		case PDO_LENGTH_ERROR: return "\"PDO_LENGTH_ERROR\"";
 		case PDO_LENGTH_EXCEEDED: return "\"PDO_LENGTH_EXCEEDED\"";
 		case PROTOCOL_ERROR: return "\"PROTOCOL_ERROR\"";
-		case RPDO_TIMEOUT: return "\"RPDO_TIMEOUT\"";
 		case SOFTWARE: return "\"SOFTWARE\"";
 		case TEMPERATURE: return "\"TEMPERATURE\"";
 		case TEMPERATURE_AMBIENT: return "\"TEMPERATURE_AMBIENT\"";
 		case TEMPERATURE_DEVICE: return "\"TEMPERATURE_DEVICE\"";
-		case UNEXPECTED_SYNC_LENGTH: return "\"UNEXPECTED_SYNC_LENGTH\"";
 		case USER_SOFTWARE: return "\"USER_SOFTWARE\"";
 		case VOLTAGE: return "\"VOLTAGE\"";
 		case VOLTAGE_INSIDE: return "\"VOLTAGE_INSIDE\"";
@@ -138,7 +134,7 @@ std::string emcy_code_e::to_string_value() const {
 		case CURRENT_INPUT: return "CURRENT_INPUT";
 		case CURRENT_INSIDE: return "CURRENT_INSIDE";
 		case CURRENT_OUTPUT: return "CURRENT_OUTPUT";
-		case DAM_MPDO_NOT_PROCESSED: return "DAM_MPDO_NOT_PROCESSED";
+		case CUSTOM: return "CUSTOM";
 		case DATA_SET: return "DATA_SET";
 		case DEVICE_SPECIFIC: return "DEVICE_SPECIFIC";
 		case EXTERNAL_ERROR: return "EXTERNAL_ERROR";
@@ -151,12 +147,10 @@ std::string emcy_code_e::to_string_value() const {
 		case PDO_LENGTH_ERROR: return "PDO_LENGTH_ERROR";
 		case PDO_LENGTH_EXCEEDED: return "PDO_LENGTH_EXCEEDED";
 		case PROTOCOL_ERROR: return "PROTOCOL_ERROR";
-		case RPDO_TIMEOUT: return "RPDO_TIMEOUT";
 		case SOFTWARE: return "SOFTWARE";
 		case TEMPERATURE: return "TEMPERATURE";
 		case TEMPERATURE_AMBIENT: return "TEMPERATURE_AMBIENT";
 		case TEMPERATURE_DEVICE: return "TEMPERATURE_DEVICE";
-		case UNEXPECTED_SYNC_LENGTH: return "UNEXPECTED_SYNC_LENGTH";
 		case USER_SOFTWARE: return "USER_SOFTWARE";
 		case VOLTAGE: return "VOLTAGE";
 		case VOLTAGE_INSIDE: return "VOLTAGE_INSIDE";
@@ -179,7 +173,7 @@ std::string emcy_code_e::to_string_value_full() const {
 		case CURRENT_INPUT: return "pilot.base.canopen.emcy_code_e.CURRENT_INPUT";
 		case CURRENT_INSIDE: return "pilot.base.canopen.emcy_code_e.CURRENT_INSIDE";
 		case CURRENT_OUTPUT: return "pilot.base.canopen.emcy_code_e.CURRENT_OUTPUT";
-		case DAM_MPDO_NOT_PROCESSED: return "pilot.base.canopen.emcy_code_e.DAM_MPDO_NOT_PROCESSED";
+		case CUSTOM: return "pilot.base.canopen.emcy_code_e.CUSTOM";
 		case DATA_SET: return "pilot.base.canopen.emcy_code_e.DATA_SET";
 		case DEVICE_SPECIFIC: return "pilot.base.canopen.emcy_code_e.DEVICE_SPECIFIC";
 		case EXTERNAL_ERROR: return "pilot.base.canopen.emcy_code_e.EXTERNAL_ERROR";
@@ -192,12 +186,10 @@ std::string emcy_code_e::to_string_value_full() const {
 		case PDO_LENGTH_ERROR: return "pilot.base.canopen.emcy_code_e.PDO_LENGTH_ERROR";
 		case PDO_LENGTH_EXCEEDED: return "pilot.base.canopen.emcy_code_e.PDO_LENGTH_EXCEEDED";
 		case PROTOCOL_ERROR: return "pilot.base.canopen.emcy_code_e.PROTOCOL_ERROR";
-		case RPDO_TIMEOUT: return "pilot.base.canopen.emcy_code_e.RPDO_TIMEOUT";
 		case SOFTWARE: return "pilot.base.canopen.emcy_code_e.SOFTWARE";
 		case TEMPERATURE: return "pilot.base.canopen.emcy_code_e.TEMPERATURE";
 		case TEMPERATURE_AMBIENT: return "pilot.base.canopen.emcy_code_e.TEMPERATURE_AMBIENT";
 		case TEMPERATURE_DEVICE: return "pilot.base.canopen.emcy_code_e.TEMPERATURE_DEVICE";
-		case UNEXPECTED_SYNC_LENGTH: return "pilot.base.canopen.emcy_code_e.UNEXPECTED_SYNC_LENGTH";
 		case USER_SOFTWARE: return "pilot.base.canopen.emcy_code_e.USER_SOFTWARE";
 		case VOLTAGE: return "pilot.base.canopen.emcy_code_e.VOLTAGE";
 		case VOLTAGE_INSIDE: return "pilot.base.canopen.emcy_code_e.VOLTAGE_INSIDE";
@@ -228,7 +220,7 @@ void emcy_code_e::from_string_value(const std::string& _name) {
 		else if(_name == "CURRENT_INPUT") value = CURRENT_INPUT;
 		else if(_name == "CURRENT_INSIDE") value = CURRENT_INSIDE;
 		else if(_name == "CURRENT_OUTPUT") value = CURRENT_OUTPUT;
-		else if(_name == "DAM_MPDO_NOT_PROCESSED") value = DAM_MPDO_NOT_PROCESSED;
+		else if(_name == "CUSTOM") value = CUSTOM;
 		else if(_name == "DATA_SET") value = DATA_SET;
 		else if(_name == "DEVICE_SPECIFIC") value = DEVICE_SPECIFIC;
 		else if(_name == "EXTERNAL_ERROR") value = EXTERNAL_ERROR;
@@ -241,12 +233,10 @@ void emcy_code_e::from_string_value(const std::string& _name) {
 		else if(_name == "PDO_LENGTH_ERROR") value = PDO_LENGTH_ERROR;
 		else if(_name == "PDO_LENGTH_EXCEEDED") value = PDO_LENGTH_EXCEEDED;
 		else if(_name == "PROTOCOL_ERROR") value = PROTOCOL_ERROR;
-		else if(_name == "RPDO_TIMEOUT") value = RPDO_TIMEOUT;
 		else if(_name == "SOFTWARE") value = SOFTWARE;
 		else if(_name == "TEMPERATURE") value = TEMPERATURE;
 		else if(_name == "TEMPERATURE_AMBIENT") value = TEMPERATURE_AMBIENT;
 		else if(_name == "TEMPERATURE_DEVICE") value = TEMPERATURE_DEVICE;
-		else if(_name == "UNEXPECTED_SYNC_LENGTH") value = UNEXPECTED_SYNC_LENGTH;
 		else if(_name == "USER_SOFTWARE") value = USER_SOFTWARE;
 		else if(_name == "VOLTAGE") value = VOLTAGE;
 		else if(_name == "VOLTAGE_INSIDE") value = VOLTAGE_INSIDE;
@@ -272,7 +262,7 @@ void emcy_code_e::accept(vnx::Visitor& _visitor) const {
 		case CURRENT_INPUT: _name = "CURRENT_INPUT"; break;
 		case CURRENT_INSIDE: _name = "CURRENT_INSIDE"; break;
 		case CURRENT_OUTPUT: _name = "CURRENT_OUTPUT"; break;
-		case DAM_MPDO_NOT_PROCESSED: _name = "DAM_MPDO_NOT_PROCESSED"; break;
+		case CUSTOM: _name = "CUSTOM"; break;
 		case DATA_SET: _name = "DATA_SET"; break;
 		case DEVICE_SPECIFIC: _name = "DEVICE_SPECIFIC"; break;
 		case EXTERNAL_ERROR: _name = "EXTERNAL_ERROR"; break;
@@ -285,12 +275,10 @@ void emcy_code_e::accept(vnx::Visitor& _visitor) const {
 		case PDO_LENGTH_ERROR: _name = "PDO_LENGTH_ERROR"; break;
 		case PDO_LENGTH_EXCEEDED: _name = "PDO_LENGTH_EXCEEDED"; break;
 		case PROTOCOL_ERROR: _name = "PROTOCOL_ERROR"; break;
-		case RPDO_TIMEOUT: _name = "RPDO_TIMEOUT"; break;
 		case SOFTWARE: _name = "SOFTWARE"; break;
 		case TEMPERATURE: _name = "TEMPERATURE"; break;
 		case TEMPERATURE_AMBIENT: _name = "TEMPERATURE_AMBIENT"; break;
 		case TEMPERATURE_DEVICE: _name = "TEMPERATURE_DEVICE"; break;
-		case UNEXPECTED_SYNC_LENGTH: _name = "UNEXPECTED_SYNC_LENGTH"; break;
 		case USER_SOFTWARE: _name = "USER_SOFTWARE"; break;
 		case VOLTAGE: _name = "VOLTAGE"; break;
 		case VOLTAGE_INSIDE: _name = "VOLTAGE_INSIDE"; break;
@@ -313,7 +301,7 @@ void emcy_code_e::write(std::ostream& _out) const {
 		case CURRENT_INPUT: _out << "\"CURRENT_INPUT\""; break;
 		case CURRENT_INSIDE: _out << "\"CURRENT_INSIDE\""; break;
 		case CURRENT_OUTPUT: _out << "\"CURRENT_OUTPUT\""; break;
-		case DAM_MPDO_NOT_PROCESSED: _out << "\"DAM_MPDO_NOT_PROCESSED\""; break;
+		case CUSTOM: _out << "\"CUSTOM\""; break;
 		case DATA_SET: _out << "\"DATA_SET\""; break;
 		case DEVICE_SPECIFIC: _out << "\"DEVICE_SPECIFIC\""; break;
 		case EXTERNAL_ERROR: _out << "\"EXTERNAL_ERROR\""; break;
@@ -326,12 +314,10 @@ void emcy_code_e::write(std::ostream& _out) const {
 		case PDO_LENGTH_ERROR: _out << "\"PDO_LENGTH_ERROR\""; break;
 		case PDO_LENGTH_EXCEEDED: _out << "\"PDO_LENGTH_EXCEEDED\""; break;
 		case PROTOCOL_ERROR: _out << "\"PROTOCOL_ERROR\""; break;
-		case RPDO_TIMEOUT: _out << "\"RPDO_TIMEOUT\""; break;
 		case SOFTWARE: _out << "\"SOFTWARE\""; break;
 		case TEMPERATURE: _out << "\"TEMPERATURE\""; break;
 		case TEMPERATURE_AMBIENT: _out << "\"TEMPERATURE_AMBIENT\""; break;
 		case TEMPERATURE_DEVICE: _out << "\"TEMPERATURE_DEVICE\""; break;
-		case UNEXPECTED_SYNC_LENGTH: _out << "\"UNEXPECTED_SYNC_LENGTH\""; break;
 		case USER_SOFTWARE: _out << "\"USER_SOFTWARE\""; break;
 		case VOLTAGE: _out << "\"VOLTAGE\""; break;
 		case VOLTAGE_INSIDE: _out << "\"VOLTAGE_INSIDE\""; break;
@@ -399,7 +385,7 @@ std::shared_ptr<vnx::TypeCode> emcy_code_e::static_create_type_code() {
 	auto type_code = std::make_shared<vnx::TypeCode>();
 	type_code->name = "pilot.base.canopen.emcy_code_e";
 	type_code->type_hash = vnx::Hash64(0xc0297cb989826ca8ull);
-	type_code->code_hash = vnx::Hash64(0x19522a178fe34b72ull);
+	type_code->code_hash = vnx::Hash64(0x12d0badf1b67c578ull);
 	type_code->is_native = true;
 	type_code->is_enum = true;
 	type_code->native_size = sizeof(::pilot::base::canopen::emcy_code_e);
@@ -422,7 +408,7 @@ std::shared_ptr<vnx::TypeCode> emcy_code_e::static_create_type_code() {
 	type_code->enum_map[2582093355] = "CURRENT_INPUT";
 	type_code->enum_map[513425947] = "CURRENT_INSIDE";
 	type_code->enum_map[1254426932] = "CURRENT_OUTPUT";
-	type_code->enum_map[506174374] = "DAM_MPDO_NOT_PROCESSED";
+	type_code->enum_map[2218374445] = "CUSTOM";
 	type_code->enum_map[4276352321] = "DATA_SET";
 	type_code->enum_map[3766952636] = "DEVICE_SPECIFIC";
 	type_code->enum_map[616254643] = "EXTERNAL_ERROR";
@@ -435,12 +421,10 @@ std::shared_ptr<vnx::TypeCode> emcy_code_e::static_create_type_code() {
 	type_code->enum_map[1226538660] = "PDO_LENGTH_ERROR";
 	type_code->enum_map[722766574] = "PDO_LENGTH_EXCEEDED";
 	type_code->enum_map[1346031774] = "PROTOCOL_ERROR";
-	type_code->enum_map[3265130901] = "RPDO_TIMEOUT";
 	type_code->enum_map[2410844169] = "SOFTWARE";
 	type_code->enum_map[2506210592] = "TEMPERATURE";
 	type_code->enum_map[3976088382] = "TEMPERATURE_AMBIENT";
 	type_code->enum_map[2264987537] = "TEMPERATURE_DEVICE";
-	type_code->enum_map[1608562062] = "UNEXPECTED_SYNC_LENGTH";
 	type_code->enum_map[1994157918] = "USER_SOFTWARE";
 	type_code->enum_map[1650878572] = "VOLTAGE";
 	type_code->enum_map[707070561] = "VOLTAGE_INSIDE";
